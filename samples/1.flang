@@ -1,0 +1,6 @@
+alpha = 15
+resultValue = "delta"
+
+if (x <= 4) {
+  x = 0
+}

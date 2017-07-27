@@ -1,0 +1,47 @@
+if not Flang then Flang = {} end
+Character = {}
+Flang.Character = Character
+Character.__index = Character
+
+--[[
+A Character object holds
+    - one character (self.cargo)
+    - the index of the character's position in the sourceText.
+    - the index of the line where the character was found in the sourceText.
+    - the index of the column in the line where the character was found in the sourceText.
+    !- (a reference to) the entire sourceText (self.sourceText)
+
+This information will be available to a token that uses this character.
+If an error occurs, the token can use this information to report the
+line/column number where the error occurred, and to show an image of the
+line in sourceText where the error occurred.
+--]]
+
+Character.ENDMARK = "\0"
+
+--[[
+(string) cargo - the character
+--]]
+function Character:new(o)
+  if not o then
+    error("nil constructor!")
+  end
+
+  if (string.len(o.cargo) ~= 1) then
+    error("character must be 1 char long. got: '" .. o.cargo .. "'")
+  end
+
+  setmetatable(o, self)
+  self.__index = self
+  return o
+end
+
+function Character:__tostring()
+  cargo = self.cargo
+  if cargo == " " then cargo = "SPACE" end
+  if cargo == "\n" then cargo = "NEWLINE" end
+  if cargo == "\t" then cargo = "TAB" end
+  if cargo == ENDMARK then cargo = "EOF" end
+
+  return "cargo: '" .. cargo .. "'"
+end
