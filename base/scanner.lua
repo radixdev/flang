@@ -56,10 +56,16 @@ function Scanner:get()
   if (self.sourceIndex > self.lastIndex) then
     -- We've read past the end sourceText
     -- return ENDMARK
-    character = Flang.Character:new({cargo = Flang.Character.ENDMARK})
+    character = Flang.Character:new({cargo = Flang.Character.ENDMARK,
+      sourceIndex = self.sourceIndex, lineIndex = self.lineIndex,
+      columnIndex = self.columnIndex
+    })
   else
     charAtIndex = self:getChar(self.sourceIndex)
-    character = Flang.Character:new({cargo = charAtIndex})
+    character = Flang.Character:new({cargo = charAtIndex,
+      sourceIndex = self.sourceIndex, lineIndex = self.lineIndex,
+      columnIndex = self.columnIndex
+    })
   end
 
   return character

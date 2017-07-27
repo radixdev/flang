@@ -27,6 +27,13 @@ function Character:new(o)
     error("nil constructor!")
   end
 
+  o = {
+    cargo = o.cargo,
+    sourceIndex = o.sourceIndex,
+    lineIndex = o.lineIndex,
+    columnIndex = o.columnIndex
+  }
+
   if (string.len(o.cargo) ~= 1) then
     error("character must be 1 char long. got: '" .. o.cargo .. "'")
   end
@@ -41,7 +48,11 @@ function Character:__tostring()
   if cargo == " " then cargo = "SPACE" end
   if cargo == "\n" then cargo = "NEWLINE" end
   if cargo == "\t" then cargo = "TAB" end
-  if cargo == ENDMARK then cargo = "EOF" end
+  if cargo == Character.ENDMARK then cargo = "EOF" end
 
-  return "cargo: '" .. cargo .. "'"
+  return
+   "line: '" .. self.lineIndex .. "'"
+  .. "\t column: '" .. self.columnIndex .. "'"
+  .. "\t sourceIndex: '" .. self.sourceIndex .. "'"
+  .. "\t'" .. cargo .. "'"
 end
