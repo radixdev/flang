@@ -45,10 +45,10 @@ end
 
 function Character:__tostring()
   cargo = self.cargo
-  if cargo == " " then cargo = "SPACE" end
-  if cargo == "\n" then cargo = "NEWLINE" end
-  if cargo == "\t" then cargo = "TAB" end
-  if cargo == Character.ENDMARK then cargo = "EOF" end
+  if cargo == " " then cargo = "\tSPACE" end
+  if cargo == "\n" then cargo = "\tNEWLINE" end
+  if cargo == "\t" then cargo = "\tTAB" end
+  if cargo == Character.ENDMARK then cargo = "\tEOF" end
 
   return
    "line: '" .. self.lineIndex .. "'"

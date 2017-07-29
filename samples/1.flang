@@ -1,6 +1,9 @@
 alpha = 15
 resultValue = "delta"
+b = alpha / resultValue
 
 if (x <= 4) {
   x = 0
 }
+
+pi = 3.141592
