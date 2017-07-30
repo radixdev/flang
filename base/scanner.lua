@@ -74,3 +74,18 @@ end
 function Scanner:getChar(index)
   return string.sub(self.sourceText, index, index)
 end
+
+--[[
+Returns the string (not character) at some offset from the current index
+]]
+function Scanner:lookahead(offset)
+  -- get the offet
+  index = self.sourceIndex + offset
+
+  if (index > self.lastIndex) then
+    -- read past the end of the text, EOF
+    return Flang.Character.ENDMARK
+  else
+    return self:getChar(index)
+  end
+end

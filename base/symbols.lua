@@ -40,6 +40,18 @@ function Symbols.isIdentifierChar(e)
   return Symbols.contains(Symbols.IDENTIFIER_CHARS, e)
 end
 
+function Symbols.isNumberStartChar(e)
+  return Symbols.contains(Symbols.NUMBER_STARTCHARS, e)
+end
+
+function Symbols.isNumberChar(e)
+  return Symbols.contains(Symbols.NUMBER_CHARS, e)
+end
+
+function Symbols.isStringStartChar(e)
+  return Symbols.contains(Symbols.STRING_STARTCHARS, e)
+end
+
 Symbols.KEYWORDS = Symbols.Set{
   "if",
   -- "then",
@@ -86,14 +98,13 @@ Symbols.TWO_CHARACTER_SYMBOLS = Symbols.Set{
 -- NUMBER_STARTCHARS     = string.digits
 -- NUMBER_CHARS          = string.digits + "."
 
-IDENTIFIER_STARTCHARS = Symbols.Set{"a", "b", "c", "d", "e", "f", "g", "h",
+Symbols.IDENTIFIER_STARTCHARS = Symbols.Set{"a", "b", "c", "d", "e", "f", "g", "h",
   "i", "j", "k", "l", "m", "n", "o", "p",
   "q", "r", "s", "t", "u", "v", "w", "x", "y", "z",
-
   "A", "B", "C", "D", "E", "F", "G", "H", "I",
   "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"
 }
-IDENTIFIER_CHARS = Symbols.Set{"a", "b", "c", "d", "e", "f", "g", "h",
+Symbols.IDENTIFIER_CHARS = Symbols.Set{"a", "b", "c", "d", "e", "f", "g", "h",
   "i", "j", "k", "l", "m", "n", "o", "p",
   "q", "r", "s", "t", "u", "v", "w", "x", "y", "z",
 
@@ -126,7 +137,11 @@ Symbols.EOF                = "Eof"
 -- print(Symbols.contains(Symbols.ONE_CHARACTER_SYMBOLS, a))
 -- print(Symbols.contains(Symbols.TWO_CHARACTER_SYMBOLS, a))
 
-a = "!="
+-- a = "!="
+-- print(Symbols.isKeyword(a))
+-- print(Symbols.isOneCharacterSymbol(a))
+-- print(Symbols.isTwoCharacterSymbol(a))
+
+a = "o"
 print(Symbols.isKeyword(a))
-print(Symbols.isOneCharacterSymbol(a))
-print(Symbols.isTwoCharacterSymbol(a))
+print(Symbols.isIdentifierChar(a))
