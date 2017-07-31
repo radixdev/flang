@@ -26,6 +26,13 @@ function Token:new(startCharacter)
   return o
 end
 
+--[[
+Say some nice, informative words about how they messed up
+]]
+function Token:abort(msg)
+  error(msg .. "\n\n" .. tostring(self))
+end
+
 function Token:__tostring()
   cargo = self.cargo
   if cargo == " " then cargo = "\tSPACE" end
@@ -33,9 +40,15 @@ function Token:__tostring()
   if cargo == "\t" then cargo = "\tTAB" end
   if cargo == Character.ENDMARK then cargo = "\tEOF" end
 
+  tabber = "\t"
+  -- Add an extra tab so it looks nice
+  if (self.type == nil or string.len(self.type) < 7) then
+    tabber =  tabber .. "\t"
+  end
+
   return
    "line: '" .. self.lineIndex .. "'"
   .. "\t column: '" .. self.columnIndex .. "'"
-  .. "\t type '" .. self.type .. "'"
-  .. "\t'" .. cargo .. "'"
+  .. "\t type '" .. (self.type or "") .. "'"
+  .. tabber .. "'" .. cargo .. "'"
 end

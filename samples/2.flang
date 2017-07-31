@@ -1,0 +1,17 @@
+alpha = 15
+resultValue = "delta"
+b = alpha / resultValue
+
+if (x <= 4) {
+  x = 0
+}
+
+pi = 3.141592
+
+b = true
+y = 1 + 2*3 / 4 - (10/2)
+someBoolean = false
+
+if (b == true && y < 15) {
+  someBoolean = true
+}

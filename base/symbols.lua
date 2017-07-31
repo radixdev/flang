@@ -74,21 +74,15 @@ Symbols.ONE_CHARACTER_SYMBOLS = Symbols.Set{
   "<", ">",
   "/", "*", "+", "-",
   "!", "&",
-  ".",
-  ";"
+  "."
 }
 
 Symbols.TWO_CHARACTER_SYMBOLS = Symbols.Set{
   "==",
   "<=",
   ">=",
-  -- "<>",
+  "&&",
   "!=",
-  -- "++",
-  -- "**",
-  -- "--",
-  -- "+=",
-  -- "-=",
   "||"
 }
 
@@ -142,6 +136,6 @@ Symbols.EOF                = "Eof"
 -- print(Symbols.isOneCharacterSymbol(a))
 -- print(Symbols.isTwoCharacterSymbol(a))
 
-a = "o"
-print(Symbols.isKeyword(a))
-print(Symbols.isIdentifierChar(a))
+-- a = "o"
+-- print(Symbols.isKeyword(a))
+-- print(Symbols.isIdentifierChar(a))

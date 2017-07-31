@@ -3,7 +3,7 @@ require("base.lexer")
 require("base.symbols")
 
 -- load our file
-filename = "samples/1.flang"
+filename = "samples/broken_string.flang"
 local f = assert(io.open(filename, "r"))
 local t = f:read("*all")
 f:close()
