@@ -14,22 +14,28 @@ Interpreter = {}
 Flang.Interpreter = Interpreter
 Interpreter.__index = Interpreter
 
---[[
-
-]]
 function Interpreter:new(o)
   if not o then
     error("nil constructor!")
   end
 
   o = {
-    parser = o.parser
+    parser = o.parser,
+    symbol_table_global = {}
   }
 
   setmetatable(o, self)
   self.__index = self
   return o
 end
+
+function Interpreter:error(msg)
+  error(msg)
+end
+
+-----------------------------------------------------------------------
+-- Public interface
+-----------------------------------------------------------------------
 
 function Interpreter:interpret()
   tree = self.parser:parse()
@@ -41,9 +47,10 @@ function Interpreter:interpret()
   return self:visit(tree)
 end
 
-function Interpreter:error(msg)
-  error(msg)
-end
+-----------------------------------------------------------------------
+-- AST traversal
+-- Every node must have a corresponding method here
+-----------------------------------------------------------------------
 
 function Interpreter:visit(node)
   -- See https://stackoverflow.com/questions/26042599/lua-call-a-function-using-its-name-string-in-a-class
@@ -81,4 +88,31 @@ end
 
 function Interpreter:visit_Num(node)
   return tonumber(node.value)
+end
+
+function Interpreter:visit_NoOp(node)
+  -- do nothing
+end
+
+function Interpreter:visit_Assign(node)
+  variable_name = node.left.value
+  self.symbol_table_global[variable_name] = self:visit(node.right)
+end
+
+function Interpreter:visit_Var(node)
+  variable_name = node.value
+
+  -- Check if this variable has been defined already
+  if (self.symbol_table_global[variable_name] == nil) then
+    self:error("Undefined variable " .. variable_name)
+  else
+    return self.symbol_table_global[variable_name]
+  end
+end
+
+function Interpreter:visit_Program(node)
+  -- Iterate over each of the children
+  for key,childNode in ipairs(node.children) do
+    self:visit(childNode)
+  end
 end
