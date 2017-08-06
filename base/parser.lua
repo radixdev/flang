@@ -51,10 +51,23 @@ end
 -----------------------------------------------------------------------
 
 --[[
+  FLANG 0.0.1 LANGUAGE DEFINITION
 
-    expr   : term ((PLUS | MINUS) term)*
-    term   : factor ((MUL | DIV) factor)*
-    factor : (PLUS | MINUS) factor | NUMBER | LPAREN expr RPAREN
+  program         : (statement)*
+  statement       : assignment_statement
+                  | empty
+
+  assignment_statement  : variable ASSIGN expr
+  empty                 :
+
+  expr      : term ((PLUS | MINUS) term)*
+  term      : factor ((MUL | DIV) factor)*
+  factor    : PLUS factor
+            | MINUS factor
+            | NUMBER
+            | LPAREN expr RPAREN
+            | variable
+  variable  : IDENTIFIER
 
 ]]
 
@@ -74,7 +87,7 @@ function Parser:factor()
     -- ( MINUS ) factor
     self:eat(Symbols.MINUS)
     return Node.UnaryOperator(self.prev_token, self:factor())
-    
+
   elseif (token.type == Symbols.LPAREN) then
     -- ( expr )
     self:eat(Symbols.LPAREN)
