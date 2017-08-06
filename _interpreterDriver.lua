@@ -1,8 +1,7 @@
-require("base.character")
 require("base.lexer")
-require("base.symbols")
+require("base.parser")
+require("base.interpreter")
 
--- load our file
 filename = "samples/3.flang"
 local f = assert(io.open(filename, "r"))
 local t = f:read("*all")
@@ -15,11 +14,11 @@ print("===============")
 -- give it to the lexer
 lexer = Flang.Lexer:new({sourceText = t})
 
-while true do
-  token = lexer:get()
-  print(tostring(token))
+-- then to the parser!
+parser = Flang.Parser:new({lexer = lexer})
 
-  if (token.type == Symbols.EOF) then
-    break
-  end
-end
+-- and now the interpreter
+interpreter = Flang.Interpreter:new({parser = parser})
+
+result = interpreter:interpret()
+print(result)

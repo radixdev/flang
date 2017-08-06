@@ -32,18 +32,28 @@ end
 -- Static node constructors
 -----------------------------------------------------------------------
 
-Node.BINARY_OPERATOR_TYPE = "binOp"
-function Node.BinaryOperator(left, op, right)
-  print("creating bin op node " .. tostring(op))
+Node.BINARY_OPERATOR_TYPE = "BinOp"
+function Node.BinaryOperator(left, operator, right)
+  print("creating bin op node " .. tostring(operator))
   return Node:new({
     type = Node.BINARY_OPERATOR_TYPE,
     left = left,
-    token = op,
+    token = operator,
     right = right
   })
 end
 
-Node.NUMBER_TYPE = "num"
+Node.UNARY_OPERATOR_TYPE = "UnaryOp"
+function Node.UnaryOperator(operator, expr)
+  print("creating unary op node " .. tostring(operator))
+  return Node:new({
+    type = Node.UNARY_OPERATOR_TYPE,
+    token = operator,
+    expr = expr
+  })
+end
+
+Node.NUMBER_TYPE = "Num"
 function Node.Number(token)
   print("creating num node " .. tostring(token))
   return Node:new({
@@ -61,7 +71,7 @@ function Node:__tostring()
   m = "nodeType: " ..dq(self.type).. " "
   if (self.type == Node.NUMBER_TYPE) then
     m = m .. " value: " .. dq(self.token.cargo)
-  elseif (self.type == Node.BINARY_OPERATOR_TYPE) then
+  elseif (self.type == Node.UNARY_OPERATOR_TYPE or self.type == Node.BINARY_OPERATOR_TYPE) then
     m = m .. " token: " .. dq(self.token)
   end
 
@@ -74,6 +84,11 @@ function Node:display(tabs)
 
   if (self.type == Node.NUMBER_TYPE) then
     print(string.rep("\t", tabs) .. m)
+
+  elseif (self.type == Node.UNARY_OPERATOR_TYPE) then
+    print(string.rep("\t", tabs) .. "unary op: " .. tostring(self.token.type))
+    self.expr:display(tabs + 1)
+
   elseif (self.type == Node.BINARY_OPERATOR_TYPE) then
     print(string.rep("\t", tabs) .. "bin op: " .. tostring(self.token.type))
     self.right:display(tabs + 1)

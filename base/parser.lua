@@ -1,11 +1,3 @@
---[[
-
-    expr   : term ((PLUS | MINUS) term)*
-    term   : factor ((MUL | DIV) factor)*
-    factor : NUMBER | LPAREN expr RPAREN
-
-]]
-
 require("base.symbols")
 require("base.token")
 require("base.node")
@@ -54,12 +46,37 @@ function Parser:eat(token_type)
   end
 end
 
+-----------------------------------------------------------------------
+-- AST generation
+-----------------------------------------------------------------------
+
+--[[
+
+    expr   : term ((PLUS | MINUS) term)*
+    term   : factor ((MUL | DIV) factor)*
+    factor : (PLUS | MINUS) factor | NUMBER | LPAREN expr RPAREN
+
+]]
+
 function Parser:factor()
   token = self.current_token
   if (token.type == Symbols.NUMBER) then
+    -- NUMBER
     self:eat(Symbols.NUMBER)
     return Node.Number(self.prev_token)
+
+  elseif (token.type == Symbols.PLUS) then
+    -- ( PLUS ) factor
+    self:eat(Symbols.PLUS)
+    return Node.UnaryOperator(self.prev_token, self:factor())
+
+  elseif (token.type == Symbols.MINUS) then
+    -- ( MINUS ) factor
+    self:eat(Symbols.MINUS)
+    return Node.UnaryOperator(self.prev_token, self:factor())
+    
   elseif (token.type == Symbols.LPAREN) then
+    -- ( expr )
     self:eat(Symbols.LPAREN)
     node = self:expr()
     self:eat(Symbols.RPAREN)
@@ -105,6 +122,10 @@ function Parser:expr()
 
   return node
 end
+
+-----------------------------------------------------------------------
+-- Public interface
+-----------------------------------------------------------------------
 
 function Parser:parse()
   return self:expr()
