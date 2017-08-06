@@ -14,9 +14,6 @@ Interpreter = {}
 Flang.Interpreter = Interpreter
 Interpreter.__index = Interpreter
 
---[[
-
-]]
 function Interpreter:new(o)
   if not o then
     error("nil constructor!")
@@ -31,6 +28,14 @@ function Interpreter:new(o)
   return o
 end
 
+function Interpreter:error(msg)
+  error(msg)
+end
+
+-----------------------------------------------------------------------
+-- Public interface
+-----------------------------------------------------------------------
+
 function Interpreter:interpret()
   tree = self.parser:parse()
 
@@ -41,9 +46,9 @@ function Interpreter:interpret()
   return self:visit(tree)
 end
 
-function Interpreter:error(msg)
-  error(msg)
-end
+-----------------------------------------------------------------------
+-- AST traversal
+-----------------------------------------------------------------------
 
 function Interpreter:visit(node)
   -- See https://stackoverflow.com/questions/26042599/lua-call-a-function-using-its-name-string-in-a-class
