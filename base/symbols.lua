@@ -27,8 +27,9 @@ Symbols.MUL = "*"
 Symbols.DIV = "/"
 Symbols.LPAREN = "("
 Symbols.RPAREN = ")"
+Symbols.EQUALS = "="
 Symbols.ONE_CHARACTER_SYMBOLS = Symbols.Set{
-  "=",
+  Symbols.EQUALS,
   Symbols.LPAREN, Symbols.RPAREN,
   "{", "}",
   "<", ">",

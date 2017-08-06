@@ -36,13 +36,15 @@ Compare the current token with the input token type. If the match, then
 
 Else, throw an exception ;)
 
+Note: self.prev_token can also be thought of as "the last eaten token"
+
 ]]
 function Parser:eat(token_type)
   if (self.current_token.type == token_type) then
     self.prev_token = self.current_token
     self.current_token = self.lexer:get()
   else
-    self:error("Expecting token with type " .. dq(token_type) .. " but have token with type " .. dq(self.current_token.type))
+    self:error("Expected " .. dq(token_type) .. " but got " .. dq(self.current_token.type) .. " at L" .. self.current_token.lineIndex .. ":C" .. self.current_token.columnIndex)
   end
 end
 
@@ -53,7 +55,8 @@ end
 --[[
   FLANG 0.0.1 LANGUAGE DEFINITION
 
-  program         : (statement)*
+  program         : statement
+                  | (statement)*
   statement       : assignment_statement
                   | empty
 
@@ -70,6 +73,19 @@ end
   variable  : IDENTIFIER
 
 ]]
+
+function Parser:empty()
+  -- Intentional no-op
+  return Node.NoOp()
+end
+
+function Parser:variable()
+  -- variable  : IDENTIFIER
+  -- Note that we use the current token since we haven't eaten yet!
+  node = Node.Variable(self.current_token)
+  self:eat(Symbols.IDENTIFIER)
+  return node
+end
 
 function Parser:factor()
   token = self.current_token
@@ -95,8 +111,9 @@ function Parser:factor()
     self:eat(Symbols.RPAREN)
     return node
   else
-    -- at this point, we have nothing to return and some poor node was expecting something
-    self:error("Nothing to return in factor.")
+    -- All that's left is a variable
+    node = self:variable()
+    return node
   end
 end
 
@@ -136,10 +153,54 @@ function Parser:expr()
   return node
 end
 
+function Parser:assignment_statement()
+  -- assignment_statement  : variable ASSIGN expr
+  left = self:variable()
+  self:eat(Symbols.EQUALS)
+  right = self:expr()
+  node = Node.Assign(left, self.prev_token, right)
+  return node
+end
+
+function Parser:statement()
+  --[[
+  statement   : assignment_statement
+              | empty
+  ]]
+
+  token = self.current_token
+  if (token.type == Symbols.IDENTIFIER) then
+    node = self:assignment_statement()
+  else
+    node = self:empty()
+  end
+
+  return node
+end
+
+function Parser:program()
+  --[[
+  program   : statement
+            | (statement)*
+  ]]
+  parentNode = Node.Program()
+
+  -- parse as long as we can
+  while self.current_token.type ~= Symbols.EOF do
+    node = self:statement()
+
+    count = parentNode.num_children
+    parentNode.children[count] = node
+    parentNode.num_children = count + 1
+  end
+
+  return parentNode
+end
+
 -----------------------------------------------------------------------
 -- Public interface
 -----------------------------------------------------------------------
 
 function Parser:parse()
-  return self:expr()
+  return self:program()
 end
