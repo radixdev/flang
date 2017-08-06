@@ -11,47 +11,6 @@ function Symbols.Set(table)
   return s
 end
 
--- Returns true if element in set, nil otherwise
-function Symbols.contains(set, element)
-  return set[element]
-end
-
-function Symbols.isKeyword(e)
-  return Symbols.contains(Symbols.KEYWORDS, e)
-end
-
-function Symbols.isOneCharacterSymbol(e)
-  return Symbols.contains(Symbols.ONE_CHARACTER_SYMBOLS, e)
-end
-
-function Symbols.isTwoCharacterSymbol(e)
-  return Symbols.contains(Symbols.TWO_CHARACTER_SYMBOLS, e)
-end
-
-function Symbols.isWhitespace(e)
-  return Symbols.contains(Symbols.WHITESPACE_CHARS, e)
-end
-
-function Symbols.isIdentifierStartChar(e)
-  return Symbols.contains(Symbols.IDENTIFIER_STARTCHARS, e)
-end
-
-function Symbols.isIdentifierChar(e)
-  return Symbols.contains(Symbols.IDENTIFIER_CHARS, e)
-end
-
-function Symbols.isNumberStartChar(e)
-  return Symbols.contains(Symbols.NUMBER_STARTCHARS, e)
-end
-
-function Symbols.isNumberChar(e)
-  return Symbols.contains(Symbols.NUMBER_CHARS, e)
-end
-
-function Symbols.isStringStartChar(e)
-  return Symbols.contains(Symbols.STRING_STARTCHARS, e)
-end
-
 Symbols.KEYWORDS = Symbols.Set{
   "if",
   -- "then",
@@ -63,8 +22,8 @@ Symbols.KEYWORDS = Symbols.Set{
   -- "loop",
   -- "endloop",
   "print",
-  "return",
-  "exit"
+  "return"
+  -- "exit"
 }
 
 Symbols.ONE_CHARACTER_SYMBOLS = Symbols.Set{
@@ -126,16 +85,47 @@ Symbols.WHITESPACE         = "Whitespace"
 Symbols.COMMENT            = "Comment"
 Symbols.EOF                = "Eof"
 
--- a = "*"
--- print(Symbols.contains(Symbols.KEYWORDS, a))
--- print(Symbols.contains(Symbols.ONE_CHARACTER_SYMBOLS, a))
--- print(Symbols.contains(Symbols.TWO_CHARACTER_SYMBOLS, a))
+-----------------------------------------------------------------------
+-- Set equality
+-----------------------------------------------------------------------
 
--- a = "!="
--- print(Symbols.isKeyword(a))
--- print(Symbols.isOneCharacterSymbol(a))
--- print(Symbols.isTwoCharacterSymbol(a))
+-- Returns true if element in set, nil otherwise
+function Symbols.contains(set, element)
+  return set[element]
+end
 
--- a = "o"
--- print(Symbols.isKeyword(a))
--- print(Symbols.isIdentifierChar(a))
+function Symbols.isKeyword(e)
+  return Symbols.contains(Symbols.KEYWORDS, e)
+end
+
+function Symbols.isOneCharacterSymbol(e)
+  return Symbols.contains(Symbols.ONE_CHARACTER_SYMBOLS, e)
+end
+
+function Symbols.isTwoCharacterSymbol(e)
+  return Symbols.contains(Symbols.TWO_CHARACTER_SYMBOLS, e)
+end
+
+function Symbols.isWhitespace(e)
+  return Symbols.contains(Symbols.WHITESPACE_CHARS, e)
+end
+
+function Symbols.isIdentifierStartChar(e)
+  return Symbols.contains(Symbols.IDENTIFIER_STARTCHARS, e)
+end
+
+function Symbols.isIdentifierChar(e)
+  return Symbols.contains(Symbols.IDENTIFIER_CHARS, e)
+end
+
+function Symbols.isNumberStartChar(e)
+  return Symbols.contains(Symbols.NUMBER_STARTCHARS, e)
+end
+
+function Symbols.isNumberChar(e)
+  return Symbols.contains(Symbols.NUMBER_CHARS, e)
+end
+
+function Symbols.isStringStartChar(e)
+  return Symbols.contains(Symbols.STRING_STARTCHARS, e)
+end

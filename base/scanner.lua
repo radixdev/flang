@@ -1,3 +1,7 @@
+--[[
+A Scanner object reads through the sourceText
+and returns one character at a time.
+--]]
 require("base.character")
 
 if not Flang then Flang = {} end
@@ -5,10 +9,6 @@ Scanner = {}
 Flang.Scanner = Scanner
 Scanner.__index = Scanner
 
---[[
-A Scanner object reads through the sourceText
-and returns one character at a time.
---]]
 
 --[[
 *args*

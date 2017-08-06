@@ -111,7 +111,6 @@ function Lexer:get()
       self:getChar()
     end
 
-    print("the string is done")
     -- The string is done. Add the quote to finish the string
     token.cargo = token.cargo .. self.c1
     self:getChar()

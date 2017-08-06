@@ -1,3 +1,5 @@
+require("base.character")
+
 if not Flang then Flang = {} end
 Token = {}
 Flang.Token = Token
@@ -47,8 +49,8 @@ function Token:__tostring()
   end
 
   return
-   "line: '" .. self.lineIndex .. "'"
+   "{line: '" .. self.lineIndex .. "'"
   .. "\t column: '" .. self.columnIndex .. "'"
   .. "\t type '" .. (self.type or "") .. "'"
-  .. tabber .. "'" .. cargo .. "'"
+  .. tabber .. "'" .. cargo .. "'}"
 end
