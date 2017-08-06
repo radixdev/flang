@@ -2,7 +2,7 @@
 
     expr   : term ((PLUS | MINUS) term)*
     term   : factor ((MUL | DIV) factor)*
-    factor : INTEGER | LPAREN expr RPAREN
+    factor : NUMBER | LPAREN expr RPAREN
 
 ]]
 
@@ -58,6 +58,11 @@ function Parser:factor()
   if (token.type == Symbols.NUMBER) then
     self:eat(Symbols.NUMBER)
     return Node.Number(self.prev_token)
+  elseif (token.type == "(") then
+    self:eat("(")
+    node = self:expr()
+    self:eat(")")
+    return node
   else
     -- at this point, we have nothing to return and some poor node was expecting something
     self:error("Nothing to return in factor.")
