@@ -9,6 +9,7 @@
 require("base.symbols")
 require("base.token")
 require("base.node")
+require("base.util")
 
 if not Flang then Flang = {} end
 Parser = {}
@@ -58,10 +59,10 @@ function Parser:factor()
   if (token.type == Symbols.NUMBER) then
     self:eat(Symbols.NUMBER)
     return Node.Number(self.prev_token)
-  elseif (token.type == "(") then
-    self:eat("(")
+  elseif (token.type == Symbols.LPAREN) then
+    self:eat(Symbols.LPAREN)
     node = self:expr()
-    self:eat(")")
+    self:eat(Symbols.RPAREN)
     return node
   else
     -- at this point, we have nothing to return and some poor node was expecting something
@@ -72,12 +73,12 @@ end
 function Parser:term()
   node = self:factor()
 
-  while (self.current_token.type == "*" or self.current_token.type == "/") do
+  while (self.current_token.type == Symbols.MUL or self.current_token.type == Symbols.DIV) do
     token = self.current_token
-    if (token.type == "*") then
-      self:eat("*")
-    elseif (token.type == "/") then
-      self:eat("/")
+    if (token.type == Symbols.MUL) then
+      self:eat(Symbols.MUL)
+    elseif (token.type == Symbols.DIV) then
+      self:eat(Symbols.DIV)
     end
 
     -- recursively build up the AST
@@ -90,12 +91,12 @@ end
 function Parser:expr()
   node = self:term()
 
-  while (self.current_token.type == "+" or self.current_token.type == "-") do
+  while (self.current_token.type == Symbols.PLUS or self.current_token.type == Symbols.MINUS) do
     token = self.current_token
-    if (token.type == "+") then
-      self:eat("+")
-    elseif (token.type == "-") then
-      self:eat("-")
+    if (token.type == Symbols.PLUS) then
+      self:eat(Symbols.PLUS)
+    elseif (token.type == Symbols.MINUS) then
+      self:eat(Symbols.MINUS)
     end
 
     -- recursively build up the AST
@@ -107,11 +108,4 @@ end
 
 function Parser:parse()
   return self:expr()
-end
-
---[[
-Wrap a string or object in quotes
-]]
-function dq(s)
-  return "'" .. tostring(s) .. "'"
 end

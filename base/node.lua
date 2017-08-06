@@ -1,3 +1,5 @@
+require("base.util")
+
 if not Flang then Flang = {} end
 Node = {}
 Flang.Node = Node
@@ -26,8 +28,13 @@ function Node:new(o)
   return o
 end
 
+-----------------------------------------------------------------------
+-- Static node constructors
+-----------------------------------------------------------------------
+
 Node.BINARY_OPERATOR_TYPE = "binOp"
 function Node.BinaryOperator(left, op, right)
+  print("creating bin op node " .. tostring(op))
   return Node:new({
     type = Node.BINARY_OPERATOR_TYPE,
     left = left,
@@ -46,6 +53,10 @@ function Node.Number(token)
   })
 end
 
+-----------------------------------------------------------------------
+-- Helper functions
+-----------------------------------------------------------------------
+
 function Node:__tostring()
   m = "nodeType: " ..dq(self.type).. " "
   if (self.type == Node.NUMBER_TYPE) then
@@ -58,6 +69,7 @@ function Node:__tostring()
 end
 
 function Node:display(tabs)
+  tabs = tabs or 0
   m = tostring(self)
 
   if (self.type == Node.NUMBER_TYPE) then
@@ -67,11 +79,4 @@ function Node:display(tabs)
     self.right:display(tabs + 1)
     self.left:display(tabs + 1)
   end
-end
-
---[[
-Wrap a string or object in quotes
-]]
-function dq(s)
-  return "'" .. tostring(s) .. "'"
 end

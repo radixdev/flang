@@ -1,6 +1,4 @@
--- require("base.character")
 require("base.lexer")
--- require("base.symbols")
 require("base.parser")
 
 filename = "samples/4.flang"
@@ -21,5 +19,5 @@ parser = Flang.Parser:new({lexer = lexer})
 tree = parser:parse()
 
 print("===============")
-tree:display(0)
+tree:display()
 print("===============")

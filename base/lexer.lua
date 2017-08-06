@@ -1,5 +1,6 @@
 require("base.scanner")
 require("base.token")
+require("base.util")
 
 if not Flang then Flang = {} end
 Lexer = {}
@@ -157,11 +158,4 @@ end
 
 function Lexer:status()
   print("c1: " .. dq(self.c1) .. "\tc2: " .. dq(self.c2) .. "\tchar: " .. tostring(self.character))
-end
-
---[[
-Wrap a string in quotes
-]]
-function dq(s)
-  return "'" .. s .. "'"
 end

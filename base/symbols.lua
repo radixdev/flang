@@ -13,25 +13,26 @@ end
 
 Symbols.KEYWORDS = Symbols.Set{
   "if",
-  -- "then",
   "else",
-  -- "elif",
-  -- "endif",
+  "elseif",
   "while",
   "for",
-  -- "loop",
-  -- "endloop",
   "print",
-  "return"
-  -- "exit"
+  -- "return"
 }
 
+Symbols.PLUS = "+"
+Symbols.MINUS = "-"
+Symbols.MUL = "*"
+Symbols.DIV = "/"
+Symbols.LPAREN = "("
+Symbols.RPAREN = ")"
 Symbols.ONE_CHARACTER_SYMBOLS = Symbols.Set{
   "=",
-  "(", ")",
+  Symbols.LPAREN, Symbols.RPAREN,
   "{", "}",
   "<", ">",
-  "/", "*", "+", "-",
+  Symbols.DIV, Symbols.MUL, Symbols.PLUS, Symbols.MINUS,
   "!", "&",
   "."
 }
