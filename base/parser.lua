@@ -125,11 +125,15 @@ function Parser:factor()
     self:eat(Symbols.RPAREN)
     return node
 
+  elseif (token.type == Symbols.IDENTIFIER) then
+   node = self:variable()
+   return node
+
   elseif (token.type == Symbols.TRUE or token.type == Symbols.FALSE) then
     return self:boolean()
   end
 
-  self:error("Nothing to factor.")
+  self:error("Nothing to factor. Token: "..dq(token))
 end
 
 function Parser:term()
