@@ -11,6 +11,8 @@ function Symbols.Set(table)
   return s
 end
 
+Symbols.TRUE = "true"
+Symbols.FALSE = "false"
 Symbols.KEYWORDS = Symbols.Set{
   "if",
   "else",
@@ -18,6 +20,9 @@ Symbols.KEYWORDS = Symbols.Set{
   "while",
   "for",
   "print",
+
+  Symbols.TRUE,
+  Symbols.FALSE
   -- "return"
 }
 

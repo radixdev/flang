@@ -74,7 +74,11 @@ function Interpreter:visit_BinOp(node)
   elseif node.token.type == Symbols.MUL then
     return self:visit(node.left) * self:visit(node.right)
   elseif node.token.type == Symbols.DIV then
-    return self:visit(node.left) / self:visit(node.right)
+    right_value = self:visit(node.right)
+    if (right_value == 0) then
+      self:error("Division by Zero")
+    end
+    return self:visit(node.left) / right_value
   end
 end
 

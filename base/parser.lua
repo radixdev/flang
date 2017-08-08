@@ -44,7 +44,8 @@ function Parser:eat(token_type)
     self.prev_token = self.current_token
     self.current_token = self.lexer:get()
   else
-    self:error("Expected " .. dq(token_type) .. " but got " .. dq(self.current_token.type) .. " at L" .. self.current_token.lineIndex .. ":C" .. self.current_token.columnIndex)
+    self:error("Expected " .. dq(token_type) .. " but got " .. dq(self.current_token.type) ..
+                " at L" .. self.current_token.lineIndex .. ":C" .. self.current_token.columnIndex)
   end
 end
 
@@ -70,6 +71,7 @@ end
             | NUMBER
             | LPAREN expr RPAREN
             | variable
+            | (TRUE | FALSE)
   variable  : IDENTIFIER
 
 ]]
@@ -110,11 +112,17 @@ function Parser:factor()
     node = self:expr()
     self:eat(Symbols.RPAREN)
     return node
-  else
-    -- All that's left is a variable
+
+  elseif (token.type == Symbols.IDENTIFIER) then
     node = self:variable()
     return node
+
+  elseif (token.type == Symbols.TRUE) then
+    self:eat(Symbols.TRUE)
+    return node
   end
+
+  self:error("Nothing to factor.")
 end
 
 function Parser:term()
@@ -192,6 +200,12 @@ function Parser:program()
     count = parentNode.num_children
     parentNode.children[count] = node
     parentNode.num_children = count + 1
+
+    -- If no valid statement can be found, then exit with nothing
+    if (node.type == Node.NO_OP_TYPE) then
+      print("No valid statement found. Exiting parser.")
+      break
+    end
   end
 
   return parentNode
