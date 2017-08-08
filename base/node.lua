@@ -63,6 +63,16 @@ function Node.Number(token)
   })
 end
 
+Node.BOOLEAN_TYPE = "Bool"
+function Node.Boolean(token)
+  print("creating boolean node " .. tostring(token))
+  return Node:new({
+    type = Node.BOOLEAN_TYPE,
+    token = token,
+    value = token.cargo
+  })
+end
+
 Node.VARIABLE_TYPE = "Var"
 function Node.Variable(token)
   print("creating var node " .. tostring(token))
@@ -117,6 +127,8 @@ function Node:__tostring()
     m = m .. " token: " .. dq(self.token)
   elseif (self.type == Node.VARIABLE_TYPE) then
     m = m .. " value: " .. dq(self.value)
+  elseif (self.type == Node.BOOLEAN_TYPE) then
+    m = m .. " value: " .. dq(self.value)
   elseif (self.type == Node.NO_OP_TYPE) then
     -- pass
   elseif (self.type == Node.ASSIGN_TYPE) then
@@ -136,6 +148,9 @@ function Node:display(tabs)
 
   if (self.type == Node.NUMBER_TYPE) then
     print(tabString .. m)
+
+  elseif (self.type == Node.BOOLEAN_TYPE) then
+    print(tabString .. "boolean: " .. dq(self.value))
 
   elseif (self.type == Node.VARIABLE_TYPE) then
     print(tabString .. "var: " .. dq(self.value))

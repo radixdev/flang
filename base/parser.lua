@@ -71,14 +71,26 @@ end
             | NUMBER
             | LPAREN expr RPAREN
             | variable
-            | (TRUE | FALSE)
+            | boolean
   variable  : IDENTIFIER
+  boolean   : (TRUE | FALSE)
 
 ]]
 
 function Parser:empty()
   -- Intentional no-op
   return Node.NoOp()
+end
+
+function Parser:boolean()
+  -- boolean   : (TRUE | FALSE)
+  if (token.type == Symbols.TRUE) then
+    self:eat(Symbols.TRUE)
+    return Node.Boolean(self.prev_token)
+  elseif (token.type == Symbols.FALSE) then
+    self:eat(Symbols.FALSE)
+    return Node.Boolean(self.prev_token)
+  end
 end
 
 function Parser:variable()
@@ -113,13 +125,8 @@ function Parser:factor()
     self:eat(Symbols.RPAREN)
     return node
 
-  elseif (token.type == Symbols.IDENTIFIER) then
-    node = self:variable()
-    return node
-
-  elseif (token.type == Symbols.TRUE) then
-    self:eat(Symbols.TRUE)
-    return node
+  elseif (token.type == Symbols.TRUE or token.type == Symbols.FALSE) then
+    return self:boolean()
   end
 
   self:error("Nothing to factor.")

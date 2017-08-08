@@ -103,6 +103,11 @@ function Interpreter:visit_Assign(node)
   self.symbol_table_global[variable_name] = self:visit(node.right)
 end
 
+function Interpreter:visit_Bool(node)
+  boolean = node.value
+  return boolean == "true"
+end
+
 function Interpreter:visit_Var(node)
   variable_name = node.value
 

@@ -20,5 +20,5 @@ result = interpreter:interpret()
 print("global symbol table")
 symbol_table = interpreter.symbol_table_global
 for key,value in pairs(symbol_table) do
-  print(key .. " = " .. value)
+  print(key .. " = " .. tostring(value))
 end

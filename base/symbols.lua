@@ -13,6 +13,7 @@ end
 
 Symbols.TRUE = "true"
 Symbols.FALSE = "false"
+
 Symbols.KEYWORDS = Symbols.Set{
   "if",
   "else",
@@ -33,6 +34,7 @@ Symbols.DIV = "/"
 Symbols.LPAREN = "("
 Symbols.RPAREN = ")"
 Symbols.EQUALS = "="
+
 Symbols.ONE_CHARACTER_SYMBOLS = Symbols.Set{
   Symbols.EQUALS,
   Symbols.LPAREN, Symbols.RPAREN,
