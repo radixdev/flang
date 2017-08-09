@@ -64,7 +64,7 @@ end
   assignment_statement  : variable ASSIGN expr
   empty                 :
 
-  expr        : expr_plus ((GT | LT | GTE | LTE) expr_plus)*
+  expr        : expr_plus ((GT | LT | GTE | LTE | CMP_EQUALS | CMP_NEQUALS) expr_plus)*
   expr_plus   : expr_mul ((PLUS | MINUS) expr_mul)*
   expr_mul    : factor ((MUL | DIV) factor)*
   factor      : PLUS factor
@@ -177,7 +177,8 @@ function Parser:expr()
   node = self:expr_plus()
 
   while (self.current_token.type == Symbols.GT or self.current_token.type == Symbols.LT
-        or self.current_token.type == Symbols.GTE or self.current_token.type == Symbols.LTE) do
+        or self.current_token.type == Symbols.GTE or self.current_token.type == Symbols.LTE
+        or self.current_token.type == Symbols.CMP_EQUALS or self.current_token.type == Symbols.CMP_NEQUALS) do
 
     token = self.current_token
     if (token.type == Symbols.GT) then
@@ -188,6 +189,10 @@ function Parser:expr()
       self:eat(Symbols.GTE)
     elseif (token.type == Symbols.LTE) then
       self:eat(Symbols.LTE)
+    elseif (token.type == Symbols.CMP_EQUALS) then
+      self:eat(Symbols.CMP_EQUALS)
+    elseif (token.type == Symbols.CMP_NEQUALS) then
+      self:eat(Symbols.CMP_NEQUALS)
     end
 
     node = Node.Comparator(node, self.prev_token, self:expr_plus())

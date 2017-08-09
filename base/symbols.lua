@@ -36,6 +36,7 @@ Symbols.RPAREN = ")"
 Symbols.EQUALS = "="
 Symbols.GT = ">"
 Symbols.LT = "<"
+Symbols.NEGATE = "!"
 
 Symbols.ONE_CHARACTER_SYMBOLS = Symbols.Set{
   Symbols.EQUALS,
@@ -43,16 +44,19 @@ Symbols.ONE_CHARACTER_SYMBOLS = Symbols.Set{
   "{", "}",
   Symbols.LT, Symbols.GT,
   Symbols.DIV, Symbols.MUL, Symbols.PLUS, Symbols.MINUS,
-  "!", "&",
+  Symbols.NEGATE,
+  "&",
   "."
 }
 
 Symbols.GTE = ">="
 Symbols.LTE = "<="
+Symbols.CMP_EQUALS = "=="
+Symbols.CMP_NEQUALS = "!="
 
 Symbols.TWO_CHARACTER_SYMBOLS = Symbols.Set{
-  "==",
-  "!=",
+  Symbols.CMP_EQUALS,
+  Symbols.CMP_NEQUALS,
   Symbols.LTE,
   Symbols.GTE,
   "&&",

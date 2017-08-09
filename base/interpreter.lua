@@ -67,18 +67,20 @@ function Interpreter:visit(node)
 end
 
 function Interpreter:visit_BinOp(node)
+  left = self:visit(node.left)
+  right = self:visit(node.right)
+
   if node.token.type == Symbols.PLUS then
-    return self:visit(node.left) + self:visit(node.right)
+    return left + right
   elseif node.token.type == Symbols.MINUS then
-    return self:visit(node.left) - self:visit(node.right)
+    return left - right
   elseif node.token.type == Symbols.MUL then
-    return self:visit(node.left) * self:visit(node.right)
+    return left * right
   elseif node.token.type == Symbols.DIV then
-    right_value = self:visit(node.right)
-    if (right_value == 0) then
+    if (right == 0) then
       self:error("Division by Zero")
     end
-    return self:visit(node.left) / right_value
+    return left / right
   end
 end
 
@@ -123,7 +125,11 @@ function Interpreter:visit_Cmp(node)
   left = self:visit(node.left)
   right = self:visit(node.right)
 
-  if node.token.type == Symbols.GT then
+  if node.token.type == Symbols.CMP_EQUALS then
+    return left == right
+  elseif node.token.type == Symbols.CMP_NEQUALS then
+    return left ~= right
+  elseif node.token.type == Symbols.GT then
     return left > right
   elseif node.token.type == Symbols.LT then
     return left < right
