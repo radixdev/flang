@@ -34,23 +34,28 @@ Symbols.DIV = "/"
 Symbols.LPAREN = "("
 Symbols.RPAREN = ")"
 Symbols.EQUALS = "="
+Symbols.GT = ">"
+Symbols.LT = "<"
 
 Symbols.ONE_CHARACTER_SYMBOLS = Symbols.Set{
   Symbols.EQUALS,
   Symbols.LPAREN, Symbols.RPAREN,
   "{", "}",
-  "<", ">",
+  Symbols.LT, Symbols.GT,
   Symbols.DIV, Symbols.MUL, Symbols.PLUS, Symbols.MINUS,
   "!", "&",
   "."
 }
 
+Symbols.GTE = ">="
+Symbols.LTE = "<="
+
 Symbols.TWO_CHARACTER_SYMBOLS = Symbols.Set{
   "==",
-  "<=",
-  ">=",
-  "&&",
   "!=",
+  Symbols.LTE,
+  Symbols.GTE,
+  "&&",
   "||"
 }
 

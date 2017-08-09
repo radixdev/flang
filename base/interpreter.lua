@@ -119,6 +119,21 @@ function Interpreter:visit_Var(node)
   end
 end
 
+function Interpreter:visit_Cmp(node)
+  left = self:visit(node.left)
+  right = self:visit(node.right)
+
+  if node.token.type == Symbols.GT then
+    return left > right
+  elseif node.token.type == Symbols.LT then
+    return left < right
+  elseif node.token.type == Symbols.GTE then
+    return left >= right
+  elseif node.token.type == Symbols.LTE then
+    return left <= right
+  end
+end
+
 function Interpreter:visit_Program(node)
   -- Iterate over each of the children
   for key,childNode in ipairs(node.children) do

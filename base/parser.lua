@@ -64,16 +64,17 @@ end
   assignment_statement  : variable ASSIGN expr
   empty                 :
 
-  expr      : term ((PLUS | MINUS) term)*
-  term      : factor ((MUL | DIV) factor)*
-  factor    : PLUS factor
-            | MINUS factor
-            | NUMBER
-            | LPAREN expr RPAREN
-            | variable
-            | boolean
-  variable  : IDENTIFIER
-  boolean   : (TRUE | FALSE)
+  expr        : expr_plus ((GT | LT | GTE | LTE) expr_plus)*
+  expr_plus   : expr_mul ((PLUS | MINUS) expr_mul)*
+  expr_mul    : factor ((MUL | DIV) factor)*
+  factor      : PLUS factor
+              | MINUS factor
+              | NUMBER
+              | LPAREN expr RPAREN
+              | variable
+              | boolean
+  variable    : IDENTIFIER
+  boolean     : (TRUE | FALSE)
 
 ]]
 
@@ -136,7 +137,7 @@ function Parser:factor()
   self:error("Nothing to factor. Token: "..dq(token))
 end
 
-function Parser:term()
+function Parser:expr_mul()
   node = self:factor()
 
   while (self.current_token.type == Symbols.MUL or self.current_token.type == Symbols.DIV) do
@@ -154,8 +155,8 @@ function Parser:term()
   return node
 end
 
-function Parser:expr()
-  node = self:term()
+function Parser:expr_plus()
+  node = self:expr_mul()
 
   while (self.current_token.type == Symbols.PLUS or self.current_token.type == Symbols.MINUS) do
     token = self.current_token
@@ -166,7 +167,30 @@ function Parser:expr()
     end
 
     -- recursively build up the AST
-    node = Node.BinaryOperator(node, self.prev_token, self:term())
+    node = Node.BinaryOperator(node, self.prev_token, self:expr_mul())
+  end
+
+  return node
+end
+
+function Parser:expr()
+  node = self:expr_plus()
+
+  while (self.current_token.type == Symbols.GT or self.current_token.type == Symbols.LT
+        or self.current_token.type == Symbols.GTE or self.current_token.type == Symbols.LTE) do
+
+    token = self.current_token
+    if (token.type == Symbols.GT) then
+      self:eat(Symbols.GT)
+    elseif (token.type == Symbols.LT) then
+      self:eat(Symbols.LT)
+    elseif (token.type == Symbols.GTE) then
+      self:eat(Symbols.GTE)
+    elseif (token.type == Symbols.LTE) then
+      self:eat(Symbols.LTE)
+    end
+
+    node = Node.Comparator(node, self.prev_token, self:expr_plus())
   end
 
   return node

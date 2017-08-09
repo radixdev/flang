@@ -28,13 +28,17 @@ function Node:new(o)
   return o
 end
 
+function Node.print(msg)
+  -- print(msg)
+end
+
 -----------------------------------------------------------------------
 -- Static node constructors
 -----------------------------------------------------------------------
 
 Node.BINARY_OPERATOR_TYPE = "BinOp"
 function Node.BinaryOperator(left, operator, right)
-  print("creating bin op node " .. tostring(operator))
+  Node.print("creating bin op node " .. tostring(operator))
   return Node:new({
     type = Node.BINARY_OPERATOR_TYPE,
     left = left,
@@ -45,7 +49,7 @@ end
 
 Node.UNARY_OPERATOR_TYPE = "UnaryOp"
 function Node.UnaryOperator(operator, expr)
-  print("creating unary op node " .. tostring(operator))
+  Node.print("creating unary op node " .. tostring(operator))
   return Node:new({
     type = Node.UNARY_OPERATOR_TYPE,
     token = operator,
@@ -55,7 +59,7 @@ end
 
 Node.NUMBER_TYPE = "Num"
 function Node.Number(token)
-  print("creating num node " .. tostring(token))
+  Node.print("creating num node " .. tostring(token))
   return Node:new({
     type = Node.NUMBER_TYPE,
     token = token,
@@ -65,7 +69,7 @@ end
 
 Node.BOOLEAN_TYPE = "Bool"
 function Node.Boolean(token)
-  print("creating boolean node " .. tostring(token))
+  Node.print("creating boolean node " .. tostring(token))
   return Node:new({
     type = Node.BOOLEAN_TYPE,
     token = token,
@@ -75,7 +79,7 @@ end
 
 Node.VARIABLE_TYPE = "Var"
 function Node.Variable(token)
-  print("creating var node " .. tostring(token))
+  Node.print("creating var node " .. tostring(token))
   return Node:new({
     type = Node.VARIABLE_TYPE,
     token = token,
@@ -85,7 +89,7 @@ end
 
 Node.NO_OP_TYPE = "NoOp"
 function Node.NoOp()
-  print("creating no-op node")
+  Node.print("creating no-op node")
   return Node:new({
     type = Node.NO_OP_TYPE
   })
@@ -93,7 +97,7 @@ end
 
 Node.ASSIGN_TYPE = "Assign"
 function Node.Assign(left, operator, right)
-  print("creating assign node: " .. dq(left) .. " and token " .. dq(left.value))
+  Node.print("creating assign node: " .. dq(left) .. " and token " .. dq(left.value))
   return Node:new({
     type = Node.ASSIGN_TYPE,
     left = left,
@@ -102,9 +106,20 @@ function Node.Assign(left, operator, right)
   })
 end
 
+Node.COMPARATOR_TYPE = "Cmp"
+function Node.Comparator(left, operator, right)
+  Node.print("creating comparator node: " .. dq(operator))
+  return Node:new({
+    type = Node.COMPARATOR_TYPE,
+    left = left,
+    token = operator,
+    right = right
+  })
+end
+
 Node.PROGRAM_TYPE = "Program"
 function Node.Program()
-  print("creating program node")
+  Node.print("creating program node")
   return Node:new({
     type = Node.PROGRAM_TYPE,
     -- As a polite aside, I fucking hate Lua so much
@@ -135,6 +150,9 @@ function Node:__tostring()
     m = m .. " value: " .. dq(self.left.value)
   elseif (self.type == Node.PROGRAM_TYPE) then
     m = m .. " num statements: " .. dq(self.num_children)
+
+  elseif (self.type == Node.COMPARATOR_TYPE) then
+    m = m .. " token " .. dq(self.token)
   end
 
   return m or ""
@@ -179,6 +197,11 @@ function Node:display(tabs)
       print(key)
       childNode:display(tabs + 1)
     end
+
+  elseif (self.type == Node.COMPARATOR_TYPE) then
+    print(tabString .. "comparator op: " .. dq(self.token.type))
+    self.right:display(tabs + 1)
+    self.left:display(tabs + 1)
   else
     print("Unknown type. Can't display parse tree: " .. dq(self.type))
   end
