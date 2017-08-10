@@ -14,11 +14,14 @@ end
 Symbols.TRUE = "true"
 Symbols.FALSE = "false"
 Symbols.IF = "if"
+Symbols.ELSEIF = "elseif"
+Symbols.ELSE = "else"
 
 Symbols.KEYWORDS = Symbols.Set{
   Symbols.IF,
-  "else",
-  "elseif",
+  Symbols.ELSE,
+  Symbols.ELSEIF,
+
   "while",
   "for",
   "print",

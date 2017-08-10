@@ -246,8 +246,34 @@ function Parser:conditional()
   end
 end
 
+function Parser:if_else()
+  -- if_else : ELSE block
+  if (self.current_token.type == Symbols.ELSE) then
+    local token = Token:copy(self.current_token)
+    self:eat(Symbols.ELSE)
+    return Node.If(token, nil, self:block(), nil)
+  end
+end
+
 function Parser:if_elseif()
-  
+  -- if_elseif : (ELSEIF conditional block)* if_else
+  local node
+
+  if (self.current_token.type == Symbols.ELSE) then
+    return self:if_else()
+  end
+
+  while (self.current_token.type == Symbols.ELSEIF) do
+    local token = Token:copy(self.current_token)
+
+    self:eat(Symbols.ELSEIF)
+    local cond = self:conditional()
+    local block = self:block()
+
+    node = Node.If(token, cond, block, self:if_elseif())
+  end
+
+  return node
 end
 
 -----------------------------------------------------------------------

@@ -133,7 +133,7 @@ function Node.If(token, conditional, block, next_if)
     The first "if" and subsequently chained "elseif" nodes should all contain a non-nil conditional
     and block. The "else" node should not contain a conditional.
   ]]
-  Node.print("creating if node " .. tostring(operator))
+  Node.print("creating if node " .. tostring(token))
   return Node:new({
     type = Node.IF_TYPE,
     token = token,
@@ -161,75 +161,64 @@ end
 
 -- A non-recursive representation of this node
 function Node:__tostring()
-  m = "nodeType: " ..dq(self.type).. " "
-  if (self.type == Node.NUMBER_TYPE) then
+  local type = self.type
+  local m = "nodeType: " ..dq(type).. " "
+  if (type == Node.NUMBER_TYPE or type == Node.VARIABLE_TYPE or type == Node.BOOLEAN_TYPE) then
     m = m .. " value: " .. dq(self.value)
-  elseif (self.type == Node.UNARY_OPERATOR_TYPE or self.type == Node.BINARY_OPERATOR_TYPE) then
-    m = m .. " token: " .. dq(self.token)
-  elseif (self.type == Node.VARIABLE_TYPE) then
-    m = m .. " value: " .. dq(self.value)
-  elseif (self.type == Node.BOOLEAN_TYPE) then
-    m = m .. " value: " .. dq(self.value)
-  elseif (self.type == Node.NO_OP_TYPE) then
+  end
+
+  if (type == Node.COMPARATOR_TYPE or type == Node.NEGATION_TYPE
+    or type == Node.UNARY_OPERATOR_TYPE or type == Node.BINARY_OPERATOR_TYPE) then
+    m = m .. " token " .. dq(self.token)
+  end
+
+  if (type == Node.NO_OP_TYPE) then
     -- pass
-  elseif (self.type == Node.ASSIGN_TYPE) then
+  elseif (type == Node.ASSIGN_TYPE) then
     m = m .. " value: " .. dq(self.left.value)
-  elseif (self.type == Node.PROGRAM_TYPE) then
+  elseif (type == Node.PROGRAM_TYPE) then
     m = m .. " num statements: " .. dq(self.num_children)
-  elseif (self.type == Node.COMPARATOR_TYPE) then
-    m = m .. " token " .. dq(self.token)
-  elseif (self.type == Node.NEGATION_TYPE) then
-    m = m .. " token " .. dq(self.token)
-  end
-
-  -- values
-  valuesTable = {Node.NUMBER_TYPE}
-  if (valuesTable[self.type] ~= nil) then
-    m = m .. " value: " .. dq(self.value)
-  end
-
-  -- tokens
-  tokenTable = {Node.NEGATION_TYPE}
-  if (tokenTable[self.type] ~= nil) then
-    m = m .. " token " .. dq(self.token)
   end
 
   return m or ""
 end
 
 -- A recursive representation of the current node and all of it's children
-function Node:display(tabs)
-  tabs = tabs or 0
-  tabString = string.rep("   ", tabs)
-  m = tostring(self)
+function Node:display(tabs, info)
+  local type = self.type
+  local tabs = tabs or 0
+  -- Info about the tree from the parent
+  local info = info or ""
+  local tabString = string.rep("  ", tabs) .. info
+  local m = tostring(self)
 
-  if (self.type == Node.NUMBER_TYPE) then
+  if (type == Node.NUMBER_TYPE) then
     print(tabString .. m)
 
-  elseif (self.type == Node.BOOLEAN_TYPE) then
+  elseif (type == Node.BOOLEAN_TYPE) then
     print(tabString .. "boolean: " .. dq(self.value))
 
-  elseif (self.type == Node.VARIABLE_TYPE) then
+  elseif (type == Node.VARIABLE_TYPE) then
     print(tabString .. "var: " .. dq(self.value))
 
-  elseif (self.type == Node.UNARY_OPERATOR_TYPE) then
+  elseif (type == Node.UNARY_OPERATOR_TYPE) then
     print(tabString .. "unary op: " .. dq(self.token.type))
     self.expr:display(tabs + 1)
 
-  elseif (self.type == Node.BINARY_OPERATOR_TYPE) then
+  elseif (type == Node.BINARY_OPERATOR_TYPE) then
     print(tabString .. "bin op: " .. dq(self.token.type))
     self.right:display(tabs + 1)
     self.left:display(tabs + 1)
 
-  elseif (self.type == Node.NO_OP_TYPE) then
+  elseif (type == Node.NO_OP_TYPE) then
     print(tabString .. "no op")
 
-  elseif (self.type == Node.ASSIGN_TYPE) then
+  elseif (type == Node.ASSIGN_TYPE) then
     print(tabString .. "statement assign: " .. tostring(self.left.value))
     self.right:display(tabs + 1)
     self.left:display(tabs + 1)
 
-  elseif (self.type == Node.PROGRAM_TYPE) then
+  elseif (type == Node.PROGRAM_TYPE) then
     print(tabString .. "program")
 
     for key,childNode in ipairs(self.children) do
@@ -237,16 +226,27 @@ function Node:display(tabs)
       childNode:display(tabs + 1)
     end
 
-  elseif (self.type == Node.COMPARATOR_TYPE) then
+  elseif (type == Node.COMPARATOR_TYPE) then
     print(tabString .. "comparator op: " .. dq(self.token.type))
     self.right:display(tabs + 1)
     self.left:display(tabs + 1)
 
-  elseif (self.type == Node.NEGATION_TYPE) then
+  elseif (type == Node.NEGATION_TYPE) then
     print(tabString .. "negation: " .. dq(self.token.type))
     self.expr:display(tabs + 1)
 
+  elseif (type == Node.IF_TYPE) then
+    print(tabString .. "if: " .. dq(self.token.type))
+    if self.conditional then
+      self.conditional:display(tabs + 1, "CONDITIONAL: ")
+    end
+    if self.block then
+      self.block:display(tabs + 1, "BLOCK: ")
+    end
+    if self.next_if then
+      self.next_if:display(tabs + 2)
+    end
   else
-    print("Unknown type. Can't display parse tree: " .. dq(self.type))
+    print("Unknown type. Can't display parse tree: " .. dq(type))
   end
 end

@@ -1,5 +1,9 @@
-if (true) {
+if (5 < 4) {
   x = 4
+} elseif (false) {
+  k = 1
+} else {
+  finished = true
 }
 
 if (false) {
