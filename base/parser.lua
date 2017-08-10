@@ -99,6 +99,10 @@ function Parser:empty()
   return Node.NoOp()
 end
 
+-----------------------------------------------------------------------
+-- Expressions
+-----------------------------------------------------------------------
+
 function Parser:boolean()
   -- boolean   : (TRUE | FALSE)
   local token = Token:copy(self.current_token)
@@ -196,10 +200,8 @@ function Parser:expr_plus()
   return node
 end
 
---[[
-Comparators
-]]
 function Parser:expr_cmp()
+  -- Comparators
   local node = self:expr_plus()
 
   while (self.current_token.type == Symbols.GT or self.current_token.type == Symbols.LT
@@ -231,9 +233,45 @@ function Parser:expr()
   return self:expr_cmp()
 end
 
+-----------------------------------------------------------------------
+-- Conditionals and if branching
+-----------------------------------------------------------------------
+
+function Parser:conditional()
+  if (self.current_token.type == Symbols.LPAREN) then
+    self:eat(Symbols.LPAREN)
+    local node = self:expr()
+    self:eat(Symbols.RPAREN)
+    return node
+  end
+end
+
+function Parser:if_elseif()
+
+end
+
+-----------------------------------------------------------------------
+-- Statements
+-----------------------------------------------------------------------
+
+function Parser:block()
+  if (self.current_token.type == Symbols.LBRACKET) then
+    self:eat(Symbols.LBRACKET)
+    local node = self:statement()
+    self:eat(Symbols.RBRACKET)
+    return node
+  end
+end
+
 function Parser:assignment_statement()
-  -- assignment_statement  : variable ASSIGN expr
+  --[[
+
+    assignment_statement  : variable ASSIGN expr
+
+  ]]
+
   local token = Token:copy(self.current_token)
+
   local left = self:variable()
   self:eat(Symbols.EQUALS)
   local right = self:expr()
@@ -241,15 +279,36 @@ function Parser:assignment_statement()
   return Node.Assign(left, token, right)
 end
 
+function Parser:if_statement()
+  --[[
+
+    if_statement : IF conditional block if_elseif
+
+  ]]
+
+  if (self.current_token.type == Symbols.IF) then
+    self:eat(Symbols.IF)
+    local cond = self:conditional()
+    local node = self:statement()
+    self:eat(Symbols.RBRACKET)
+    return node
+  end
+end
+
 function Parser:statement()
   --[[
-  statement   : assignment_statement
-              | empty
+
+    statement     : assignment_statement
+                  | if_statement
+                  | empty
+
   ]]
 
   local token = self.current_token
   if (token.type == Symbols.IDENTIFIER) then
     node = self:assignment_statement()
+  elseif (token.type == Symbols.IF) then
+    node = self:if_statement()
   else
     node = self:empty()
   end

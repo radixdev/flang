@@ -1,0 +1,7 @@
+if (true) {
+  x = 4
+}
+
+if (false) {
+  y = 10
+}

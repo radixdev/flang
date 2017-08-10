@@ -13,9 +13,10 @@ end
 
 Symbols.TRUE = "true"
 Symbols.FALSE = "false"
+Symbols.IF = "if"
 
 Symbols.KEYWORDS = Symbols.Set{
-  "if",
+  Symbols.IF,
   "else",
   "elseif",
   "while",
@@ -43,7 +44,7 @@ Symbols.RBRACKET = "}"
 Symbols.ONE_CHARACTER_SYMBOLS = Symbols.Set{
   Symbols.EQUALS,
   Symbols.LPAREN, Symbols.RPAREN,
-  "{", "}",
+  Symbols.LBRACKET, Symbols.RBRACKET,
   Symbols.LT, Symbols.GT,
   Symbols.DIV, Symbols.MUL, Symbols.PLUS, Symbols.MINUS,
   Symbols.NEGATE,
