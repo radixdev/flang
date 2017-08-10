@@ -31,17 +31,14 @@ end
 
 --[[
 
-Compare the current token with the input token type. If the match, then
-"eat" the current token and assign the next token to "self.current_token".
+  Compare the current token with the input token type. If the match, then
+  "eat" the current token and assign the next token to "self.current_token".
 
-Else, throw an exception ;)
-
-Note: self.prev_token can also be thought of as "the last eaten token"
+  Else, throw an exception ;)
 
 ]]
 function Parser:eat(token_type)
   if (self.current_token.type == token_type) then
-    -- self.prev_token = self.current_token
     self.current_token = self.lexer:get()
     print("  Ate token " .. dq(token_type))
   else
@@ -68,7 +65,7 @@ end
   empty                 :
 
   if_elseif     : (ELSEIF conditional block)* if_else
-  if_else       : (ELSE block)*
+  if_else       : ELSE block
 
   conditional   : LPAREN expr RPAREN
   block         : LBRACKET statement RBRACKET
@@ -247,7 +244,7 @@ function Parser:conditional()
 end
 
 function Parser:if_else()
-  -- if_else : ELSE block
+  -- if_else : (ELSE block)?
   if (self.current_token.type == Symbols.ELSE) then
     local token = Token:copy(self.current_token)
     self:eat(Symbols.ELSE)

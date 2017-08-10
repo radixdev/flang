@@ -54,8 +54,6 @@ end
 
 function Interpreter:visit(node)
   -- See https://stackoverflow.com/questions/26042599/lua-call-a-function-using-its-name-string-in-a-class
-  -- tree:display(0)
-  -- tree["display"](tree, 0)
 
   local method_name = "visit_" .. node.type
   if (self[method_name] == nil) then
@@ -144,10 +142,29 @@ function Interpreter:visit_Cmp(node)
 end
 
 function Interpreter:visit_Negate(node)
-  -- print(node.token.type)
-  -- if node.token.type == Symbols.NEGATE then
-    return not self:visit(node.expr)
-  -- end
+  return not self:visit(node.expr)
+end
+
+function Interpreter:visit_If(node)
+  --[[
+    Only execute the block if:
+      ("if" or "elseif") the conditional exists and is true
+      ("else") no conditional exists
+  ]]
+  local should_execute_block = true
+
+  if node.conditional then
+    should_execute_block = self:visit(node.conditional)
+  end
+
+  -- If this block gets executed, then any subsequent blocks do not get executed
+  if should_execute_block then
+    self:visit(node.block)
+  else
+    if node.next_if then
+      self:visit(node.next_if)
+    end
+  end
 end
 
 function Interpreter:visit_Program(node)
