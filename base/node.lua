@@ -29,7 +29,7 @@ function Node:new(o)
 end
 
 function Node.print(msg)
-  -- print(msg)
+  print(msg)
 end
 
 -----------------------------------------------------------------------

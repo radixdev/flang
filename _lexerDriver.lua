@@ -3,7 +3,7 @@ require("base.lexer")
 require("base.symbols")
 
 -- load our file
-filename = "samples/eq2.flang"
+filename = "samples/complete.flang"
 local f = assert(io.open(filename, "r"))
 local t = f:read("*all")
 f:close()
