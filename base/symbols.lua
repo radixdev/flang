@@ -36,6 +36,7 @@ Symbols.EQUALS = "="
 Symbols.GT = ">"
 Symbols.LT = "<"
 Symbols.NEGATE = "!"
+Symbols.MODULUS = "%"
 
 Symbols.ONE_CHARACTER_SYMBOLS = Symbols.Set{
   Symbols.EQUALS,
@@ -44,7 +45,7 @@ Symbols.ONE_CHARACTER_SYMBOLS = Symbols.Set{
   Symbols.LT, Symbols.GT,
   Symbols.DIV, Symbols.MUL, Symbols.PLUS, Symbols.MINUS,
   Symbols.NEGATE,
-  "&",
+  Symbols.MODULUS,
   "."
 }
 

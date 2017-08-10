@@ -81,6 +81,10 @@ end
 
 ]]
 
+--[[
+  http://www.cs.bilkent.edu.tr/~guvenir/courses/CS101/op_precedence.html
+]]
+
 function Parser:empty()
   -- Intentional no-op
   return Node.NoOp()
@@ -146,12 +150,16 @@ end
 function Parser:expr_mul()
   local node = self:factor()
 
-  while (self.current_token.type == Symbols.MUL or self.current_token.type == Symbols.DIV) do
+  while (self.current_token.type == Symbols.MUL
+        or self.current_token.type == Symbols.MODULUS
+        or self.current_token.type == Symbols.DIV) do
     local token = Token:copy(self.current_token)
     if (token.type == Symbols.MUL) then
       self:eat(Symbols.MUL)
     elseif (token.type == Symbols.DIV) then
       self:eat(Symbols.DIV)
+    elseif (token.type == Symbols.MODULUS) then
+      self:eat(Symbols.MODULUS)
     end
 
     -- recursively build up the AST

@@ -2,7 +2,7 @@ require("base.lexer")
 require("base.parser")
 require("base.interpreter")
 
-filename = "samples/eq2.flang"
+filename = "samples/wacky.flang"
 local f = assert(io.open(filename, "r"))
 local t = f:read("*all")
 f:close()

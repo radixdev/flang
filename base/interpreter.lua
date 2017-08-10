@@ -83,6 +83,8 @@ function Interpreter:visit_BinOp(node)
       self:error("Division by Zero")
     end
     return left / right
+  elseif node.token.type == Symbols.MODULUS then
+    return left % right
   end
 end
 

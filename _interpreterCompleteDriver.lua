@@ -45,4 +45,7 @@ assertEquals("shouldBeFalse", false)
 assertEquals("eTrue", true)
 assertEquals("under_score_var", 12)
 assertEquals("boolTrue", true)
+
+assertEquals("modulus_2", 2)
+assertEquals("modulus_3", 3)
 print("========ALL CHECKS PASSED=======")

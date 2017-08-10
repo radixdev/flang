@@ -16,3 +16,6 @@ shouldBeFalse=!true
 
 under_score_var = 12
 false2 = !( 3>+4)
+
+modulus_3 = 18 % 5
+modulus_2 = -1 % 3
