@@ -154,6 +154,8 @@ function Parser:factor()
 
   elseif (token.type == Symbols.TRUE or token.type == Symbols.FALSE) then
     return self:boolean()
+  else
+    return self:empty()
   end
 end
 

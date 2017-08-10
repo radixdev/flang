@@ -1,0 +1,17 @@
+if (3 < 1) {
+  ifShouldBe6 = 2
+} elseif (1 < 6) {
+
+} elseif (4 == 4) {
+  ifShouldBe6 = 6
+}
+
+if (true) {
+  if (true) {
+    if (false) {
+
+    } else {
+      ifShouldBe10 = 10
+    }
+  }
+}

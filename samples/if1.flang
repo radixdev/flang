@@ -15,3 +15,10 @@ if (3 < 1) {
 } elseif (4 == 4) {
   six = 5
 }
+
+boolTrue = true
+if (boolTrue) {
+  five = 5
+} else {
+  two = 2
+}
