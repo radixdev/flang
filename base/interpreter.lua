@@ -38,7 +38,7 @@ end
 -----------------------------------------------------------------------
 
 function Interpreter:interpret()
-  tree = self.parser:parse()
+  local tree = self.parser:parse()
 
   print("====== PARSE TREE =====")
   tree:display(0)
@@ -110,8 +110,7 @@ function Interpreter:visit_Assign(node)
 end
 
 function Interpreter:visit_Bool(node)
-  local boolean = node.value
-  return boolean == "true"
+  return node.value == "true"
 end
 
 function Interpreter:visit_Var(node)

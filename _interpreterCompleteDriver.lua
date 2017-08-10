@@ -11,10 +11,12 @@ print("===============")
 print(t)
 print("===============")
 
+local start_time = os.clock()
 lexer = Flang.Lexer:new({sourceText = t})
 parser = Flang.Parser:new({lexer = lexer})
 interpreter = Flang.Interpreter:new({parser = parser})
 result = interpreter:interpret()
+local elapsed = os.clock() - start_time
 
 -- print out the symbol table
 print("global symbol table")
@@ -49,3 +51,4 @@ assertEquals("boolTrue", true)
 assertEquals("modulus_2", 2)
 assertEquals("modulus_3", 3)
 print("========ALL CHECKS PASSED=======")
+print(string.format("elapsed time: %.2f\n", os.clock() - start_time))

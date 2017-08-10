@@ -252,13 +252,13 @@ function Parser:program()
   program   : statement
             | (statement)*
   ]]
-  parentNode = Node.Program()
+  local parentNode = Node.Program()
 
   -- parse as long as we can
   while self.current_token.type ~= Symbols.EOF do
-    node = self:statement()
+    local node = self:statement()
 
-    count = parentNode.num_children
+    local count = parentNode.num_children
     parentNode.children[count] = node
     parentNode.num_children = count + 1
 
