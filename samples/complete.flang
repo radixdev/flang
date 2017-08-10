@@ -1,13 +1,15 @@
 alpha = 15
-bool = true
+boolTrue = true
 
-b = alpha / 3
+bFive = alpha / 3
 
 pi = 3.141592
 
-a = 3 > 4
-b = 1 < 2
-c = 5 >= 5
-d = 6 <= 6
+aFalse = 3 > 4
+bTrue = 1 < 2
+cTrue = 5 >= 5
+dTrue = 6 <= 6
 
-e = 2 *3 > 4 - 2
+eTrue = 2 *3 > 4 - 2
+
+shouldBeFalse=!true

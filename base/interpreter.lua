@@ -62,6 +62,8 @@ function Interpreter:visit(node)
     self:error("No method in interpreter with name: " .. dq(method_name))
   end
 
+  print("visiting " .. method_name)
+
   -- Call and return the method
   return self[method_name](self, node)
 end
@@ -138,6 +140,13 @@ function Interpreter:visit_Cmp(node)
   elseif node.token.type == Symbols.LTE then
     return left <= right
   end
+end
+
+function Interpreter:visit_Negate(node)
+  -- print(node.token.type)
+  -- if node.token.type == Symbols.NEGATE then
+    return not self:visit(node.expr)
+  -- end
 end
 
 function Interpreter:visit_Program(node)

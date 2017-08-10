@@ -43,6 +43,7 @@ function Parser:eat(token_type)
   if (self.current_token.type == token_type) then
     self.prev_token = self.current_token
     self.current_token = self.lexer:get()
+    -- print("ate token " .. dq(token_type) .. " have token " .. dq(self.current_token))
   else
     self:error("Expected " .. dq(token_type) .. " but got " .. dq(self.current_token.type) ..
                 " at L" .. self.current_token.lineIndex .. ":C" .. self.current_token.columnIndex)
@@ -64,10 +65,12 @@ end
   assignment_statement  : variable ASSIGN expr
   empty                 :
 
-  expr        : expr_plus ((GT | LT | GTE | LTE | CMP_EQUALS | CMP_NEQUALS) expr_plus)*
+  expr        : expr_cmp
+  expr_cmp    : expr_plus ((GT | LT | GTE | LTE | CMP_EQUALS | CMP_NEQUALS) expr_plus)*
   expr_plus   : expr_mul ((PLUS | MINUS) expr_mul)*
   expr_mul    : factor ((MUL | DIV) factor)*
-  factor      : PLUS factor
+  factor      : NEGATE factor
+              | PLUS factor
               | MINUS factor
               | NUMBER
               | LPAREN expr RPAREN
@@ -85,12 +88,13 @@ end
 
 function Parser:boolean()
   -- boolean   : (TRUE | FALSE)
+  local token = Token:copy(self.current_token)
   if (token.type == Symbols.TRUE) then
     self:eat(Symbols.TRUE)
-    return Node.Boolean(self.prev_token)
+    return Node.Boolean(token)
   elseif (token.type == Symbols.FALSE) then
     self:eat(Symbols.FALSE)
-    return Node.Boolean(self.prev_token)
+    return Node.Boolean(token)
   end
 end
 
@@ -103,21 +107,26 @@ function Parser:variable()
 end
 
 function Parser:factor()
-  token = self.current_token
+  local token = Token:copy(self.current_token)
+
   if (token.type == Symbols.NUMBER) then
     -- NUMBER
     self:eat(Symbols.NUMBER)
-    return Node.Number(self.prev_token)
+    return Node.Number(token)
 
   elseif (token.type == Symbols.PLUS) then
     -- ( PLUS ) factor
     self:eat(Symbols.PLUS)
-    return Node.UnaryOperator(self.prev_token, self:factor())
+    return Node.UnaryOperator(token, self:factor())
 
   elseif (token.type == Symbols.MINUS) then
     -- ( MINUS ) factor
     self:eat(Symbols.MINUS)
-    return Node.UnaryOperator(self.prev_token, self:factor())
+    return Node.UnaryOperator(token, self:factor())
+
+  elseif (token.type == Symbols.NEGATE) then
+    self:eat(Symbols.NEGATE)
+    return Node.Negation(token, self:factor())
 
   elseif (token.type == Symbols.LPAREN) then
     -- ( expr )
@@ -134,7 +143,7 @@ function Parser:factor()
     return self:boolean()
   end
 
-  self:error("Nothing to factor. Token: "..dq(token))
+  -- self:error("Nothing to factor. Token: "..dq(token))
 end
 
 function Parser:expr_mul()
@@ -173,7 +182,7 @@ function Parser:expr_plus()
   return node
 end
 
-function Parser:expr()
+function Parser:expr_cmp()
   node = self:expr_plus()
 
   while (self.current_token.type == Symbols.GT or self.current_token.type == Symbols.LT
@@ -199,6 +208,30 @@ function Parser:expr()
   end
 
   return node
+end
+
+function Parser:expr()
+  return self:expr_cmp()
+  -- print("top")
+  -- node = self:expr_cmp()
+  --
+  -- print("after: " .. dq(self.current_token))
+  -- while (self.current_token.type == Symbols.NEGATE) do
+  --   self:eat(Symbols.NEGATE)
+  --   print("on neg")
+  --   print(dq(self.current_token))
+  --   print( dq(self.prev_token))
+  --
+  --   node = Node.Negation(node, self.prev_token, self:expr_cmp())
+  -- end
+
+  -- if (self.current_token.type == Symbols.NEGATE) then
+  --   self:eat(Symbols.NEGATE)
+  --
+  --   node = Node.Negation(node, self.prev_token, self:expr_cmp())
+  -- end
+  --
+  -- return node
 end
 
 function Parser:assignment_statement()

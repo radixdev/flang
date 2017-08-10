@@ -7,3 +7,5 @@ e = 2*3 > 4 - 2
 
 equals = 4 == 4
 nequals = 4 != 4
+
+test = !a

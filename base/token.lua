@@ -29,6 +29,26 @@ function Token:new(startCharacter)
 end
 
 --[[
+Takes a token as input
+]]
+function Token:copy(token)
+  if not token then
+    error("nil constructor!")
+  end
+
+  o = {
+    cargo = token.cargo,
+    lineIndex = token.lineIndex,
+    columnIndex = token.columnIndex,
+    type = token.type
+  }
+
+  setmetatable(o, self)
+  self.__index = self
+  return o
+end
+
+--[[
 Say some nice, informative words about how they messed up
 ]]
 function Token:abort(msg)

@@ -29,7 +29,7 @@ function Node:new(o)
 end
 
 function Node.print(msg)
-  -- print(msg)
+  print(msg)
 end
 
 -----------------------------------------------------------------------
@@ -117,6 +117,16 @@ function Node.Comparator(left, operator, right)
   })
 end
 
+Node.NEGATION_TYPE = "Negate"
+function Node.Negation(operator, expr)
+  Node.print("creating negation node " .. tostring(operator))
+  return Node:new({
+    type = Node.NEGATION_TYPE,
+    token = operator,
+    expr = expr
+  })
+end
+
 Node.PROGRAM_TYPE = "Program"
 function Node.Program()
   Node.print("creating program node")
@@ -152,6 +162,9 @@ function Node:__tostring()
     m = m .. " num statements: " .. dq(self.num_children)
 
   elseif (self.type == Node.COMPARATOR_TYPE) then
+    m = m .. " token " .. dq(self.token)
+
+  elseif (self.type == Node.NEGATION_TYPE) then
     m = m .. " token " .. dq(self.token)
   end
 
@@ -202,6 +215,11 @@ function Node:display(tabs)
     print(tabString .. "comparator op: " .. dq(self.token.type))
     self.right:display(tabs + 1)
     self.left:display(tabs + 1)
+
+  elseif (self.type == Node.NEGATION_TYPE) then
+    print(tabString .. "negation: " .. dq(self.token.type))
+    -- self.expr:display(tabs + 1)
+
   else
     print("Unknown type. Can't display parse tree: " .. dq(self.type))
   end

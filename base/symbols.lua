@@ -24,7 +24,6 @@ Symbols.KEYWORDS = Symbols.Set{
 
   Symbols.TRUE,
   Symbols.FALSE
-  -- "return"
 }
 
 Symbols.PLUS = "+"
