@@ -41,9 +41,9 @@ Note: self.prev_token can also be thought of as "the last eaten token"
 ]]
 function Parser:eat(token_type)
   if (self.current_token.type == token_type) then
-    self.prev_token = self.current_token
+    -- self.prev_token = self.current_token
     self.current_token = self.lexer:get()
-    -- print("ate token " .. dq(token_type) .. " have token " .. dq(self.current_token))
+    print("  Ate token " .. dq(token_type))
   else
     self:error("Expected " .. dq(token_type) .. " but got " .. dq(self.current_token.type) ..
                 " at L" .. self.current_token.lineIndex .. ":C" .. self.current_token.columnIndex)
@@ -247,7 +247,7 @@ function Parser:conditional()
 end
 
 function Parser:if_elseif()
-
+  
 end
 
 -----------------------------------------------------------------------
@@ -287,10 +287,14 @@ function Parser:if_statement()
   ]]
 
   if (self.current_token.type == Symbols.IF) then
+    local token = Token:copy(self.current_token)
+
     self:eat(Symbols.IF)
     local cond = self:conditional()
-    local node = self:statement()
-    self:eat(Symbols.RBRACKET)
+    local block = self:block()
+
+    node = Node.If(token, cond, block, self:if_elseif())
+
     return node
   end
 end

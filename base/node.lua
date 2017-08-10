@@ -8,9 +8,7 @@ Node.__index = Node
 --[[
 A Node object represents a node in the AST passed from the parser to the
 interpreter.
---]]
 
---[[
 Nodes only require a type. The object passed to this constructor could contains
 whatever the node requires.
 ]]
@@ -29,7 +27,7 @@ function Node:new(o)
 end
 
 function Node.print(msg)
-  -- print(msg)
+  print(msg)
 end
 
 -----------------------------------------------------------------------
@@ -127,6 +125,24 @@ function Node.Negation(operator, expr)
   })
 end
 
+Node.IF_TYPE = "If"
+function Node.If(token, conditional, block, next_if)
+  --[[
+    An If statement. These nodes chain together to represent an if-elseif-else.
+
+    The first "if" and subsequently chained "elseif" nodes should all contain a non-nil conditional
+    and block. The "else" node should not contain a conditional.
+  ]]
+  Node.print("creating if node " .. tostring(operator))
+  return Node:new({
+    type = Node.IF_TYPE,
+    token = token,
+    conditional = conditional,
+    block = block,
+    next_if = next_if
+  })
+end
+
 Node.PROGRAM_TYPE = "Program"
 function Node.Program()
   Node.print("creating program node")
@@ -160,11 +176,21 @@ function Node:__tostring()
     m = m .. " value: " .. dq(self.left.value)
   elseif (self.type == Node.PROGRAM_TYPE) then
     m = m .. " num statements: " .. dq(self.num_children)
-
   elseif (self.type == Node.COMPARATOR_TYPE) then
     m = m .. " token " .. dq(self.token)
-
   elseif (self.type == Node.NEGATION_TYPE) then
+    m = m .. " token " .. dq(self.token)
+  end
+
+  -- values
+  valuesTable = {Node.NUMBER_TYPE}
+  if (valuesTable[self.type] ~= nil) then
+    m = m .. " value: " .. dq(self.value)
+  end
+
+  -- tokens
+  tokenTable = {Node.NEGATION_TYPE}
+  if (tokenTable[self.type] ~= nil) then
     m = m .. " token " .. dq(self.token)
   end
 
