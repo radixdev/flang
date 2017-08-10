@@ -37,6 +37,8 @@ Symbols.GT = ">"
 Symbols.LT = "<"
 Symbols.NEGATE = "!"
 Symbols.MODULUS = "%"
+Symbols.LBRACKET = "{"
+Symbols.RBRACKET = "}"
 
 Symbols.ONE_CHARACTER_SYMBOLS = Symbols.Set{
   Symbols.EQUALS,

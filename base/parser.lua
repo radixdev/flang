@@ -57,27 +57,36 @@ end
 --[[
   FLANG 0.0.1 LANGUAGE DEFINITION
 
-  program         : statement
-                  | (statement)*
-  statement       : assignment_statement
-                  | empty
+  program       : statement
+                | (statement)*
+  statement     : assignment_statement
+                | if_statement
+                | empty
 
   assignment_statement  : variable ASSIGN expr
+  if_statement          : IF conditional block if_elseif
   empty                 :
 
-  expr        : expr_cmp
-  expr_cmp    : expr_plus ((GT | LT | GTE | LTE | CMP_EQUALS | CMP_NEQUALS) expr_plus)*
-  expr_plus   : expr_mul ((PLUS | MINUS) expr_mul)*
-  expr_mul    : factor ((MUL | DIV) factor)*
-  factor      : NEGATE factor
-              | PLUS factor
-              | MINUS factor
-              | NUMBER
-              | LPAREN expr RPAREN
-              | variable
-              | boolean
-  variable    : IDENTIFIER
-  boolean     : (TRUE | FALSE)
+  if_elseif     : (ELSEIF conditional block)* if_else
+  if_else       : (ELSE block)*
+
+  conditional   : LPAREN expr RPAREN
+  block         : LBRACKET statement RBRACKET
+
+  expr          : expr_cmp
+  expr_cmp      : expr_plus ((GT | LT | GTE | LTE | CMP_EQUALS | CMP_NEQUALS) expr_plus)*
+  expr_plus     : expr_mul ((PLUS | MINUS) expr_mul)*
+  expr_mul      : factor ((MUL | DIV) factor)*
+  factor        : NEGATE factor
+                | PLUS factor
+                | MINUS factor
+                | NUMBER
+                | LPAREN expr RPAREN
+                | variable
+                | boolean
+
+  variable      : IDENTIFIER
+  boolean       : (TRUE | FALSE)
 
 ]]
 
@@ -224,11 +233,12 @@ end
 
 function Parser:assignment_statement()
   -- assignment_statement  : variable ASSIGN expr
+  local token = Token:copy(self.current_token)
   local left = self:variable()
   self:eat(Symbols.EQUALS)
   local right = self:expr()
 
-  return Node.Assign(left, self.prev_token, right)
+  return Node.Assign(left, token, right)
 end
 
 function Parser:statement()
