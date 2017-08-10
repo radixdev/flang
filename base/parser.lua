@@ -101,7 +101,7 @@ end
 function Parser:variable()
   -- variable  : IDENTIFIER
   -- Note that we use the current token since we haven't eaten yet!
-  node = Node.Variable(self.current_token)
+  local node = Node.Variable(Token:copy(self.current_token))
   self:eat(Symbols.IDENTIFIER)
   return node
 end
@@ -131,13 +131,12 @@ function Parser:factor()
   elseif (token.type == Symbols.LPAREN) then
     -- ( expr )
     self:eat(Symbols.LPAREN)
-    node = self:expr()
+    local node = self:expr()
     self:eat(Symbols.RPAREN)
     return node
 
   elseif (token.type == Symbols.IDENTIFIER) then
-   node = self:variable()
-   return node
+   return self:variable()
 
   elseif (token.type == Symbols.TRUE or token.type == Symbols.FALSE) then
     return self:boolean()
@@ -147,10 +146,10 @@ function Parser:factor()
 end
 
 function Parser:expr_mul()
-  node = self:factor()
+  local node = self:factor()
 
   while (self.current_token.type == Symbols.MUL or self.current_token.type == Symbols.DIV) do
-    token = self.current_token
+    local token = Token:copy(self.current_token)
     if (token.type == Symbols.MUL) then
       self:eat(Symbols.MUL)
     elseif (token.type == Symbols.DIV) then
@@ -158,17 +157,17 @@ function Parser:expr_mul()
     end
 
     -- recursively build up the AST
-    node = Node.BinaryOperator(node, self.prev_token, self:factor())
+    node = Node.BinaryOperator(node, token, self:factor())
   end
 
   return node
 end
 
 function Parser:expr_plus()
-  node = self:expr_mul()
+  local node = self:expr_mul()
 
   while (self.current_token.type == Symbols.PLUS or self.current_token.type == Symbols.MINUS) do
-    token = self.current_token
+    local token = Token:copy(self.current_token)
     if (token.type == Symbols.PLUS) then
       self:eat(Symbols.PLUS)
     elseif (token.type == Symbols.MINUS) then
@@ -176,20 +175,20 @@ function Parser:expr_plus()
     end
 
     -- recursively build up the AST
-    node = Node.BinaryOperator(node, self.prev_token, self:expr_mul())
+    node = Node.BinaryOperator(node, token, self:expr_mul())
   end
 
   return node
 end
 
 function Parser:expr_cmp()
-  node = self:expr_plus()
+  local node = self:expr_plus()
 
   while (self.current_token.type == Symbols.GT or self.current_token.type == Symbols.LT
         or self.current_token.type == Symbols.GTE or self.current_token.type == Symbols.LTE
         or self.current_token.type == Symbols.CMP_EQUALS or self.current_token.type == Symbols.CMP_NEQUALS) do
 
-    token = self.current_token
+    local token = Token:copy(self.current_token)
     if (token.type == Symbols.GT) then
       self:eat(Symbols.GT)
     elseif (token.type == Symbols.LT) then
@@ -204,7 +203,7 @@ function Parser:expr_cmp()
       self:eat(Symbols.CMP_NEQUALS)
     end
 
-    node = Node.Comparator(node, self.prev_token, self:expr_plus())
+    node = Node.Comparator(node, token, self:expr_plus())
   end
 
   return node
@@ -236,11 +235,11 @@ end
 
 function Parser:assignment_statement()
   -- assignment_statement  : variable ASSIGN expr
-  left = self:variable()
+  local left = self:variable()
   self:eat(Symbols.EQUALS)
-  right = self:expr()
-  node = Node.Assign(left, self.prev_token, right)
-  return node
+  local right = self:expr()
+
+  return Node.Assign(left, self.prev_token, right)
 end
 
 function Parser:statement()
@@ -249,7 +248,7 @@ function Parser:statement()
               | empty
   ]]
 
-  token = self.current_token
+  local token = self.current_token
   if (token.type == Symbols.IDENTIFIER) then
     node = self:assignment_statement()
   else

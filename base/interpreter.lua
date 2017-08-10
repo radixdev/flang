@@ -57,20 +57,20 @@ function Interpreter:visit(node)
   -- tree:display(0)
   -- tree["display"](tree, 0)
 
-  method_name = "visit_" .. node.type
+  local method_name = "visit_" .. node.type
   if (self[method_name] == nil) then
     self:error("No method in interpreter with name: " .. dq(method_name))
   end
 
-  print("visiting " .. method_name)
+  -- print("visiting " .. method_name)
 
   -- Call and return the method
   return self[method_name](self, node)
 end
 
 function Interpreter:visit_BinOp(node)
-  left = self:visit(node.left)
-  right = self:visit(node.right)
+  local left = self:visit(node.left)
+  local right = self:visit(node.right)
 
   if node.token.type == Symbols.PLUS then
     return left + right
@@ -103,17 +103,17 @@ function Interpreter:visit_NoOp(node)
 end
 
 function Interpreter:visit_Assign(node)
-  variable_name = node.left.value
+  local variable_name = node.left.value
   self.symbol_table_global[variable_name] = self:visit(node.right)
 end
 
 function Interpreter:visit_Bool(node)
-  boolean = node.value
+  local boolean = node.value
   return boolean == "true"
 end
 
 function Interpreter:visit_Var(node)
-  variable_name = node.value
+  local variable_name = node.value
 
   -- Check if this variable has been defined already
   if (self.symbol_table_global[variable_name] == nil) then
@@ -124,8 +124,8 @@ function Interpreter:visit_Var(node)
 end
 
 function Interpreter:visit_Cmp(node)
-  left = self:visit(node.left)
-  right = self:visit(node.right)
+  local left = self:visit(node.left)
+  local right = self:visit(node.right)
 
   if node.token.type == Symbols.CMP_EQUALS then
     return left == right

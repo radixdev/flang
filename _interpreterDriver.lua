@@ -3,6 +3,7 @@ require("base.parser")
 require("base.interpreter")
 
 filename = "samples/complete.flang"
+-- filename = "samples/eq2.flang"
 local f = assert(io.open(filename, "r"))
 local t = f:read("*all")
 f:close()

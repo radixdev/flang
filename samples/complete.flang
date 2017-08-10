@@ -1,7 +1,7 @@
-alpha = 15
+alpha15 = 15
 boolTrue = true
 
-bFive = alpha / 3
+bFive = alpha15 / 3
 
 pi = 3.141592
 
@@ -13,3 +13,5 @@ dTrue = 6 <= 6
 eTrue = 2 *3 > 4 - 2
 
 shouldBeFalse=!true
+
+under_score_var = 12
