@@ -141,8 +141,6 @@ function Parser:factor()
   elseif (token.type == Symbols.TRUE or token.type == Symbols.FALSE) then
     return self:boolean()
   end
-
-  -- self:error("Nothing to factor. Token: "..dq(token))
 end
 
 function Parser:expr_mul()
@@ -181,6 +179,9 @@ function Parser:expr_plus()
   return node
 end
 
+--[[
+Comparators
+]]
 function Parser:expr_cmp()
   local node = self:expr_plus()
 
@@ -211,26 +212,6 @@ end
 
 function Parser:expr()
   return self:expr_cmp()
-  -- print("top")
-  -- node = self:expr_cmp()
-  --
-  -- print("after: " .. dq(self.current_token))
-  -- while (self.current_token.type == Symbols.NEGATE) do
-  --   self:eat(Symbols.NEGATE)
-  --   print("on neg")
-  --   print(dq(self.current_token))
-  --   print( dq(self.prev_token))
-  --
-  --   node = Node.Negation(node, self.prev_token, self:expr_cmp())
-  -- end
-
-  -- if (self.current_token.type == Symbols.NEGATE) then
-  --   self:eat(Symbols.NEGATE)
-  --
-  --   node = Node.Negation(node, self.prev_token, self:expr_cmp())
-  -- end
-  --
-  -- return node
 end
 
 function Parser:assignment_statement()

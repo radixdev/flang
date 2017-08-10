@@ -218,7 +218,7 @@ function Node:display(tabs)
 
   elseif (self.type == Node.NEGATION_TYPE) then
     print(tabString .. "negation: " .. dq(self.token.type))
-    -- self.expr:display(tabs + 1)
+    self.expr:display(tabs + 1)
 
   else
     print("Unknown type. Can't display parse tree: " .. dq(self.type))
