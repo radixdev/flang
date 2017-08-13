@@ -38,3 +38,8 @@ if (true) {
     }
   }
 }
+
+forShouldBe100 = 0
+for (i=0; i < 100; i = i + 1) {
+  forShouldBe100 = forShouldBe100 + 1
+}

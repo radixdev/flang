@@ -54,5 +54,7 @@ assertEquals("modulus_3", 3)
 assertEquals("ifShouldBe6", 6)
 assertEquals("ifShouldBe10", 10)
 assertEquals("ifShouldBe7", 7)
+
+assertEquals("forShouldBe100", 100)
 print("========ALL CHECKS PASSED=======")
 print(string.format("elapsed time: %.2f\n", os.clock() - start_time))
