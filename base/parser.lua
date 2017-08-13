@@ -401,6 +401,11 @@ function Parser:statement_list()
     parentNode.num_children = count + 1
   end
 
+  -- If there's only 1 statement in the list, only return the 1 statement
+  if (parentNode.num_children == 2) then
+    return parentNode.children[1]
+  end
+
   return parentNode
 end
 

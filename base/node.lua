@@ -21,6 +21,10 @@ function Node:new(o)
     error("Nodes require a type")
   end
 
+  if (o.token ~= nil) then
+    o.token_type = o.token.type
+  end
+
   setmetatable(o, self)
   self.__index = self
   return o
@@ -61,7 +65,8 @@ function Node.Number(token)
   return Node:new({
     type = Node.NUMBER_TYPE,
     token = token,
-    value = token.cargo
+    value = token.cargo,
+    parsed_value = tonumber(token.cargo)
   })
 end
 
@@ -71,7 +76,8 @@ function Node.Boolean(token)
   return Node:new({
     type = Node.BOOLEAN_TYPE,
     token = token,
-    value = token.cargo
+    value = token.cargo,
+    parsed_value = (token.cargo == "true")
   })
 end
 
