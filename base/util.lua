@@ -1,3 +1,7 @@
+if not Flang then Flang = {} end
+
+Flang.DEBUG_LOGGING = false
+
 --[[
 Wraps a string or object tostring inside single quotes
 ]]

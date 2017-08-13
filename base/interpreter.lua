@@ -40,9 +40,11 @@ end
 function Interpreter:interpret()
   local tree = self.parser:parse()
 
-  print("====== PARSE TREE =====")
-  tree:display(0)
-  print("=======================")
+  if (Flang.DEBUG_LOGGING) then
+    print("====== PARSE TREE =====")
+    tree:display(0)
+    print("=======================")
+  end
 
   return self:visit(tree)
 end
@@ -169,7 +171,14 @@ end
 
 function Interpreter:visit_StatementList(node)
   -- Iterate over each of the children
-  for _,childNode in ipairs(node.children) do
+  -- for _,childNode in ipairs(node.children) do
+  --   self:visit(childNode)
+  -- end
+
+  -- faster than ipairs
+  local k
+  for k=1, node.num_children-1 do
+    local childNode = node.children[k]
     self:visit(childNode)
   end
 end
