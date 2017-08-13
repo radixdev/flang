@@ -173,3 +173,12 @@ function Interpreter:visit_StatementList(node)
     self:visit(childNode)
   end
 end
+
+function Interpreter:visit_For(node)
+  self:visit(node.initializer)
+
+  while self:visit(node.condition) do
+    self:visit(node.block)
+    self:visit(node.incrementer)
+  end
+end

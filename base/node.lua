@@ -234,7 +234,7 @@ function Node:display(tabs, info)
     self.left:display(tabs + 1)
 
   elseif (type == Node.STATEMENT_LIST_TYPE) then
-    print(tabString .. "statement list")
+    print(tabString .. "STATEMENT LIST")
 
     for key,childNode in ipairs(self.children) do
       print(tabString .. key)
@@ -263,12 +263,12 @@ function Node:display(tabs, info)
     end
 
   elseif (type == Node.FOR_TYPE) then
-    print(tabString .. "for: " .. dq(self.token))
+    print(tabString .. "for: " .. dq(self.token.type))
 
-    self.initializer:display(tabs + 1)
-    self.condition:display(tabs + 1)
-    self.incrementer:display(tabs + 1)
-    self.block:display(tabs + 1)
+    self.initializer:display(tabs + 1, "INITIALIZER: ")
+    self.condition:display(tabs + 1, "CONDITIONAL: ")
+    self.incrementer:display(tabs + 1, "INCREMENTER: ")
+    self.block:display(tabs + 2)
   else
     print("Unknown type. Can't display parse tree: " .. dq(type))
   end
