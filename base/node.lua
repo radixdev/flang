@@ -27,7 +27,7 @@ function Node:new(o)
 end
 
 function Node.print(msg)
-  print(msg)
+  -- print(msg)
 end
 
 -----------------------------------------------------------------------
@@ -155,6 +155,19 @@ function Node.StatementList()
   })
 end
 
+Node.FOR_TYPE = "For"
+function Node.For(token, initializer, condition, incrementer, block)
+  Node.print("creating for node " .. tostring(token))
+  return Node:new({
+    type = Node.FOR_TYPE,
+    token = token,
+    initializer = initializer,
+    condition = condition,
+    incrementer = incrementer,
+    block = block
+  })
+end
+
 -----------------------------------------------------------------------
 -- Helper functions
 -----------------------------------------------------------------------
@@ -178,6 +191,8 @@ function Node:__tostring()
     m = m .. " value: " .. dq(self.left.value)
   elseif (type == Node.STATEMENT_LIST_TYPE) then
     m = m .. " num statements: " .. dq(self.num_children)
+  elseif (type == Node.FOR_TYPE) then
+    m = m .. " for: " .. dq(self.token)
   end
 
   return m or ""
@@ -222,7 +237,7 @@ function Node:display(tabs, info)
     print(tabString .. "statement list")
 
     for key,childNode in ipairs(self.children) do
-      print(key)
+      print(tabString .. key)
       childNode:display(tabs + 1)
     end
 
@@ -246,6 +261,14 @@ function Node:display(tabs, info)
     if self.next_if then
       self.next_if:display(tabs + 2)
     end
+
+  elseif (type == Node.FOR_TYPE) then
+    print(tabString .. "for: " .. dq(self.token))
+
+    self.initializer:display(tabs + 1)
+    self.condition:display(tabs + 1)
+    self.incrementer:display(tabs + 1)
+    self.block:display(tabs + 1)
   else
     print("Unknown type. Can't display parse tree: " .. dq(type))
   end

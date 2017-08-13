@@ -40,7 +40,7 @@ end
 function Parser:eat(token_type)
   if (self.current_token.type == token_type) then
     self.current_token = self.lexer:get()
-    print("  Ate token " .. dq(token_type))
+    -- print("  Ate token " .. dq(token_type))
   else
     self:error("Expected " .. dq(token_type) .. " but got " .. dq(self.current_token.type) ..
                 " at L" .. self.current_token.lineIndex .. ":C" .. self.current_token.columnIndex)
@@ -55,13 +55,16 @@ end
   FLANG 0.0.1 LANGUAGE DEFINITION
 
   program         : statement_list
+
   statement_list  : (statement)*
   statement       : assignment_statement
                   | if_statement
+                  | for_statement
                   | empty
 
   assignment_statement  : variable ASSIGN expr
   if_statement          : IF conditional block if_elseif
+  for_statement         : FOR LPAREN statement SEMICOLON expr SEMICOLON statement RPAREN block
   empty                 :
 
   if_elseif     : (ELSEIF conditional block)* if_else
@@ -324,11 +327,39 @@ function Parser:if_statement()
   end
 end
 
+function Parser:for_statement()
+  --[[
+
+    for_statement : FOR LPAREN statement SEMICOLON expr SEMICOLON statement RPAREN block
+
+  ]]
+
+  if (self.current_token.type == Symbols.FOR) then
+    local token = Token:copy(self.current_token)
+    self:eat(Symbols.FOR)
+    self:eat(Symbols.LPAREN)
+
+    local initializer = self:statement()
+    self:eat(Symbols.SEMICOLON)
+
+    local condition = self:expr()
+    self:eat(Symbols.SEMICOLON)
+
+    local incrementer = self:statement()
+    self:eat(Symbols.RPAREN)
+
+    local block = self:block()
+
+    return Node.For(token, initializer, condition, incrementer, block)
+  end
+end
+
 function Parser:statement()
   --[[
 
     statement     : assignment_statement
                   | if_statement
+                  | for_statement
                   | empty
 
   ]]
@@ -338,6 +369,8 @@ function Parser:statement()
     node = self:assignment_statement()
   elseif (token.type == Symbols.IF) then
     node = self:if_statement()
+  elseif (token.type == Symbols.FOR) then
+    node = self:for_statement()
   else
     node = self:empty()
   end
@@ -347,7 +380,9 @@ end
 
 function Parser:statement_list()
   --[[
-  program   : statement_list
+
+    statement_list  : (statement)*
+
   ]]
   local parentNode = Node.StatementList()
 
@@ -355,15 +390,15 @@ function Parser:statement_list()
   while self.current_token.type ~= Symbols.EOF do
     local node = self:statement()
 
+    -- If no valid statement can be found, then break out of the statement list
+    if (node.type == Node.NO_OP_TYPE) then
+      -- print("No valid statement found. Exiting parser.")
+      break
+    end
+
     local count = parentNode.num_children
     parentNode.children[count] = node
     parentNode.num_children = count + 1
-
-    -- If no valid statement can be found, then exit with nothing
-    if (node.type == Node.NO_OP_TYPE) then
-      print("No valid statement found. Exiting parser.")
-      break
-    end
   end
 
   return parentNode

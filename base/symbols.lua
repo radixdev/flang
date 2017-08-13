@@ -16,6 +16,7 @@ Symbols.FALSE = "false"
 Symbols.IF = "if"
 Symbols.ELSEIF = "elseif"
 Symbols.ELSE = "else"
+Symbols.FOR = "for"
 
 Symbols.KEYWORDS = Symbols.Set{
   Symbols.IF,
@@ -23,7 +24,7 @@ Symbols.KEYWORDS = Symbols.Set{
   Symbols.ELSEIF,
 
   "while",
-  "for",
+  Symbols.FOR,
   "print",
 
   Symbols.TRUE,
@@ -43,6 +44,7 @@ Symbols.NEGATE = "!"
 Symbols.MODULUS = "%"
 Symbols.LBRACKET = "{"
 Symbols.RBRACKET = "}"
+Symbols.SEMICOLON = ";"
 
 Symbols.ONE_CHARACTER_SYMBOLS = Symbols.Set{
   Symbols.EQUALS,
@@ -52,6 +54,7 @@ Symbols.ONE_CHARACTER_SYMBOLS = Symbols.Set{
   Symbols.DIV, Symbols.MUL, Symbols.PLUS, Symbols.MINUS,
   Symbols.NEGATE,
   Symbols.MODULUS,
+  Symbols.SEMICOLON,
   "."
 }
 
