@@ -282,7 +282,7 @@ end
 function Parser:block()
   if (self.current_token.type == Symbols.LBRACKET) then
     self:eat(Symbols.LBRACKET)
-    local node = self:statement()
+    local node = self:statement_list()
     self:eat(Symbols.RBRACKET)
     return node
   end
