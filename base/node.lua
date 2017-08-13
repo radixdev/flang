@@ -206,7 +206,7 @@ end
 
 -- A recursive representation of the current node and all of it's children
 function Node:display(tabs, info)
-  local type = self.type
+  local type =  "visit_" .. self.type
   local tabs = tabs or 0
   -- Info about the tree from the parent
   local info = info or ""

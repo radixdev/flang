@@ -54,21 +54,23 @@ end
 -- Every node must have a corresponding method here
 -----------------------------------------------------------------------
 
+VISIT_TABLE = {}
+
 function Interpreter:visit(node)
   -- See https://stackoverflow.com/questions/26042599/lua-call-a-function-using-its-name-string-in-a-class
 
-  local method_name = "visit_" .. node.type
-  if not self[method_name] then
-    self:error("No method in interpreter with name: " .. dq(method_name))
-  end
+  -- comment out for faster performance
+  -- if not self[node.type] then
+  --   self:error("No method in interpreter with name: " .. dq(node.type))
+  -- end
 
   -- print("visiting " .. method_name)
 
   -- Call and return the method
-  return self[method_name](self, node)
+  return self[node.type](self, node)
 end
 
-function Interpreter:visit_BinOp(node)
+function Interpreter:BinOp(node)
   local left = self:visit(node.left)
   local right = self:visit(node.right)
 
@@ -88,7 +90,7 @@ function Interpreter:visit_BinOp(node)
   end
 end
 
-function Interpreter:visit_UnaryOp(node)
+function Interpreter:UnaryOp(node)
   if node.token_type == Symbols.PLUS then
     return self:visit(node.expr)
   elseif node.token_type == Symbols.MINUS then
@@ -96,24 +98,24 @@ function Interpreter:visit_UnaryOp(node)
   end
 end
 
-function Interpreter:visit_Num(node)
+function Interpreter:Num(node)
   return node.parsed_value
 end
 
-function Interpreter:visit_NoOp(node)
+function Interpreter:NoOp(node)
   -- do nothing
 end
 
-function Interpreter:visit_Assign(node)
+function Interpreter:Assign(node)
   local variable_name = node.left.value
   self.symbol_table_global[variable_name] = self:visit(node.right)
 end
 
-function Interpreter:visit_Bool(node)
+function Interpreter:Bool(node)
   return node.parsed_value
 end
 
-function Interpreter:visit_Var(node)
+function Interpreter:Var(node)
   local variable_name = node.value
 
   -- Check if this variable has been defined already
@@ -124,7 +126,7 @@ function Interpreter:visit_Var(node)
   end
 end
 
-function Interpreter:visit_Cmp(node)
+function Interpreter:Cmp(node)
   local left = self:visit(node.left)
   local right = self:visit(node.right)
 
@@ -143,11 +145,11 @@ function Interpreter:visit_Cmp(node)
   end
 end
 
-function Interpreter:visit_Negate(node)
+function Interpreter:Negate(node)
   return not self:visit(node.expr)
 end
 
-function Interpreter:visit_If(node)
+function Interpreter:If(node)
   --[[
     Only execute the block if:
       ("if" or "elseif") the conditional exists and is true
@@ -169,7 +171,7 @@ function Interpreter:visit_If(node)
   end
 end
 
-function Interpreter:visit_StatementList(node)
+function Interpreter:StatementList(node)
   -- Iterate over each of the children
   -- for _,childNode in ipairs(node.children) do
   --   self:visit(childNode)
@@ -183,7 +185,7 @@ function Interpreter:visit_StatementList(node)
   end
 end
 
-function Interpreter:visit_For(node)
+function Interpreter:For(node)
   self:visit(node.initializer)
 
   while self:visit(node.condition) do
