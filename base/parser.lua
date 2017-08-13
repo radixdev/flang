@@ -54,11 +54,11 @@ end
 --[[
   FLANG 0.0.1 LANGUAGE DEFINITION
 
-  program       : statement
-                | (statement)*
-  statement     : assignment_statement
-                | if_statement
-                | empty
+  program         : statement_list
+  statement_list  : (statement)*
+  statement       : assignment_statement
+                  | if_statement
+                  | empty
 
   assignment_statement  : variable ASSIGN expr
   if_statement          : IF conditional block if_elseif
@@ -68,7 +68,7 @@ end
   if_else       : ELSE block
 
   conditional   : LPAREN expr RPAREN
-  block         : LBRACKET statement RBRACKET
+  block         : LBRACKET statement_list RBRACKET
 
   expr          : expr_cmp
   expr_cmp      : expr_plus ((GT | LT | GTE | LTE | CMP_EQUALS | CMP_NEQUALS) expr_plus)*
@@ -345,12 +345,11 @@ function Parser:statement()
   return node
 end
 
-function Parser:program()
+function Parser:statement_list()
   --[[
-  program   : statement
-            | (statement)*
+  program   : statement_list
   ]]
-  local parentNode = Node.Program()
+  local parentNode = Node.StatementList()
 
   -- parse as long as we can
   while self.current_token.type ~= Symbols.EOF do
@@ -368,6 +367,14 @@ function Parser:program()
   end
 
   return parentNode
+end
+
+function Parser:program()
+  --[[
+  program   : statement_list
+  ]]
+
+  return self:statement_list()
 end
 
 -----------------------------------------------------------------------

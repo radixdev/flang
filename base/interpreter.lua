@@ -167,7 +167,7 @@ function Interpreter:visit_If(node)
   end
 end
 
-function Interpreter:visit_Program(node)
+function Interpreter:visit_StatementList(node)
   -- Iterate over each of the children
   for key,childNode in ipairs(node.children) do
     self:visit(childNode)

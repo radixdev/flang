@@ -143,11 +143,11 @@ function Node.If(token, conditional, block, next_if)
   })
 end
 
-Node.PROGRAM_TYPE = "Program"
-function Node.Program()
-  Node.print("creating program node")
+Node.STATEMENT_LIST_TYPE = "StatementList"
+function Node.StatementList()
+  Node.print("creating StatementList node")
   return Node:new({
-    type = Node.PROGRAM_TYPE,
+    type = Node.STATEMENT_LIST_TYPE,
     -- As a polite aside, I fucking hate Lua so much
     -- No real arrays, and this joke of a substitute has to start at 1
     children = {},
@@ -176,7 +176,7 @@ function Node:__tostring()
     -- pass
   elseif (type == Node.ASSIGN_TYPE) then
     m = m .. " value: " .. dq(self.left.value)
-  elseif (type == Node.PROGRAM_TYPE) then
+  elseif (type == Node.STATEMENT_LIST_TYPE) then
     m = m .. " num statements: " .. dq(self.num_children)
   end
 
@@ -218,8 +218,8 @@ function Node:display(tabs, info)
     self.right:display(tabs + 1)
     self.left:display(tabs + 1)
 
-  elseif (type == Node.PROGRAM_TYPE) then
-    print(tabString .. "program")
+  elseif (type == Node.STATEMENT_LIST_TYPE) then
+    print(tabString .. "statement list")
 
     for key,childNode in ipairs(self.children) do
       print(key)
