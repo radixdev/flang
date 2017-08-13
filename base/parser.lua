@@ -371,7 +371,7 @@ end
 
 function Parser:program()
   --[[
-  program   : statement_list
+    program   : statement_list
   ]]
 
   return self:statement_list()
