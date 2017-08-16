@@ -54,8 +54,6 @@ end
 -- Every node must have a corresponding method here
 -----------------------------------------------------------------------
 
-VISIT_TABLE = {}
-
 function Interpreter:visit(node)
   -- See https://stackoverflow.com/questions/26042599/lua-call-a-function-using-its-name-string-in-a-class
 

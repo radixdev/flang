@@ -206,40 +206,39 @@ end
 
 -- A recursive representation of the current node and all of it's children
 function Node:display(tabs, info)
-  local type =  "visit_" .. self.type
   local tabs = tabs or 0
   -- Info about the tree from the parent
   local info = info or ""
   local tabString = string.rep("  ", tabs) .. info
   local m = tostring(self)
 
-  if (type == Node.NUMBER_TYPE) then
+  if (self.type == Node.NUMBER_TYPE) then
     print(tabString .. m)
 
-  elseif (type == Node.BOOLEAN_TYPE) then
+  elseif (self.type == Node.BOOLEAN_TYPE) then
     print(tabString .. "boolean: " .. dq(self.value))
 
-  elseif (type == Node.VARIABLE_TYPE) then
+  elseif (self.type == Node.VARIABLE_TYPE) then
     print(tabString .. "var: " .. dq(self.value))
 
-  elseif (type == Node.UNARY_OPERATOR_TYPE) then
+  elseif (self.type == Node.UNARY_OPERATOR_TYPE) then
     print(tabString .. "unary op: " .. dq(self.token.type))
     self.expr:display(tabs + 1)
 
-  elseif (type == Node.BINARY_OPERATOR_TYPE) then
+  elseif (self.type == Node.BINARY_OPERATOR_TYPE) then
     print(tabString .. "bin op: " .. dq(self.token.type))
     self.right:display(tabs + 1)
     self.left:display(tabs + 1)
 
-  elseif (type == Node.NO_OP_TYPE) then
+  elseif (self.type == Node.NO_OP_TYPE) then
     print(tabString .. "no op")
 
-  elseif (type == Node.ASSIGN_TYPE) then
+  elseif (self.type == Node.ASSIGN_TYPE) then
     print(tabString .. "statement assign: " .. tostring(self.left.value))
     self.right:display(tabs + 1)
     self.left:display(tabs + 1)
 
-  elseif (type == Node.STATEMENT_LIST_TYPE) then
+  elseif (self.type == Node.STATEMENT_LIST_TYPE) then
     print(tabString .. "STATEMENT LIST")
 
     for key,childNode in ipairs(self.children) do
@@ -247,16 +246,16 @@ function Node:display(tabs, info)
       childNode:display(tabs + 1)
     end
 
-  elseif (type == Node.COMPARATOR_TYPE) then
+  elseif (self.type == Node.COMPARATOR_TYPE) then
     print(tabString .. "comparator op: " .. dq(self.token.type))
     self.right:display(tabs + 1)
     self.left:display(tabs + 1)
 
-  elseif (type == Node.NEGATION_TYPE) then
+  elseif (self.type == Node.NEGATION_TYPE) then
     print(tabString .. "negation: " .. dq(self.token.type))
     self.expr:display(tabs + 1)
 
-  elseif (type == Node.IF_TYPE) then
+  elseif (self.type == Node.IF_TYPE) then
     print(tabString .. "if: " .. dq(self.token.type))
     if self.conditional then
       self.conditional:display(tabs + 1, "CONDITIONAL: ")
@@ -268,7 +267,7 @@ function Node:display(tabs, info)
       self.next_if:display(tabs + 2)
     end
 
-  elseif (type == Node.FOR_TYPE) then
+  elseif (self.type == Node.FOR_TYPE) then
     print(tabString .. "for: " .. dq(self.token.type))
 
     self.initializer:display(tabs + 1, "INITIALIZER: ")
