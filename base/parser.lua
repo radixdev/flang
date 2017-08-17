@@ -51,7 +51,12 @@ end
   Takes a token type and eats if it exists in valid_token_types
 ]]
 function Parser:eat_several(token_type, valid_token_types)
-  
+  if (Util.contains(valid_token_types, token_type)) then
+    self:eat(token_type)
+  --   print(" Ate several on token " .. dq(token_type))
+  -- else
+  --   print("did not eat token "..dq(token_type))
+  end
 end
 
 -----------------------------------------------------------------------
@@ -305,14 +310,18 @@ function Parser:assignment_statement()
 
   ]]
 
-  local token = Token:copy(self.current_token)
+  local var_token = Token:copy(self.current_token)
 
   local left = self:variable()
 
-  self:eat(Symbols.EQUALS)
+  local assignment_token = Token:copy(self.current_token)
+  valid_tokens = Util.Set{Symbols.EQUALS, Symbols.ASSIGN_PLUS,
+      Symbols.ASSIGN_MINUS, Symbols.ASSIGN_MUL, Symbols.ASSIGN_DIV}
+  self:eat_several(self.current_token.type, valid_tokens)
+
   local right = self:expr()
 
-  return Node.Assign(left, token, right)
+  return Node.Assign(left, var_token, right, assignment_token)
 end
 
 function Parser:if_statement()

@@ -100,13 +100,14 @@ function Node.NoOp()
 end
 
 Node.ASSIGN_TYPE = "Assign"
-function Node.Assign(left, operator, right)
+function Node.Assign(left, operator, right, assignment_token)
   Node.print("creating assign node: " .. dq(left) .. " and token " .. dq(left.value))
   return Node:new({
     type = Node.ASSIGN_TYPE,
     left = left,
     token = operator,
-    right = right
+    right = right,
+    assignment_token = assignment_token
   })
 end
 
@@ -234,7 +235,7 @@ function Node:display(tabs, info)
     print(tabString .. "no op")
 
   elseif (self.type == Node.ASSIGN_TYPE) then
-    print(tabString .. "statement assign: " .. tostring(self.left.value))
+    print(tabString .. "statement assign: " .. tostring(self.left.value) .. " sym: " .. dq(self.assignment_token.type))
     self.right:display(tabs + 1)
     self.left:display(tabs + 1)
 

@@ -106,6 +106,8 @@ end
 
 function Interpreter:Assign(node)
   local variable_name = node.left.value
+
+  -- if (node.token_type == Symbols.EQUALS)
   self.symbol_table_global[variable_name] = self:visit(node.right)
 end
 
