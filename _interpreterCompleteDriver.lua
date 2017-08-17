@@ -56,5 +56,10 @@ assertEquals("ifShouldBe10", 10)
 assertEquals("ifShouldBe7", 7)
 
 assertEquals("forShouldBe100", 100)
+
+assertEquals("asShouldBe11", 11)
+assertEquals("asShouldBe8", 8)
+assertEquals("asShouldBe12", 12)
+assertEquals("asShouldBe2p5", 2.5)
 print("========ALL CHECKS PASSED=======")
 print(string.format("elapsed time: %.2f\n", os.clock() - start_time))

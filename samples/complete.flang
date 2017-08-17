@@ -40,6 +40,18 @@ if (true) {
 }
 
 forShouldBe100 = 0
-for (i=0; i < 100; i = i + 1) {
+for (i=0; i < 100; i += 1) {
   forShouldBe100 = forShouldBe100 + 1
 }
+
+asShouldBe11 = 10
+asShouldBe11+=1
+
+asShouldBe8=10
+asShouldBe8-=2
+
+asShouldBe12=4
+asShouldBe12*=3
+
+asShouldBe2p5=5
+asShouldBe2p5/=2

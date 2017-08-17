@@ -76,7 +76,7 @@ function Interpreter:visit(node)
     self:error("No method in interpreter with name: " .. dq(node.type))
   end
 
-  print("visiting " .. method_name)
+  -- print("visiting " .. method_name)
 
   -- Call and return the method
   return self[node.type](self, node)
