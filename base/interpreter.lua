@@ -50,6 +50,19 @@ function Interpreter:interpret()
 end
 
 -----------------------------------------------------------------------
+-- State information
+-----------------------------------------------------------------------
+
+function Interpreter:get_variable(variable_name)
+  -- Check if this variable has been defined already
+  if (self.symbol_table_global[variable_name] == nil) then
+    self:error("Undefined variable " .. variable_name)
+  else
+    return self.symbol_table_global[variable_name]
+  end
+end
+
+-----------------------------------------------------------------------
 -- AST traversal
 -- Every node must have a corresponding method here
 -----------------------------------------------------------------------
@@ -58,11 +71,12 @@ function Interpreter:visit(node)
   -- See https://stackoverflow.com/questions/26042599/lua-call-a-function-using-its-name-string-in-a-class
 
   -- comment out for faster performance
-  -- if not self[node.type] then
-  --   self:error("No method in interpreter with name: " .. dq(node.type))
-  -- end
+  local method_name = node.type
+  if not self[method_name] then
+    self:error("No method in interpreter with name: " .. dq(node.type))
+  end
 
-  -- print("visiting " .. method_name)
+  print("visiting " .. method_name)
 
   -- Call and return the method
   return self[node.type](self, node)
@@ -106,9 +120,26 @@ end
 
 function Interpreter:Assign(node)
   local variable_name = node.left.value
+  local token_type = node.assignment_token.type
 
-  -- if (node.token_type == Symbols.EQUALS)
-  self.symbol_table_global[variable_name] = self:visit(node.right)
+  if (token_type == Symbols.EQUALS) then
+    self.symbol_table_global[variable_name] = self:visit(node.right)
+  end
+
+  -- We have to make sure
+  if (token_type == Symbols.ASSIGN_PLUS) then
+    self.symbol_table_global[variable_name] = self:get_variable(variable_name) + self:visit(node.right)
+  elseif (token_type == Symbols.ASSIGN_MINUS) then
+    self.symbol_table_global[variable_name] = self:get_variable(variable_name) - self:visit(node.right)
+  elseif (token_type == Symbols.ASSIGN_MUL) then
+    self.symbol_table_global[variable_name] = self:get_variable(variable_name) * self:visit(node.right)
+  elseif (token_type == Symbols.ASSIGN_DIV) then
+    local right_value = self:visit(node.right)
+    if (right_value == 0) then
+      self:error("Division by Zero")
+    end
+    self.symbol_table_global[variable_name] = self:get_variable(variable_name) / right_value
+  end
 end
 
 function Interpreter:Bool(node)
@@ -116,14 +147,7 @@ function Interpreter:Bool(node)
 end
 
 function Interpreter:Var(node)
-  local variable_name = node.value
-
-  -- Check if this variable has been defined already
-  if (self.symbol_table_global[variable_name] == nil) then
-    self:error("Undefined variable " .. variable_name)
-  else
-    return self.symbol_table_global[variable_name]
-  end
+  return self:get_variable(node.value)
 end
 
 function Interpreter:Cmp(node)
