@@ -62,12 +62,20 @@ Symbols.GTE = ">="
 Symbols.LTE = "<="
 Symbols.CMP_EQUALS = "=="
 Symbols.CMP_NEQUALS = "!="
+Symbols.ASSIGN_PLUS = "+="
+Symbols.ASSIGN_MINUS = "-="
+Symbols.ASSIGN_MUL = "*="
+Symbols.ASSIGN_DIV = "/="
 
 Symbols.TWO_CHARACTER_SYMBOLS = Symbols.Set{
   Symbols.CMP_EQUALS,
   Symbols.CMP_NEQUALS,
   Symbols.LTE,
   Symbols.GTE,
+  Symbols.ASSIGN_PLUS,
+  Symbols.ASSIGN_MINUS,
+  Symbols.ASSIGN_MUL,
+  Symbols.ASSIGN_DIV,
   "&&",
   "||"
 }

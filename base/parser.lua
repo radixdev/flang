@@ -47,6 +47,13 @@ function Parser:eat(token_type)
   end
 end
 
+--[[
+  Takes a token type and eats if it exists in valid_token_types
+]]
+function Parser:eat_several(token_type, valid_token_types)
+  
+end
+
 -----------------------------------------------------------------------
 -- AST generation
 -----------------------------------------------------------------------
@@ -62,10 +69,10 @@ end
                   | for_statement
                   | empty
 
-  assignment_statement  : variable ASSIGN expr
-  if_statement          : IF conditional block if_elseif
-  for_statement         : FOR LPAREN statement SEMICOLON expr SEMICOLON statement RPAREN block
-  empty                 :
+  assignment_statement      : variable (ASSIGN | ASSIGN_PLUS | ASSIGN_MINUS | ASSIGN_MUL | ASSIGN_DIV)  expr
+  if_statement              : IF conditional block if_elseif
+  for_statement             : FOR LPAREN statement SEMICOLON expr SEMICOLON statement RPAREN block
+  empty                     :
 
   if_elseif     : (ELSEIF conditional block)* if_else
   if_else       : ELSE block
@@ -294,13 +301,14 @@ end
 function Parser:assignment_statement()
   --[[
 
-    assignment_statement  : variable ASSIGN expr
+    assignment_statement : variable (ASSIGN | ASSIGN_PLUS | ASSIGN_MINUS | ASSIGN_MUL | ASSIGN_DIV)  expr
 
   ]]
 
   local token = Token:copy(self.current_token)
 
   local left = self:variable()
+
   self:eat(Symbols.EQUALS)
   local right = self:expr()
 
