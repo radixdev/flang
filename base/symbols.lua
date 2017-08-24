@@ -39,6 +39,7 @@ Symbols.MODULUS = "%"
 Symbols.LBRACKET = "{"
 Symbols.RBRACKET = "}"
 Symbols.SEMICOLON = ";"
+Symbols.COMMA = ","
 
 Symbols.ONE_CHARACTER_SYMBOLS = Util.Set{
   Symbols.EQUALS,
@@ -49,6 +50,7 @@ Symbols.ONE_CHARACTER_SYMBOLS = Util.Set{
   Symbols.NEGATE,
   Symbols.MODULUS,
   Symbols.SEMICOLON,
+  Symbols.COMMA,
   "."
 }
 

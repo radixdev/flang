@@ -76,7 +76,7 @@ end
 
   assignment_statement      : variable (ASSIGN | ASSIGN_PLUS | ASSIGN_MINUS | ASSIGN_MUL | ASSIGN_DIV)  expr
   if_statement              : IF conditional block if_elseif
-  for_statement             : FOR LPAREN statement SEMICOLON expr SEMICOLON statement RPAREN block
+  for_statement             : FOR LPAREN assignment_statement SEMICOLON expr (SEMICOLON statement | SEMICOLON expr)? RPAREN block
   empty                     :
 
   if_elseif     : (ELSEIF conditional block)* if_else
@@ -347,7 +347,7 @@ end
 function Parser:for_statement()
   --[[
 
-    for_statement : FOR LPAREN statement SEMICOLON expr SEMICOLON statement RPAREN block
+  for_statement : FOR LPAREN assignment_statement SEMICOLON expr (SEMICOLON statement | SEMICOLON expr)? RPAREN block
 
   ]]
 
@@ -360,14 +360,34 @@ function Parser:for_statement()
     self:eat(Symbols.SEMICOLON)
 
     local condition = self:expr()
-    self:eat(Symbols.SEMICOLON)
 
-    local incrementer = self:statement()
+    -- the incrementer is either a number or a statement
+    local incrementer = self:empty()
+    local enhanced = false
+    if (self.current_token.type == Symbols.SEMICOLON) then
+      self:eat(Symbols.SEMICOLON)
+
+      incrementer = self:statement()
+      if (incrementer.type == Node.NO_OP_TYPE) then
+        -- no statement, check for an expression
+        incrementer = self:expr()
+
+        if (incrementer.type == Node.NO_OP_TYPE) then
+          incrementer = self:empty()
+        else
+          -- enhanced loop
+          enhanced = true
+        end
+      end
+    else
+      enhanced = true
+    end
+
     self:eat(Symbols.RPAREN)
 
     local block = self:block()
 
-    return Node.For(token, initializer, condition, incrementer, block)
+    return Node.For(token, initializer, condition, incrementer, block, enhanced)
   end
 end
 
@@ -419,9 +439,9 @@ function Parser:statement_list()
   end
 
   -- If there's only 1 statement in the list, only return the 1 statement
-  if (parentNode.num_children == 2) then
-    return parentNode.children[1]
-  end
+  -- if (parentNode.num_children == 2) then
+  --   return parentNode.children[1]
+  -- end
 
   return parentNode
 end

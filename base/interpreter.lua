@@ -124,6 +124,7 @@ function Interpreter:Assign(node)
 
   if (token_type == Symbols.EQUALS) then
     self.symbol_table_global[variable_name] = self:visit(node.right)
+    return
   end
 
   -- We have to make sure
@@ -210,6 +211,14 @@ function Interpreter:StatementList(node)
 end
 
 function Interpreter:For(node)
+  --[[
+    This is either a standard for loop or an enhanced for loop.
+
+    Enhanced for-loops have the following structure:
+    for (assignment ; number (; number) ) block
+
+    Without this structure, we fallback to the standard for loop
+  ]]
   self:visit(node.initializer)
 
   while self:visit(node.condition) do

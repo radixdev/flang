@@ -163,7 +163,7 @@ function Node.StatementList()
 end
 
 Node.FOR_TYPE = "For"
-function Node.For(token, initializer, condition, incrementer, block)
+function Node.For(token, initializer, condition, incrementer, block, enhanced)
   Node.print("creating for node " .. tostring(token))
   return Node:new({
     type = Node.FOR_TYPE,
@@ -171,7 +171,8 @@ function Node.For(token, initializer, condition, incrementer, block)
     initializer = initializer,
     condition = condition,
     incrementer = incrementer,
-    block = block
+    block = block,
+    enhanced = enhanced
   })
 end
 
@@ -269,7 +270,7 @@ function Node:display(tabs, info)
     end
 
   elseif (self.type == Node.FOR_TYPE) then
-    print(tabString .. "for: " .. dq(self.token.type))
+    print(tabString .. "for: " .. dq(self.token.type) .. " enhanced: " .. dq(self.enhanced))
 
     self.initializer:display(tabs + 1, "INITIALIZER: ")
     self.condition:display(tabs + 1, "CONDITIONAL: ")
