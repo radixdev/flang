@@ -361,7 +361,7 @@ function Parser:for_statement()
 
     local condition = self:expr()
 
-    -- the incrementer is either a number or a statement
+    -- the incrementer is either a number, a statement, or empty
     local incrementer = self:empty()
     local enhanced = false
     if (self.current_token.type == Symbols.SEMICOLON) then
@@ -372,9 +372,7 @@ function Parser:for_statement()
         -- no statement, check for an expression
         incrementer = self:expr()
 
-        if (incrementer.type == Node.NO_OP_TYPE) then
-          incrementer = self:empty()
-        else
+        if (incrementer.type ~= Node.NO_OP_TYPE) then
           -- enhanced loop
           enhanced = true
         end
