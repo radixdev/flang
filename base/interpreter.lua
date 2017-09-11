@@ -62,6 +62,10 @@ function Interpreter:get_variable(variable_name)
   end
 end
 
+function Interpreter:set_variable(variable_name, value)
+  self.symbol_table_global[variable_name] = value
+end
+
 -----------------------------------------------------------------------
 -- AST traversal
 -- Every node must have a corresponding method here
@@ -123,23 +127,30 @@ function Interpreter:Assign(node)
   local token_type = node.assignment_token.type
 
   if (token_type == Symbols.EQUALS) then
-    self.symbol_table_global[variable_name] = self:visit(node.right)
+    -- self.symbol_table_global[variable_name] = self:visit(node.right)
+    self:set_variable(variable_name, self:visit(node.right))
     return
   end
 
   -- We have to make sure
   if (token_type == Symbols.ASSIGN_PLUS) then
-    self.symbol_table_global[variable_name] = self:get_variable(variable_name) + self:visit(node.right)
+    -- self.symbol_table_global[variable_name] = self:get_variable(variable_name) + self:visit(node.right)
+    self:set_variable(variable_name, self:get_variable(variable_name) + self:visit(node.right))
   elseif (token_type == Symbols.ASSIGN_MINUS) then
-    self.symbol_table_global[variable_name] = self:get_variable(variable_name) - self:visit(node.right)
+    -- self.symbol_table_global[variable_name] = self:get_variable(variable_name) - self:visit(node.right)
+    self:set_variable(variable_name, self:get_variable(variable_name) - self:visit(node.right))
+
   elseif (token_type == Symbols.ASSIGN_MUL) then
-    self.symbol_table_global[variable_name] = self:get_variable(variable_name) * self:visit(node.right)
+    -- self.symbol_table_global[variable_name] = self:get_variable(variable_name) * self:visit(node.right)
+    self:set_variable(variable_name, self:get_variable(variable_name) * self:visit(node.right))
+
   elseif (token_type == Symbols.ASSIGN_DIV) then
     local right_value = self:visit(node.right)
     if (right_value == 0) then
       self:error("Division by Zero")
     end
-    self.symbol_table_global[variable_name] = self:get_variable(variable_name) / right_value
+    -- self.symbol_table_global[variable_name] = self:get_variable(variable_name) / right_value
+    self:set_variable(variable_name, self:get_variable(variable_name) / self:visit(node.right))
   end
 end
 
@@ -219,10 +230,29 @@ function Interpreter:For(node)
 
     Without this structure, we fallback to the standard for loop
   ]]
+
   self:visit(node.initializer)
 
-  while self:visit(node.condition) do
-    self:visit(node.block)
-    self:visit(node.incrementer)
+  if (node.enhanced) then
+    -- extract the variable
+    local variable_name = node.initializer.left.value
+    print(dq(variable_name))
+
+    -- visit the condition value
+    condition_value = self:visit(node.condition)
+    print(dq(condition_value))
+
+    local initializer_value = self:get_variable(variable_name)
+
+    for i = initializer_value, (condition_value-1) do
+      self:visit(node.block)
+    end
+  else
+    self:visit(node.initializer)
+
+    while self:visit(node.condition) do
+      self:visit(node.block)
+      self:visit(node.incrementer)
+    end
   end
 end

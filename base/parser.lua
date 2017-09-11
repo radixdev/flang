@@ -361,7 +361,15 @@ function Parser:for_statement()
 
     local condition = self:expr()
 
-    -- the incrementer is either a number, a statement, or empty
+    --[[
+      the incrementer is either a number or empty (ENHANCED FOR) or a statement (STANDARD FOR)
+      the incrementer can be an expression in the case of:
+      for (i=0; 10; 2) {
+        *BLOCK*
+      }
+
+
+    ]]
     local incrementer = self:empty()
     local enhanced = false
     if (self.current_token.type == Symbols.SEMICOLON) then
