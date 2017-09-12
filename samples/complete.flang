@@ -55,3 +55,13 @@ asShouldBe12*=3
 
 asShouldBe2p5=5
 asShouldBe2p5/=2
+
+eForShouldBe10000 = 0
+for (i=0; 10000) {
+  eForShouldBe10000+=1
+}
+
+eForShouldBe5000 = 0
+for (i=0; 10000; 2) {
+  eForShouldBe5000+=1
+}

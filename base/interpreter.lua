@@ -238,7 +238,10 @@ function Interpreter:For(node)
     local variable_name = node.initializer.left.value
 
     -- visit the condition value
-    condition_value = self:visit(node.condition)
+    local condition_value = self:visit(node.condition)
+    if (type(condition_value) ~= "number") then
+      self:error("Expected for loop condition to evaluate to number")
+    end
 
     local initializer_value = self:get_variable(variable_name)
 
