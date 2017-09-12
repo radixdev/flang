@@ -236,16 +236,22 @@ function Interpreter:For(node)
   if (node.enhanced) then
     -- extract the variable
     local variable_name = node.initializer.left.value
-    print(dq(variable_name))
 
     -- visit the condition value
     condition_value = self:visit(node.condition)
-    print(dq(condition_value))
 
     local initializer_value = self:get_variable(variable_name)
 
-    for i = initializer_value, (condition_value-1) do
+    if (node.incrementer.type == Node.NO_OP_TYPE) then
+      incrementer_value = 1
+    else
+      incrementer_value = self:visit(node.incrementer)
+    end
+
+    for i = initializer_value, (condition_value-1), incrementer_value do
       self:visit(node.block)
+      -- set i
+      self:set_variable(variable_name, i)
     end
   else
     self:visit(node.initializer)

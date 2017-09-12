@@ -276,6 +276,7 @@ function Node:display(tabs, info)
     self.condition:display(tabs + 1, "CONDITIONAL: ")
     self.incrementer:display(tabs + 1, "INCREMENTER: ")
     self.block:display(tabs + 2)
+
   else
     print("Unknown type. Can't display parse tree: " .. dq(type))
   end
