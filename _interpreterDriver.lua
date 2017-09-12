@@ -2,7 +2,7 @@ require("base.lexer")
 require("base.parser")
 require("base.interpreter")
 
-filename = "samples/efor1.flang"
+filename = "samples/comment1.flang"
 local f = assert(io.open(filename, "r"))
 local t = f:read("*all")
 f:close()

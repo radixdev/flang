@@ -1,0 +1,9 @@
+if (true) {
+  x = 4
+  //y=1
+  a = 0
+  // this is a comment!
+  x=20 // niceee
+}
+
+// eof or end of function, you decide

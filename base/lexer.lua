@@ -35,20 +35,23 @@ function Lexer:get()
     self:getChar()
   end
 
-  -- self:status()
-
-  -- Read past any whitespace
+-- Read past any whitespace
   while Flang.Symbols.isWhitespace(self.c1) do
-    token = Flang.Token:new(self.character)
-    token.type = Flang.Symbols.WHITESPACE
+    self:getChar()
+  end
+
+  -- Drop any comments
+  if (self.c2 == Flang.Symbols.SINGLE_LINE_COMMENT_START) then
     self:getChar()
 
-    -- consume the rest of the whitespace
-    while Flang.Symbols.isWhitespace(self.c1) do
-      token.cargo = token.cargo .. self.c1
+    -- Eat everything until the line is over
+    while (self.c1 ~= Symbols.NEWLINE and self.c1 ~= Flang.Character.ENDMARK) do
       self:getChar()
+    end
 
-      -- only return this token if we want whitespace
+    -- trim up any trailing characters
+    while Flang.Symbols.isWhitespace(self.c1) do
+      self:getChar()
     end
   end
 

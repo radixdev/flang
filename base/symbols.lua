@@ -62,6 +62,7 @@ Symbols.ASSIGN_PLUS = "+="
 Symbols.ASSIGN_MINUS = "-="
 Symbols.ASSIGN_MUL = "*="
 Symbols.ASSIGN_DIV = "/="
+Symbols.SINGLE_LINE_COMMENT_START = "//"
 
 Symbols.TWO_CHARACTER_SYMBOLS = Util.Set{
   Symbols.CMP_EQUALS,
@@ -73,7 +74,8 @@ Symbols.TWO_CHARACTER_SYMBOLS = Util.Set{
   Symbols.ASSIGN_MUL,
   Symbols.ASSIGN_DIV,
   "&&",
-  "||"
+  "||",
+  Symbols.SINGLE_LINE_COMMENT_START
 }
 
 -- IDENTIFIER_STARTCHARS = string.letters
@@ -104,7 +106,8 @@ Symbols.NUMBER_STARTCHARS     = Util.Set{"0", "1", "2", "3", "4", "5", "6", "7",
 Symbols.NUMBER_CHARS          = Util.Set{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "."}
 
 Symbols.STRING_STARTCHARS = Util.Set{"'", '"'}
-Symbols.WHITESPACE_CHARS  = Util.Set{" ", "\t", "\n"}
+Symbols.NEWLINE = "\n"
+Symbols.WHITESPACE_CHARS  = Util.Set{" ", "\t", Symbols.NEWLINE}
 
 -----------------------------------------------------------------------
 -- TokenTypes for things other than symbols and keywords
