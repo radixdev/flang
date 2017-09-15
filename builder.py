@@ -10,7 +10,7 @@ def local_file_path(filename):
     return os.path.join(curDir, filename)
 
 def release_file_path(filename):
-    return os.path.join(curDir, os.path.join("releases", filename))
+    return os.path.join(release_folder_path, filename)
 
 # read the info.json for the release name
 def get_version():
@@ -20,11 +20,11 @@ def get_version():
     	config = json.load(data_file)
         return config["version"]
 
-version = get_version()
-
 # make the release
-release_folder_path = local_file_path(os.path.join("releases", "flang" + "_" + version))
-print release_folder_path
+version = get_version()
+release_name = "flang" + "_" + version
+release_folder_path = local_file_path(os.path.join("releases", release_name))
+print "release_folder_path", release_folder_path
 
 if (os.path.exists(release_folder_path)):
     print "Release already exists at " + release_folder_path
@@ -36,7 +36,15 @@ os.mkdir(release_folder_path)
 whitelisted_files = ["lang", "locale", "prototypes", "control.lua", "data.lua", "info.json"]
 
 for file in whitelisted_files:
-    shutil.copy(local_file_path(file), release_file_path(file))
+    localpath = local_file_path(file)
+    releasepath = release_file_path(file)
+
+    print "localpath", localpath
+    print "releasepath", releasepath
+    if (os.path.isfile(localpath)):
+        shutil.copyfile(localpath, releasepath)
+    else:
+        shutil.copytree(localpath, releasepath)
 
 # test line, rm later!
 # os.rmdir(release_folder_path)
