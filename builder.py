@@ -46,5 +46,5 @@ for file in whitelisted_files:
     else:
         shutil.copytree(localpath, releasepath)
 
-# test line, rm later!
-# os.rmdir(release_folder_path)
+# create the zip file
+shutil.make_archive(release_folder_path, 'zip', release_folder_path)
