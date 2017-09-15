@@ -1,5 +1,4 @@
-
-releases/*
+releases/
 
 # auto-gen below
 # Compiled Lua sources
