@@ -20,9 +20,17 @@ def get_version():
     	config = json.load(data_file)
         return config["version"]
 
+# read the info.json for the mod name
+def get_mod_name():
+    filename = "info.json"
+    fileAbsolutePath = local_file_path(filename)
+    with open(fileAbsolutePath) as data_file:
+    	config = json.load(data_file)
+        return config["name"]
+
 # make the release
 version = get_version()
-release_name = "flang" + "_" + version
+release_name = get_mod_name() + "_" + version
 release_folder_path = local_file_path(os.path.join("releases", release_name))
 print "release_folder_path", release_folder_path
 
@@ -33,7 +41,7 @@ if (os.path.exists(release_folder_path)):
 os.mkdir(release_folder_path)
 
 # copy the files to releases
-whitelisted_files = ["lang", "locale", "prototypes", "control.lua", "data.lua", "info.json"]
+whitelisted_files = ["lang", "locale", "prototypes", "graphics", "LICENSE", "control.lua", "data.lua", "info.json"]
 
 for file in whitelisted_files:
     localpath = local_file_path(file)

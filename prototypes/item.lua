@@ -1,39 +1,47 @@
-local flangChip = table.deepcopy(data.raw.item["arithmetic-combinator"])
+local flangChip = {}
 
 flangChip.name = "flang-chip"
--- flangChip.icons= {
+flangChip.type = "item"
+flangChip.icon = "__Flang__/graphics/flangchip.png"
+flangChip.flags = { "goes-to-quickbar" }
+flangChip.subgroup = "circuit-network"
+flangChip.place_result="flang-chip"
+flangChip.order = "c[combinators]-a[arithmetic-combinator]"
+flangChip.stack_size= 50
+
+local recipe = table.deepcopy(data.raw.recipe["arithmetic-combinator"])
+recipe.enabled = true
+recipe.ingredients = {{"copper-plate",200},{"steel-plate",50}}
+recipe.result = "flang-chip"
+
+-- local recipe = {}
+-- recipe.type = "recipe"
+-- recipe.name = "flang-chip"
+-- recipe.enabled = true
+-- recipe.ingredients =
+-- {
+--   {"copper-cable", 5},
+--   {"electronic-circuit", 5},
+-- }
+-- recipe.result = "flang-chip"
+
+data:extend{flangChip, recipe}
+
+
+--------------------------------------
+-- local fireArmor = table.deepcopy(data.raw.armor["heavy-armor"])
+--
+-- fireArmor.name = "flang-chip"
+-- fireArmor.icons= {
 --    {
---       icon=flangChip.icon,
+--       icon=fireArmor.icon,
 --       tint={r=1,g=0,b=0,a=0.3}
 --    },
 -- }
-
--- flangChip.resistances = {
---    {
---       type = "physical",
---       decrease = 6,
---       percent = 10
---    },
---    {
---       type = "explosion",
---       decrease = 10,
---       percent = 30
---    },
---    {
---       type = "acid",
---       decrease = 5,
---       percent = 30
---    },
---    {
---       type = "fire",
---       decrease = 0,
---       percent = 100
---    },
--- }
-
-local recipe = table.deepcopy(data.raw.item["arithmetic-combinator"])
-recipe.enabled = true
-recipe.ingredients = {{"steel-plate",1}}
-recipe.result = "flang-chip"
-
-data:extend{flangChip,recipe}
+--
+-- local recipe = table.deepcopy(data.raw.recipe["heavy-armor"])
+-- recipe.enabled = true
+-- recipe.ingredients = {{"copper-plate",200},{"steel-plate",50}}
+-- recipe.result = "flang-chip"
+--
+-- data:extend{fireArmor,recipe}
