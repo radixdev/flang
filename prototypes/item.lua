@@ -8,30 +8,4 @@ flangChip.subgroup = "circuit-network"
 flangChip.place_result="flang-chip"
 flangChip.stack_size= 50
 
-local recipe = {}
-recipe.type = "recipe"
-recipe.name = "flang-chip"
-recipe.enabled = true
-recipe.ingredients = {{"copper-plate",200},{"steel-plate",50}}
-recipe.result = "flang-chip"
-
-data:extend{flangChip, recipe}
-
-
---------------------------------------
--- local fireArmor = table.deepcopy(data.raw.armor["heavy-armor"])
---
--- fireArmor.name = "flang-chip"
--- fireArmor.icons= {
---    {
---       icon=fireArmor.icon,
---       tint={r=1,g=0,b=0,a=0.3}
---    },
--- }
---
--- local recipe = table.deepcopy(data.raw.recipe["heavy-armor"])
--- recipe.enabled = true
--- recipe.ingredients = {{"copper-plate",200},{"steel-plate",50}}
--- recipe.result = "flang-chip"
---
--- data:extend{fireArmor,recipe}
+data:extend{flangChip}
