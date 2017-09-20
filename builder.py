@@ -31,14 +31,16 @@ def get_mod_name():
 # make the release
 version = get_version()
 release_name = get_mod_name() + "_" + version
-release_folder_path = local_file_path(os.path.join("releases", release_name))
+# release_folder_path = local_file_path(os.path.join("releases", release_name))
+release_folder_path = os.path.join("C:\Users\jrcontre\AppData\Roaming\Factorio\mods", release_name)
 print "release_folder_path", release_folder_path
 
 if (os.path.exists(release_folder_path)):
     print "Release already exists at " + release_folder_path
-    exit(0)
-
-os.mkdir(release_folder_path)
+    shutil.rmtree(release_folder_path, ignore_errors=True)
+    # exit(0)
+else:
+    os.mkdir(release_folder_path)
 
 # copy the files to releases
 whitelisted_files = ["lang", "locale", "prototypes", "graphics", "LICENSE", "control.lua", "data.lua", "info.json"]
