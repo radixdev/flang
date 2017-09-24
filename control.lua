@@ -5,7 +5,14 @@ local PLAYER_ID_TO_ENTITY_MAPPING = {}
 function get_player_last_chip_entity(player_id)
   -- create the table if needed
   if PLAYER_ID_TO_ENTITY_MAPPING["player_last_chip_entity_mapping"] then
-    return PLAYER_ID_TO_ENTITY_MAPPING["player_last_chip_entity_mapping"][player_id]
+    local entity = PLAYER_ID_TO_ENTITY_MAPPING["player_last_chip_entity_mapping"][player_id]
+    if entity and entity.valid then
+      return entity
+    else
+      -- get rid of this hot entity
+      PLAYER_ID_TO_ENTITY_MAPPING["player_last_chip_entity_mapping"][player_id] = nil
+      return nil
+    end
   else
     return nil
   end
@@ -13,7 +20,6 @@ end
 
 function set_player_last_chip_entity(player_id, entity)
   if not PLAYER_ID_TO_ENTITY_MAPPING["player_last_chip_entity_mapping"] then
-    player.print("creating table")
     PLAYER_ID_TO_ENTITY_MAPPING["player_last_chip_entity_mapping"] = {}
   end
 
@@ -48,8 +54,7 @@ function create_editor_window(player, source)
   -- create the info window
   info_window = flang_parent_window_flow.add{
     type="text-box", name="flang_info_window",
-    style="flang_info_window_style",
-    text = "ayyyy\nlmao"
+    style="flang_info_window_style"
   }
 end
 
@@ -89,6 +94,11 @@ script.on_event("flang-open-editor", function(event)
   -- Make sure the entity is a flang chip
   if player.selected and is_entity_flang_chip(player.selected) then
     entity = player.selected
+
+    -- for k,v in pairs(entity_data) do
+    --   player.print("key " .. k)
+    --   player.print("val " .. v)
+    -- end
     source = GlobalData.get_entity_data(entity.unit_number)["source"]
     set_player_last_chip_entity(event.player_index, entity)
     create_editor_window(player, source)

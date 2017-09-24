@@ -44,7 +44,9 @@ function GlobalData.get_entity_data(entity_id)
   if not global[GLOBAL_TABLE_NAME] then
     -- create the table
     global[GLOBAL_TABLE_NAME] = {}
+  end
 
+  if not global[GLOBAL_TABLE_NAME][entity_id] then
     global[GLOBAL_TABLE_NAME][entity_id] = GlobalData.new_data_object()
   end
 
