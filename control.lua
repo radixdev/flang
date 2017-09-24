@@ -8,6 +8,9 @@
 ]]
 
 function create_editor_window(player)
+  -- Get rid of any window that's already present
+  if player.gui.center.parent_window_flow then player.gui.center.parent_window_flow.destroy() end
+
   -- create the parent window for the whole thing
   local parent_window_flow = player.gui.center.parent_window_flow
   if not parent_window_flow then
@@ -15,9 +18,17 @@ function create_editor_window(player)
     parent_window_flow = player.gui.center.add{type = "flow", name = "parent_window_flow", direction = "vertical"}
   end
 
+  -- create the menu
+  menu_flow = parent_window_flow.add{type = "flow", name = "flang_menu_flow", direction = "horizontal"}
+  -- inside the menu we add the buttons and stuff
+  close_button = menu_flow.add{type = "sprite-button", name = "flang_menu_close_button",
+      sprite = "close",
+      style="slot_button_style"}
+
   -- create the editor
-  editor_window = parent_window_flow.add{type="text-box", name="flang_editor_window",
-        caption="Hi", style="flang_editor_window_style"}
+  editor_window = parent_window_flow.add{type="text-box", name="flang_editor_window", style="flang_editor_window_style"}
+
+  -- create the info window
   info_window = parent_window_flow.add{
     type="text-box", name="flang_info_window",
     style="flang_info_window_style",
@@ -25,40 +36,79 @@ function create_editor_window(player)
   }
 end
 
+function close_editor_window(player)
+  if player.gui.center.parent_window_flow then
+    player.gui.center.parent_window_flow.destroy()
+  end
+end
 
-script.on_event({defines.events.on_tick},
-   function (e)
-      -- if e.tick % 60 == 0 then --common trick to reduce how often this runs, we don't want it running every tick, just 1/second
-      --    for index,player in pairs(game.connected_players) do  --loop through all online players on the server
-      --       --if they're wearing our armor
-      --       if player.character and player.get_inventory(defines.inventory.player_armor).get_item_count("fire-armor") >= 1 then
-      --          --create the fire where they're standing
-      --          player.surface.create_entity{name="fire-flame", position=player.position, force="neutral"}
-      --       end
-      --    end
-      -- end
-   end
-)
+script.on_event(defines.events.on_tick, function(event)
+  -- if (event.tick % 60 == 0) then
+  --   for index,player in pairs(game.connected_players) do  --loop through all online players on the server
+  --     player.print("tick " .. event.tick)
+  --   end
+  -- end
+end)
 
 script.on_init(function()
 	for _, player in pairs(game.players) do
-    -- add_top_button(player)
-    player.print("on init")
+    create_editor_window(player)
   end
 end)
 
 script.on_configuration_changed(function()
 	for _, player in pairs(game.players) do
-    -- add_top_button(player)
     player.print("on config changeddd")
     create_editor_window(player)
-
-    -- player.gui.center.add{type="text-box", name="text-here",
-    --   caption="Hi", style="big_box_style"}
   end
 end)
 
 script.on_event(defines.events.on_player_created, function(event)
-	-- add_top_button(game.players[event.player_index])
-  player.print("player created "..event.player_index)
+  player = game.players[event.player_index]
+  create_editor_window(player)
 end)
+
+script.on_event(defines.events.on_gui_click, function(event)
+	local player = game.players[event.player_index]
+
+  -- if the close button was clicked, close the parent window
+	if event.element.name == "flang_menu_close_button" then
+    close_editor_window(player)
+  end
+end)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- script.on_event({defines.events.on_tick},
+--    function (e)
+--       -- if e.tick % 60 == 0 then --common trick to reduce how often this runs, we don't want it running every tick, just 1/second
+--       --    for index,player in pairs(game.connected_players) do  --loop through all online players on the server
+--       --       --if they're wearing our armor
+--       --       if player.character and player.get_inventory(defines.inventory.player_armor).get_item_count("fire-armor") >= 1 then
+--       --          --create the fire where they're standing
+--       --          player.surface.create_entity{name="fire-flame", position=player.position, force="neutral"}
+--       --       end
+--       --    end
+--       -- end
+--    end
+-- )

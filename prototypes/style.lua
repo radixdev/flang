@@ -1,11 +1,3 @@
-data.raw["gui-style"].default.big_box_style = {
-  type = "textbox_style",
-  minimal_height = 40,
-  minimal_width = 40,
-  maximal_height = 1000,
-  maximal_width = 1000
-}
-
 local WIDTH = 800
 
 -- All other widths reference this value
