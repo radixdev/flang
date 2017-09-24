@@ -43,7 +43,7 @@ else:
     os.mkdir(release_folder_path)
 
 # copy the files to releases
-whitelisted_files = ["lang", "locale", "prototypes", "graphics", "LICENSE", "control.lua", "data.lua", "info.json"]
+whitelisted_files = ["lang", "controller", "locale", "prototypes", "graphics", "LICENSE", "control.lua", "data.lua", "info.json"]
 
 for file in whitelisted_files:
     localpath = local_file_path(file)
