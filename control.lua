@@ -7,18 +7,15 @@
 
 ]]
 
---[[
-  Gets a chip object from its game entity
-
-  chip object: {
-    body - Text body of the editor
-  }
-]]
-function get_chip_object(chip_entity)
+function update_controller_source()
 
 end
 
-function create_editor_window(player, chip_entity)
+function get_controller()
+
+end
+
+function create_editor_window(player, flang_controller)
   -- Get rid of any window that's already present
   if player.gui.left.flang_parent_window_flow then player.gui.left.flang_parent_window_flow.destroy() end
 
@@ -37,7 +34,8 @@ function create_editor_window(player, chip_entity)
       style="slot_button_style"}
 
   -- create the editor
-  editor_window = flang_parent_window_flow.add{type="text-box", name="flang_editor_window", style="flang_editor_window_style"}
+  editor_window = flang_parent_window_flow.add{type="text-box", name="flang_editor_window",
+    style="flang_editor_window_style", text=EDITOR_TEXT}
 
   -- create the info window
   info_window = flang_parent_window_flow.add{
@@ -78,4 +76,18 @@ script.on_event(defines.events.on_gui_click, function(event)
 	if event.element.name == "flang_menu_close_button" then
     close_editor_window(player)
   end
+end)
+
+script.on_event(defines.events.on_gui_text_changed, function(event)
+	if event.element.name == "flang_editor_window" then
+    -- EDITOR_TEXT = event.element.text
+  end
+end)
+
+script.on_init(function()
+  -- recreate the controller table from the global table
+end)
+
+script.on_configuration_changed(function()
+  -- recreate the controller table from the global table
 end)
