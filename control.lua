@@ -9,13 +9,13 @@
 
 function create_editor_window(player)
   -- Get rid of any window that's already present
-  if player.gui.center.flang_parent_window_flow then player.gui.center.flang_parent_window_flow.destroy() end
+  if player.gui.left.flang_parent_window_flow then player.gui.left.flang_parent_window_flow.destroy() end
 
   -- create the parent window for the whole thing
-  local flang_parent_window_flow = player.gui.center.flang_parent_window_flow
+  local flang_parent_window_flow = player.gui.left.flang_parent_window_flow
   if not flang_parent_window_flow then
     -- create the parent flow
-    flang_parent_window_flow = player.gui.center.add{type = "flow", name = "flang_parent_window_flow", direction = "vertical"}
+    flang_parent_window_flow = player.gui.left.add{type = "flow", name = "flang_parent_window_flow", direction = "vertical"}
   end
 
   -- create the menu
@@ -37,8 +37,8 @@ function create_editor_window(player)
 end
 
 function close_editor_window(player)
-  if player.gui.center.flang_parent_window_flow then
-    player.gui.center.flang_parent_window_flow.destroy()
+  if player.gui.left.flang_parent_window_flow then
+    player.gui.left.flang_parent_window_flow.destroy()
   end
 end
 
@@ -50,22 +50,46 @@ script.on_event(defines.events.on_tick, function(event)
   -- end
 end)
 
-script.on_init(function()
-	for _, player in pairs(game.players) do
-    create_editor_window(player)
-  end
-end)
+-- script.on_init(function()
+-- 	for _, player in pairs(game.players) do
+--     -- create_editor_window(player)
+--   end
+-- end)
+--
+-- script.on_configuration_changed(function()
+-- 	for _, player in pairs(game.players) do
+--     player.print("on config changed")
+--     -- create_editor_window(player)
+--   end
+-- end)
+--
+-- script.on_event(defines.events.on_player_created, function(event)
+--   player = game.players[event.player_index]
+--   -- create_editor_window(player)
+-- end)
 
-script.on_configuration_changed(function()
-	for _, player in pairs(game.players) do
-    player.print("on config changeddd")
-    create_editor_window(player)
-  end
-end)
+-- script.on_event(defines.events.on_selected_entity_changed, function(event)
+--   player = game.players[event.player_index]
+--   if (player.selected ~= nil) then
+--     player.print("last selected entity " .. player.selected.unit_number)
+--   else
+--     player.print("nil selected entity ")
+--   end
+--
+--   if (player.opened) then
+--     -- player.print("player opened " .. tostring(player.opened))
+--     create_editor_window(player)
+--   end
+-- end)
 
-script.on_event(defines.events.on_player_created, function(event)
+script.on_event("flang-open-editor", function(event)
   player = game.players[event.player_index]
-  create_editor_window(player)
+
+  -- Make sure the entity is a flang chip
+  if player.selected and player.selected.name == "flang-chip" then
+    flangchip_entity = player.selected
+    create_editor_window(player)
+  end
 end)
 
 script.on_event(defines.events.on_gui_click, function(event)
