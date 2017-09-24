@@ -1,5 +1,7 @@
 --[[
-  A whole bunch of shit to save in the global table across saves
+  A whole bunch of shit to save in the global table across saves.
+
+  Note that while values can be Factorio objects, KEYS must be primitives
 
   see http://lua-api.factorio.com/latest/Global.html
 ]]
@@ -18,7 +20,7 @@ function GlobalData.new_data_object()
 end
 
 function GlobalData.write_entity_data(entity_id, data_object)
-  if global[GLOBAL_TABLE_NAME] and global[GLOBAL_TABLE_NAME][entity_id] then
+  if global[GLOBAL_TABLE_NAME] then
     global[GLOBAL_TABLE_NAME][entity_id] = data_object
   end
 end

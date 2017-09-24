@@ -1,24 +1,29 @@
 GlobalData = require("controller.GlobalData")
 
+local PLAYER_ID_TO_ENTITY_MAPPING = {}
+
 function get_player_last_chip_entity(player_id)
   -- create the table if needed
-  if global["player_last_chip_entity_mapping"] then
-    return global["player_last_chip_entity_mapping"][player_id]
+  if PLAYER_ID_TO_ENTITY_MAPPING["player_last_chip_entity_mapping"] then
+    return PLAYER_ID_TO_ENTITY_MAPPING["player_last_chip_entity_mapping"][player_id]
   else
     return nil
   end
 end
 
 function set_player_last_chip_entity(player_id, entity)
-  if not global["player_last_chip_entity_mapping"] then
+  if not PLAYER_ID_TO_ENTITY_MAPPING["player_last_chip_entity_mapping"] then
     player.print("creating table")
-    global["player_last_chip_entity_mapping"] = {}
+    PLAYER_ID_TO_ENTITY_MAPPING["player_last_chip_entity_mapping"] = {}
   end
 
-  global["player_last_chip_entity_mapping"][player_id] = entity
+  PLAYER_ID_TO_ENTITY_MAPPING["player_last_chip_entity_mapping"][player_id] = entity
 end
 
-function create_editor_window(player, entity)
+--[[
+  The source is the preloaded source from storage
+]]
+function create_editor_window(player, source)
   -- Get rid of any window that's already present
   if player.gui.left.flang_parent_window_flow then player.gui.left.flang_parent_window_flow.destroy() end
 
@@ -37,7 +42,6 @@ function create_editor_window(player, entity)
       style="slot_button_style"}
 
   -- create the editor
-  source = GlobalData.get_entity_data(entity.unit_number)["source"]
   editor_window = flang_parent_window_flow.add{type="text-box", name="flang_editor_window",
     style="flang_editor_window_style", text=source}
 
@@ -64,8 +68,10 @@ end
 ]]
 function delete_chip_controller(entity)
   if is_entity_flang_chip(entity) then
-    -- delete from the tables
+    -- delete from global storage
     GlobalData.delete_entity_data(entity.unit_number)
+
+    -- delete from local storage
   end
 end
 
@@ -83,8 +89,9 @@ script.on_event("flang-open-editor", function(event)
   -- Make sure the entity is a flang chip
   if player.selected and is_entity_flang_chip(player.selected) then
     entity = player.selected
-    create_editor_window(player, entity)
+    source = GlobalData.get_entity_data(entity.unit_number)["source"]
     set_player_last_chip_entity(event.player_index, entity)
+    create_editor_window(player, source)
   end
 end)
 
@@ -101,10 +108,8 @@ script.on_event(defines.events.on_gui_text_changed, function(event)
   local player = game.players[event.player_index]
 
 	if event.element.name == "flang_editor_window" then
-    -- update the relevant controller
     text = event.element.text
 
-    -- need the entity!!!
     entity = get_player_last_chip_entity(event.player_index)
     if entity then
       GlobalData.write_entity_source(entity.unit_number, text)
