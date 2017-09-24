@@ -9,27 +9,27 @@
 
 function create_editor_window(player)
   -- Get rid of any window that's already present
-  if player.gui.center.parent_window_flow then player.gui.center.parent_window_flow.destroy() end
+  if player.gui.center.flang_parent_window_flow then player.gui.center.flang_parent_window_flow.destroy() end
 
   -- create the parent window for the whole thing
-  local parent_window_flow = player.gui.center.parent_window_flow
-  if not parent_window_flow then
+  local flang_parent_window_flow = player.gui.center.flang_parent_window_flow
+  if not flang_parent_window_flow then
     -- create the parent flow
-    parent_window_flow = player.gui.center.add{type = "flow", name = "parent_window_flow", direction = "vertical"}
+    flang_parent_window_flow = player.gui.center.add{type = "flow", name = "flang_parent_window_flow", direction = "vertical"}
   end
 
   -- create the menu
-  menu_flow = parent_window_flow.add{type = "flow", name = "flang_menu_flow", direction = "horizontal"}
+  menu_flow = flang_parent_window_flow.add{type = "flow", name = "flang_menu_flow", direction = "horizontal"}
   -- inside the menu we add the buttons and stuff
   close_button = menu_flow.add{type = "sprite-button", name = "flang_menu_close_button",
       sprite = "close",
       style="slot_button_style"}
 
   -- create the editor
-  editor_window = parent_window_flow.add{type="text-box", name="flang_editor_window", style="flang_editor_window_style"}
+  editor_window = flang_parent_window_flow.add{type="text-box", name="flang_editor_window", style="flang_editor_window_style"}
 
   -- create the info window
-  info_window = parent_window_flow.add{
+  info_window = flang_parent_window_flow.add{
     type="text-box", name="flang_info_window",
     style="flang_info_window_style",
     text = "ayyyy\nlmao"
@@ -37,8 +37,8 @@ function create_editor_window(player)
 end
 
 function close_editor_window(player)
-  if player.gui.center.parent_window_flow then
-    player.gui.center.parent_window_flow.destroy()
+  if player.gui.center.flang_parent_window_flow then
+    player.gui.center.flang_parent_window_flow.destroy()
   end
 end
 
