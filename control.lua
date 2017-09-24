@@ -7,7 +7,18 @@
 
 ]]
 
-function create_editor_window(player)
+--[[
+  Gets a chip object from its game entity
+
+  chip object: {
+    body - Text body of the editor
+  }
+]]
+function get_chip_object(chip_entity)
+
+end
+
+function create_editor_window(player, chip_entity)
   -- Get rid of any window that's already present
   if player.gui.left.flang_parent_window_flow then player.gui.left.flang_parent_window_flow.destroy() end
 
@@ -36,7 +47,7 @@ function create_editor_window(player)
   }
 end
 
-function close_editor_window(player)
+function close_editor_window(player, flangchip_entity)
   if player.gui.left.flang_parent_window_flow then
     player.gui.left.flang_parent_window_flow.destroy()
   end
@@ -50,45 +61,13 @@ script.on_event(defines.events.on_tick, function(event)
   -- end
 end)
 
--- script.on_init(function()
--- 	for _, player in pairs(game.players) do
---     -- create_editor_window(player)
---   end
--- end)
---
--- script.on_configuration_changed(function()
--- 	for _, player in pairs(game.players) do
---     player.print("on config changed")
---     -- create_editor_window(player)
---   end
--- end)
---
--- script.on_event(defines.events.on_player_created, function(event)
---   player = game.players[event.player_index]
---   -- create_editor_window(player)
--- end)
-
--- script.on_event(defines.events.on_selected_entity_changed, function(event)
---   player = game.players[event.player_index]
---   if (player.selected ~= nil) then
---     player.print("last selected entity " .. player.selected.unit_number)
---   else
---     player.print("nil selected entity ")
---   end
---
---   if (player.opened) then
---     -- player.print("player opened " .. tostring(player.opened))
---     create_editor_window(player)
---   end
--- end)
-
 script.on_event("flang-open-editor", function(event)
   player = game.players[event.player_index]
 
   -- Make sure the entity is a flang chip
   if player.selected and player.selected.name == "flang-chip" then
     flangchip_entity = player.selected
-    create_editor_window(player)
+    create_editor_window(player, flangchip_entity)
   end
 end)
 
@@ -100,39 +79,3 @@ script.on_event(defines.events.on_gui_click, function(event)
     close_editor_window(player)
   end
 end)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
--- script.on_event({defines.events.on_tick},
---    function (e)
---       -- if e.tick % 60 == 0 then --common trick to reduce how often this runs, we don't want it running every tick, just 1/second
---       --    for index,player in pairs(game.connected_players) do  --loop through all online players on the server
---       --       --if they're wearing our armor
---       --       if player.character and player.get_inventory(defines.inventory.player_armor).get_item_count("fire-armor") >= 1 then
---       --          --create the fire where they're standing
---       --          player.surface.create_entity{name="fire-flame", position=player.position, force="neutral"}
---       --       end
---       --    end
---       -- end
---    end
--- )
