@@ -1,6 +1,8 @@
+require("controller.FlangChip")
 GlobalData = require("controller.GlobalData")
 
 local PLAYER_ID_TO_ENTITY_MAPPING = {}
+local CHIP_TABLE = {}
 
 function get_player_last_chip_entity(player_id)
   -- create the table if needed
@@ -64,21 +66,36 @@ function close_editor_window(player, flangchip_entity)
   end
 end
 
-function is_entity_flang_chip(entity)
-  return entity.name == "flang-chip"
-end
-
 --[[
   Called when the chip dies or is mined.
 ]]
 function delete_chip_controller(entity)
   if is_entity_flang_chip(entity) then
+    id = entity.unit_number
+
     -- delete from global storage
-    GlobalData.delete_entity_data(entity.unit_number)
+    GlobalData.delete_entity_data(id)
 
     -- delete from local storage
+    CHIP_TABLE[id] = nil
   end
 end
+
+function create_chip_controller(entity)
+  if is_entity_flang_chip(entity) then
+    id = entity.unit_number
+
+    -- we have nothing to write to global storage currently
+
+    -- create the local chip
+    chip = FlangChip:new({entity = entity})
+    CHIP_TABLE[id] = chip
+  end
+end
+
+-------------------------- Chip Handling  --------------------
+
+--------------------------------------------------------------
 
 script.on_event(defines.events.on_tick, function(event)
   -- if (event.tick % 60 == 0) then
@@ -87,6 +104,18 @@ script.on_event(defines.events.on_tick, function(event)
   --   end
   -- end
 end)
+
+script.on_event(defines.events.on_built_entity, function(event)
+  create_chip_controller(event.created_entity)
+end)
+
+script.on_event(defines.events.on_robot_built_entity, function(event)
+  create_chip_controller(event.created_entity)
+end)
+
+-------------------------- GUI  ------------------------------
+
+--------------------------------------------------------------
 
 script.on_event("flang-open-editor", function(event)
   player = game.players[event.player_index]
@@ -127,6 +156,10 @@ script.on_event(defines.events.on_gui_text_changed, function(event)
   end
 end)
 
+-------------------------- Deletion --------------------------
+
+--------------------------------------------------------------
+
 script.on_event(defines.events.on_entity_died, function(event)
   delete_chip_controller(event.entity)
 end)
@@ -139,6 +172,10 @@ script.on_event(defines.events.on_robot_mined_entity, function(event)
   delete_chip_controller(event.entity)
 end)
 
+-------------------------- Initialization --------------------
+
+--------------------------------------------------------------
+
 script.on_init(function()
   -- recreate the controller table from the global table
 end)
@@ -146,3 +183,17 @@ end)
 script.on_configuration_changed(function()
   -- recreate the controller table from the global table
 end)
+
+-------------------------- Misc ------------------------------
+
+--------------------------------------------------------------
+
+function is_entity_flang_chip(entity)
+  return entity.name == "flang-chip" and entity.valid
+end
+
+function print(msg)
+  for index,player in pairs(game.connected_players) do
+    player.print(msg)
+  end
+end
