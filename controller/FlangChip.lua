@@ -11,7 +11,11 @@ function FlangChip:new(o)
     source = o.source or "",
     interpreter = nil,
 
-    is_running = false
+    is_running = false,
+
+    -- debug shit
+    -- optional straight to player console function
+    printer = o.printer or nil
   }
 
   setmetatable(o, self)

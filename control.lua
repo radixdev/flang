@@ -88,7 +88,8 @@ function create_chip_controller(entity)
     -- we have nothing to write to global storage currently
 
     -- create the local chip
-    chip = FlangChip:new({entity = entity})
+    printer_function = function(msg) player_log_print(msg) end
+    chip = FlangChip:new({entity = entity, printer = printer_function})
     CHIP_TABLE[id] = chip
   end
 end
@@ -159,9 +160,7 @@ script.on_event(defines.events.on_gui_text_changed, function(event)
       -- Local setting
       -- The chip should exist already
       chip = CHIP_TABLE[id]
-      if chip then
-        
-      end
+      chip:update_source(text)
     end
   end
 end)
@@ -202,7 +201,7 @@ function is_entity_flang_chip(entity)
   return entity.name == "flang-chip" and entity.valid
 end
 
-function print(msg)
+function player_log_print(msg)
   for index,player in pairs(game.connected_players) do
     player.print(msg)
   end
