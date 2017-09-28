@@ -2,6 +2,8 @@ require("base.lexer")
 require("base.parser")
 require("base.interpreter")
 
+Flang.DEBUG_LOGGING = true
+
 filename = "samples/complete.flang"
 local f = assert(io.open(filename, "r"))
 local t = f:read("*all")
@@ -64,4 +66,4 @@ assertEquals("asShouldBe2p5", 2.5)
 
 assertEquals("eForShouldBe10000", 10000)
 print("========ALL CHECKS PASSED=======")
-print(string.format("elapsed time: %.2f\n", os.clock() - start_time))
+print(string.format("elapsed time: %.2f\n", elapsed))

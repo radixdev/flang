@@ -151,7 +151,17 @@ script.on_event(defines.events.on_gui_text_changed, function(event)
 
     entity = get_player_last_chip_entity(event.player_index)
     if entity then
-      GlobalData.write_entity_source(entity.unit_number, text)
+      id = entity.unit_number
+
+      -- Globals
+      GlobalData.write_entity_source(id, text)
+
+      -- Local setting
+      -- The chip should exist already
+      chip = CHIP_TABLE[id]
+      if chip then
+        
+      end
     end
   end
 end)

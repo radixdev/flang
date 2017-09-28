@@ -21,7 +21,8 @@ function Interpreter:new(o)
 
   o = {
     parser = o.parser,
-    symbol_table_global = {}
+    symbol_table_global = {},
+    tree = o.parser:parse()
   }
 
   setmetatable(o, self)
@@ -38,15 +39,13 @@ end
 -----------------------------------------------------------------------
 
 function Interpreter:interpret()
-  local tree = self.parser:parse()
-
   if (Flang.DEBUG_LOGGING) then
     print("====== PARSE TREE =====")
-    tree:display(0)
+    self.tree:display(0)
     print("=======================")
   end
 
-  return self:visit(tree)
+  return self:visit(self.tree)
 end
 
 -----------------------------------------------------------------------
