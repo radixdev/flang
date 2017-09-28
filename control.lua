@@ -99,11 +99,15 @@ end
 --------------------------------------------------------------
 
 script.on_event(defines.events.on_tick, function(event)
-  -- if (event.tick % 60 == 0) then
-  --   for index,player in pairs(game.connected_players) do  --loop through all online players on the server
-  --     player.print("tick " .. event.tick)
-  --   end
-  -- end
+  if (event.tick % (60*5) == 0) then
+    for entity_id, chip in pairs(CHIP_TABLE) do
+      player_log_print(chip.source)
+      chip:start_execution()
+      result = chip:execute()
+
+      print_pairs(result)
+    end
+  end
 end)
 
 script.on_event(defines.events.on_built_entity, function(event)
@@ -125,10 +129,6 @@ script.on_event("flang-open-editor", function(event)
   if player.selected and is_entity_flang_chip(player.selected) then
     entity = player.selected
 
-    -- for k,v in pairs(entity_data) do
-    --   player.print("key " .. k)
-    --   player.print("val " .. v)
-    -- end
     source = GlobalData.get_entity_data(entity.unit_number)["source"]
     set_player_last_chip_entity(event.player_index, entity)
     create_editor_window(player, source)
@@ -204,5 +204,12 @@ end
 function player_log_print(msg)
   for index,player in pairs(game.connected_players) do
     player.print(msg)
+  end
+end
+
+function print_pairs(table)
+  for k,v in pairs(table) do
+    player_log_print("key " .. k)
+    player_log_print("val " .. v)
   end
 end

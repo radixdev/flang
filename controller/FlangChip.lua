@@ -1,3 +1,7 @@
+require("lang.base.lexer")
+require("lang.base.parser")
+require("lang.base.interpreter")
+
 FlangChip = {}
 FlangChip.__index = FlangChip
 
@@ -41,6 +45,8 @@ function FlangChip:start_execution()
   else
     self:on_error(result)
   end
+
+  return result
 end
 
 --[[
