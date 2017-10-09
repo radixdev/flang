@@ -1,5 +1,4 @@
-require("base.lexer")
-require("base.parser")
+require("base.flang_import")
 
 filename = "samples/eq2.flang"
 local f = assert(io.open(filename, "r"))

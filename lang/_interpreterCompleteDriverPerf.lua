@@ -1,6 +1,4 @@
-require("base.lexer")
-require("base.parser")
-require("base.interpreter")
+require("base.flang_import")
 
 Flang.DEBUG_LOGGING = false
 
@@ -19,5 +17,5 @@ for i=0, 100 do
 end
 local elapsed = os.clock() - start_time
 
-print(string.format("elapsed time: %.2f", elapsed))
-print(string.format("elapsed time per execution: %.2f", elapsed / 100.0000))
+print(string.format("elapsed time: %.5f", elapsed))
+print(string.format("elapsed time per execution: %.5f", elapsed / 100.0000))

@@ -1,6 +1,4 @@
-require("base.lexer")
-require("base.parser")
-require("base.interpreter")
+require("base.flang_import")
 
 filename = "samples/comment1.flang"
 local f = assert(io.open(filename, "r"))
@@ -26,4 +24,4 @@ for key,value in pairs(symbol_table) do
   print(key .. " = " .. tostring(value))
 end
 
-print(string.format("elapsed time: %.2f\n", os.clock() - start_time))
+print(string.format("elapsed time: %.4f\n", os.clock() - start_time))

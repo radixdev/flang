@@ -1,4 +1,3 @@
-if not Flang then Flang = {} end
 Character = {}
 Flang.Character = Character
 Character.__index = Character

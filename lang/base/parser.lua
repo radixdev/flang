@@ -1,9 +1,3 @@
-require("base.symbols")
-require("base.token")
-require("base.node")
-require("base.util")
-
-if not Flang then Flang = {} end
 Parser = {}
 Flang.Parser = Parser
 Parser.__index = Parser

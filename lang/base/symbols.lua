@@ -1,6 +1,3 @@
-require("base.util")
-
-if not Flang then Flang = {} end
 Symbols = {}
 Flang.Symbols = Symbols
 Symbols.__index = Symbols
@@ -12,7 +9,7 @@ Symbols.ELSEIF = "elseif"
 Symbols.ELSE = "else"
 Symbols.FOR = "for"
 
-Symbols.KEYWORDS = Util.Set{
+Symbols.KEYWORDS = Flang.Util.Set{
   Symbols.IF,
   Symbols.ELSE,
   Symbols.ELSEIF,
@@ -41,7 +38,7 @@ Symbols.RBRACKET = "}"
 Symbols.SEMICOLON = ";"
 Symbols.COMMA = ","
 
-Symbols.ONE_CHARACTER_SYMBOLS = Util.Set{
+Symbols.ONE_CHARACTER_SYMBOLS = Flang.Util.Set{
   Symbols.EQUALS,
   Symbols.LPAREN, Symbols.RPAREN,
   Symbols.LBRACKET, Symbols.RBRACKET,
@@ -64,7 +61,7 @@ Symbols.ASSIGN_MUL = "*="
 Symbols.ASSIGN_DIV = "/="
 Symbols.SINGLE_LINE_COMMENT_START = "//"
 
-Symbols.TWO_CHARACTER_SYMBOLS = Util.Set{
+Symbols.TWO_CHARACTER_SYMBOLS = Flang.Util.Set{
   Symbols.CMP_EQUALS,
   Symbols.CMP_NEQUALS,
   Symbols.LTE,
@@ -84,13 +81,13 @@ Symbols.TWO_CHARACTER_SYMBOLS = Util.Set{
 -- NUMBER_STARTCHARS     = string.digits
 -- NUMBER_CHARS          = string.digits + "."
 
-Symbols.IDENTIFIER_STARTCHARS = Util.Set{"a", "b", "c", "d", "e", "f", "g", "h",
+Symbols.IDENTIFIER_STARTCHARS = Flang.Util.Set{"a", "b", "c", "d", "e", "f", "g", "h",
   "i", "j", "k", "l", "m", "n", "o", "p",
   "q", "r", "s", "t", "u", "v", "w", "x", "y", "z",
   "A", "B", "C", "D", "E", "F", "G", "H", "I",
   "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"
 }
-Symbols.IDENTIFIER_CHARS = Util.Set{"a", "b", "c", "d", "e", "f", "g", "h",
+Symbols.IDENTIFIER_CHARS = Flang.Util.Set{"a", "b", "c", "d", "e", "f", "g", "h",
   "i", "j", "k", "l", "m", "n", "o", "p",
   "q", "r", "s", "t", "u", "v", "w", "x", "y", "z",
 
@@ -102,12 +99,12 @@ Symbols.IDENTIFIER_CHARS = Util.Set{"a", "b", "c", "d", "e", "f", "g", "h",
   "_"
 }
 
-Symbols.NUMBER_STARTCHARS     = Util.Set{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"}
-Symbols.NUMBER_CHARS          = Util.Set{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "."}
+Symbols.NUMBER_STARTCHARS     = Flang.Util.Set{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"}
+Symbols.NUMBER_CHARS          = Flang.Util.Set{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "."}
 
-Symbols.STRING_STARTCHARS = Util.Set{"'", '"'}
+Symbols.STRING_STARTCHARS = Flang.Util.Set{"'", '"'}
 Symbols.NEWLINE = "\n"
-Symbols.WHITESPACE_CHARS  = Util.Set{" ", "\t", Symbols.NEWLINE}
+Symbols.WHITESPACE_CHARS  = Flang.Util.Set{" ", "\t", Symbols.NEWLINE}
 
 -----------------------------------------------------------------------
 -- TokenTypes for things other than symbols and keywords
@@ -124,37 +121,37 @@ Symbols.EOF                = "Eof"
 -----------------------------------------------------------------------
 
 function Symbols.isKeyword(e)
-  return Util.contains(Symbols.KEYWORDS, e)
+  return Flang.Util.contains(Symbols.KEYWORDS, e)
 end
 
 function Symbols.isOneCharacterSymbol(e)
-  return Util.contains(Symbols.ONE_CHARACTER_SYMBOLS, e)
+  return Flang.Util.contains(Symbols.ONE_CHARACTER_SYMBOLS, e)
 end
 
 function Symbols.isTwoCharacterSymbol(e)
-  return Util.contains(Symbols.TWO_CHARACTER_SYMBOLS, e)
+  return Flang.Util.contains(Symbols.TWO_CHARACTER_SYMBOLS, e)
 end
 
 function Symbols.isWhitespace(e)
-  return Util.contains(Symbols.WHITESPACE_CHARS, e)
+  return Flang.Util.contains(Symbols.WHITESPACE_CHARS, e)
 end
 
 function Symbols.isIdentifierStartChar(e)
-  return Util.contains(Symbols.IDENTIFIER_STARTCHARS, e)
+  return Flang.Util.contains(Symbols.IDENTIFIER_STARTCHARS, e)
 end
 
 function Symbols.isIdentifierChar(e)
-  return Util.contains(Symbols.IDENTIFIER_CHARS, e)
+  return Flang.Util.contains(Symbols.IDENTIFIER_CHARS, e)
 end
 
 function Symbols.isNumberStartChar(e)
-  return Util.contains(Symbols.NUMBER_STARTCHARS, e)
+  return Flang.Util.contains(Symbols.NUMBER_STARTCHARS, e)
 end
 
 function Symbols.isNumberChar(e)
-  return Util.contains(Symbols.NUMBER_CHARS, e)
+  return Flang.Util.contains(Symbols.NUMBER_CHARS, e)
 end
 
 function Symbols.isStringStartChar(e)
-  return Util.contains(Symbols.STRING_STARTCHARS, e)
+  return Flang.Util.contains(Symbols.STRING_STARTCHARS, e)
 end
