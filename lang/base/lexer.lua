@@ -1,7 +1,3 @@
-require("base.scanner")
-require("base.token")
-require("base.util")
-
 if not Flang then Flang = {} end
 Lexer = {}
 Flang.Lexer = Lexer

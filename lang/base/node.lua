@@ -1,5 +1,3 @@
-require("base.util")
-
 if not Flang then Flang = {} end
 Node = {}
 Flang.Node = Node

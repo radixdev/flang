@@ -6,9 +6,6 @@ Interpreter for the Flang language ;)
 
 ]]
 
-require("base.parser")
-require("base.util")
-
 if not Flang then Flang = {} end
 Interpreter = {}
 Flang.Interpreter = Interpreter
