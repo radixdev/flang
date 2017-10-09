@@ -1,6 +1,4 @@
-require("base.lexer")
-require("base.parser")
-require("base.interpreter")
+require("base.flang_import")
 
 filename = "samples/complete.flang"
 local f = assert(io.open(filename, "r"))
@@ -11,6 +9,7 @@ print("===============")
 print(t)
 print("===============")
 
+Flang.DEBUG_LOGGING = false
 local start_time = os.clock()
 lexer = Flang.Lexer:new({sourceText = t})
 parser = Flang.Parser:new({lexer = lexer})
@@ -64,4 +63,4 @@ assertEquals("asShouldBe2p5", 2.5)
 
 assertEquals("eForShouldBe10000", 10000)
 print("========ALL CHECKS PASSED=======")
-print(string.format("elapsed time: %.2f\n", os.clock() - start_time))
+print(string.format("elapsed time: %.2f\n", elapsed - start_time))
