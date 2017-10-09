@@ -1,4 +1,3 @@
-if not Flang then Flang = {} end
 Symbols = {}
 Flang.Symbols = Symbols
 Symbols.__index = Symbols

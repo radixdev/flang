@@ -6,7 +6,6 @@ Interpreter for the Flang language ;)
 
 ]]
 
-if not Flang then Flang = {} end
 Interpreter = {}
 Flang.Interpreter = Interpreter
 Interpreter.__index = Interpreter

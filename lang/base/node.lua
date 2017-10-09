@@ -1,4 +1,3 @@
-if not Flang then Flang = {} end
 Node = {}
 Flang.Node = Node
 Node.__index = Node

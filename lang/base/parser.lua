@@ -1,4 +1,3 @@
-if not Flang then Flang = {} end
 Parser = {}
 Flang.Parser = Parser
 Parser.__index = Parser

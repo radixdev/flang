@@ -1,4 +1,3 @@
-if not Flang then Flang = {} end
 Lexer = {}
 Flang.Lexer = Lexer
 Lexer.__index = Lexer

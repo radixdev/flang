@@ -1,4 +1,3 @@
-if not Flang then Flang = {} end
 Token = {}
 Flang.Token = Token
 Token.__index = Token

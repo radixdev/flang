@@ -2,7 +2,6 @@
 A Scanner object reads through the sourceText
 and returns one character at a time.
 --]]
-if not Flang then Flang = {} end
 Scanner = {}
 Flang.Scanner = Scanner
 Scanner.__index = Scanner

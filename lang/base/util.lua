@@ -1,4 +1,3 @@
-if not Flang then Flang = {} end
 Util = {}
 Flang.Util = Util
 Util.__index = Util
