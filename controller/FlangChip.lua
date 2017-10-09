@@ -1,6 +1,4 @@
-require("lang.base.lexer")
-require("lang.base.parser")
-require("lang.base.interpreter")
+require("lang.base.flang_import")
 
 FlangChip = {}
 FlangChip.__index = FlangChip

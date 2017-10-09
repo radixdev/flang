@@ -45,9 +45,16 @@ function create_editor_window(player, source)
   -- create the menu
   menu_flow = flang_parent_window_flow.add{type = "flow", name = "flang_menu_flow", direction = "horizontal"}
   -- inside the menu we add the buttons and stuff
+  button_style = "slot_button_style"
   close_button = menu_flow.add{type = "sprite-button", name = "flang_menu_close_button",
       sprite = "close",
-      style="slot_button_style"}
+      style=button_style}
+  play_button = menu_flow.add{type = "sprite-button", name = "flang_menu_play_button",
+      sprite = "play",
+      style=button_style}
+  stop_button = menu_flow.add{type = "sprite-button", name = "flang_menu_stop_button",
+      sprite = "stop",
+      style=button_style}
 
   -- create the editor
   editor_window = flang_parent_window_flow.add{type="text-box", name="flang_editor_window",
@@ -100,13 +107,13 @@ end
 
 script.on_event(defines.events.on_tick, function(event)
   if (event.tick % (60*5) == 0) then
-    for entity_id, chip in pairs(CHIP_TABLE) do
-      player_log_print(chip.source)
-      chip:start_execution()
-      result = chip:execute()
-
-      print_pairs(result)
-    end
+    -- for entity_id, chip in pairs(CHIP_TABLE) do
+    --   player_log_print(chip.source)
+    --   chip:start_execution()
+    --   result = chip:execute()
+    --
+    --   print_pairs(result)
+    -- end
   end
 end)
 
@@ -148,18 +155,18 @@ script.on_event(defines.events.on_gui_text_changed, function(event)
   local player = game.players[event.player_index]
 
 	if event.element.name == "flang_editor_window" then
-    text = event.element.text
+    local text = event.element.text
 
-    entity = get_player_last_chip_entity(event.player_index)
+    local entity = get_player_last_chip_entity(event.player_index)
     if entity then
-      id = entity.unit_number
+      local id = entity.unit_number
 
       -- Globals
       GlobalData.write_entity_source(id, text)
 
       -- Local setting
       -- The chip should exist already
-      chip = CHIP_TABLE[id]
+      local chip = CHIP_TABLE[id]
       chip:update_source(text)
     end
   end
@@ -187,10 +194,17 @@ end)
 
 script.on_init(function()
   -- recreate the controller table from the global table
+  player_log_print("on init")
 end)
 
 script.on_configuration_changed(function()
   -- recreate the controller table from the global table
+  player_log_print("on config changed")
+end)
+
+script.on_load(function()
+  -- recreate the controller table from the global table
+  -- player_log_print("on load changed")
 end)
 
 -------------------------- Misc ------------------------------
