@@ -101,7 +101,7 @@ function create_chip_controller(entity)
   end
 end
 
--------------------------- Chip Handling  --------------------
+-------------------------- Chip Handling ---------------------
 
 --------------------------------------------------------------
 
@@ -125,7 +125,7 @@ script.on_event(defines.events.on_robot_built_entity, function(event)
   create_chip_controller(event.created_entity)
 end)
 
--------------------------- GUI  ------------------------------
+-------------------------- GUI -------------------------------
 
 --------------------------------------------------------------
 

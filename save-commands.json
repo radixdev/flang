@@ -1,0 +1,5 @@
+{
+    "commands": [
+        "** : python builder.py"
+    ]
+}

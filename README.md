@@ -19,3 +19,8 @@ The drivers run different functionality modules of the language. For example, th
 # example
 
 A complete example of Flang can be found in the `samples/complete.flang` file. Running `lua _interpreterCompleteDriver.lua` will run this example and assertions. An example successful output (with lexer tokens) is printed below:
+
+# building to mod
+The builder.py script creates a zipped mod file.
+
+If using Atom, this script will be run on-save automatically, see https://atom.io/packages/save-commands
