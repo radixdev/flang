@@ -2,7 +2,7 @@ Util = {}
 Flang.Util = Util
 Util.__index = Util
 
-Flang.DEBUG_LOGGING = true
+Flang.DEBUG_LOGGING = false
 
 --[[
 Wraps a string or object tostring inside single quotes

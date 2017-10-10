@@ -1,5 +1,4 @@
-require("base.scanner")
-require("base.character")
+require("base.flang_import")
 
 -- load our file
 filename = "samples/1.flang"
@@ -15,7 +14,7 @@ scanner = Flang.Scanner:new({sourceText = t})
 while true do
   char = scanner:get()
   print(tostring(char))
-  
+
   if (char.cargo == Flang.Character.ENDMARK) then
     break
   end

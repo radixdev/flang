@@ -1,6 +1,4 @@
-require("base.character")
-require("base.lexer")
-require("base.symbols")
+require("base.flang_import")
 
 -- load our file
 filename = "samples/comment1.flang"
