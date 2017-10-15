@@ -13,7 +13,7 @@ function FlangChip:new(o)
     source = o.source or "",
     interpreter = nil,
 
-    is_running = false,
+    is_running = o.is_running or false,
 
     -- debug shit
     -- optional straight to player console function

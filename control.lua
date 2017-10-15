@@ -213,6 +213,7 @@ script.on_load(function()
     chip = FlangChip:new({
       entity = chip_data["entity"],
       source = chip_data["source"],
+      is_running = chip_data["is_running"],
       printer = printer_function
     })
     CHIP_TABLE[entity_id] = chip

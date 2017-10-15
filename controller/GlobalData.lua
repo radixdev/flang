@@ -17,6 +17,8 @@ function GlobalData.new_data_object()
   return {
     -- The code in the editor
     source = "",
+    -- is the code running or nah?
+    is_running = false,
     -- the entity referenced by the id
     entity = nil
   }
