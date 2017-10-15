@@ -153,18 +153,19 @@ script.on_event(defines.events.on_gui_click, function(event)
     if entity then
       local id = entity.unit_number
 
-      -- Local setting
+      GlobalData.write_entity_is_running(id, true)
+
       -- The chip should exist already
       local chip = CHIP_TABLE[id]
       chip:start_execution()
-      -- chip:execute()
     end
   elseif event.element.name == "flang_menu_stop_button" then
     local entity = get_player_last_chip_entity(event.player_index)
     if entity then
       local id = entity.unit_number
 
-      -- Local setting
+      GlobalData.write_entity_is_running(id, false)
+
       -- The chip should exist already
       local chip = CHIP_TABLE[id]
       chip:stop_execution()
@@ -189,7 +190,6 @@ script.on_event(defines.events.on_gui_text_changed, function(event)
       -- Local setting
       -- The chip should exist already
       local chip = CHIP_TABLE[id]
-      --
       chip:update_source(text.."\n")
     end
   end
@@ -260,7 +260,6 @@ function player_log_print(msg, log_to_console)
   end
 end
 
--- TODO testddd
 function player_info_window_print(msg, should_clear)
   if game == nil then
     return

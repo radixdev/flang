@@ -52,18 +52,28 @@ function FlangChip:start_execution()
 end
 
 --[[
-  Stop the program.
+  Stops the program.
   Does not modify the interpreter
 ]]
 function FlangChip:stop_execution()
   if (self.is_running) then
-    self.printer("execution stopped.")
+    self.printer("execution stopped")
   end
   self.is_running = false
 end
 
 function FlangChip:execute()
   if not self.is_running then return end
+
+  if not self.interpreter then
+    -- create the interpreter
+    self:start_execution()
+
+    -- if the interpreter failed here, then just return
+    -- this check is duplicated so we don't keep trying to create the interpreter
+    -- and error loop into oblivion
+    if not self.is_running then return end
+  end
 
   local success, result = pcall(self.interpreter.interpret, self.interpreter)
   if success then
@@ -84,10 +94,6 @@ function FlangChip:on_error(error)
   self.printer(tostring(error))
 end
 
-function FlangChip:__tostring()
-  print("source:\n" .. self.source)
-end
-
 function create_flang_interpreter(source)
   local lexer = Flang.Lexer:new({sourceText = source})
   local parser = Flang.Parser:new({lexer = lexer})
@@ -95,7 +101,11 @@ function create_flang_interpreter(source)
   return interpreter
 end
 
-Flang.DEBUG_LOGGING = true
+function FlangChip:__tostring()
+  print("source:\n" .. self.source)
+end
+
+-- Flang.DEBUG_LOGGING = true
 
 -- -- Routes all print statements to the player chat.
 -- -- SHOULD NOT BE PRESENT IN PRODUCTION!
