@@ -69,7 +69,7 @@ end
 function FlangChip:on_error(error)
   -- fuck
 
-  -- Call a callback?
+  -- todo Call a callback?
 end
 
 function FlangChip:__tostring()

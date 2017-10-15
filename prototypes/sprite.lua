@@ -4,8 +4,8 @@ data:extend({
     name = "close",
   	filename = "__Flang__/graphics/close.png",
   	priority = "extra-high-no-scale",
-  	width = 32,
-  	height = 32,
+  	width = 64,
+  	height = 64,
   	scale = 1,
   },
   {

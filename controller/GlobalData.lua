@@ -15,8 +15,18 @@ local GLOBAL_TABLE_NAME = "chip_data"
 ]]
 function GlobalData.new_data_object()
   return {
-    source = ""
+    -- The code in the editor
+    source = "",
+    -- the entity referenced by the id
+    entity = nil
   }
+end
+
+function createGlobalTable()
+  if not global[GLOBAL_TABLE_NAME] then
+    -- create the table
+    global[GLOBAL_TABLE_NAME] = {}
+  end
 end
 
 function GlobalData.write_entity_data(entity_id, data_object)
@@ -41,10 +51,7 @@ end
   If the entity hasn't been saved, then the data object will be empty
 ]]
 function GlobalData.get_entity_data(entity_id)
-  if not global[GLOBAL_TABLE_NAME] then
-    -- create the table
-    global[GLOBAL_TABLE_NAME] = {}
-  end
+  createGlobalTable()
 
   if not global[GLOBAL_TABLE_NAME][entity_id] then
     global[GLOBAL_TABLE_NAME][entity_id] = GlobalData.new_data_object()
@@ -52,6 +59,14 @@ function GlobalData.get_entity_data(entity_id)
 
   -- get the table
   return global[GLOBAL_TABLE_NAME][entity_id]
+end
+
+--[[
+  Reads whatever the fuck is present in the global table at the time of reading.
+  Does not modify the global table in any way!
+]]
+function GlobalData.get_all_entities()
+  return global[GLOBAL_TABLE_NAME] or {}
 end
 
 return GlobalData

@@ -92,7 +92,10 @@ function create_chip_controller(entity)
   if is_entity_flang_chip(entity) then
     id = entity.unit_number
 
-    -- we have nothing to write to global storage currently
+    -- create the first record of the entity
+    object_data = GlobalData.new_data_object()
+    object_data.entity = entity
+    GlobalData.write_entity_data(id, object_data)
 
     -- create the local chip
     printer_function = function(msg) player_log_print(msg) end
@@ -203,8 +206,17 @@ script.on_configuration_changed(function()
 end)
 
 script.on_load(function()
+  printer_function = function(msg) player_log_print(msg) end
+
   -- recreate the controller table from the global table
-  -- player_log_print("on load changed")
+  for entity_id, chip_data in pairs(GlobalData.get_all_entities()) do
+    chip = FlangChip:new({
+      entity = chip_data["entity"],
+      source = chip_data["source"],
+      printer = printer_function
+    })
+    CHIP_TABLE[entity_id] = chip
+  end
 end)
 
 -------------------------- Misc ------------------------------
@@ -216,6 +228,10 @@ function is_entity_flang_chip(entity)
 end
 
 function player_log_print(msg)
+  if game == nil then
+    return
+  end
+
   for index,player in pairs(game.connected_players) do
     player.print(msg)
   end
