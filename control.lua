@@ -63,7 +63,8 @@ function create_editor_window(player, source)
   -- create the info window
   info_window = flang_parent_window_flow.add{
     type="text-box", name="flang_info_window",
-    style="flang_info_window_style"
+    style="flang_info_window_style",
+    text="nothing here... yet"
   }
 end
 
@@ -110,13 +111,9 @@ end
 
 script.on_event(defines.events.on_tick, function(event)
   if (event.tick % (60*5) == 0) then
-    -- for entity_id, chip in pairs(CHIP_TABLE) do
-    --   player_log_print(chip.source)
-    --   chip:start_execution()
-    --   result = chip:execute()
-    --
-    --   print_pairs(result)
-    -- end
+    for entity_id, chip in pairs(CHIP_TABLE) do
+      result = chip:execute()
+    end
   end
 end)
 
@@ -151,6 +148,28 @@ script.on_event(defines.events.on_gui_click, function(event)
   -- if the close button was clicked, close the parent window
 	if event.element.name == "flang_menu_close_button" then
     close_editor_window(player)
+  elseif event.element.name == "flang_menu_play_button" then
+    local entity = get_player_last_chip_entity(event.player_index)
+    if entity then
+      local id = entity.unit_number
+
+      GlobalData.write_entity_is_running(id, true)
+
+      -- The chip should exist already
+      local chip = CHIP_TABLE[id]
+      chip:start_execution()
+    end
+  elseif event.element.name == "flang_menu_stop_button" then
+    local entity = get_player_last_chip_entity(event.player_index)
+    if entity then
+      local id = entity.unit_number
+
+      GlobalData.write_entity_is_running(id, false)
+
+      -- The chip should exist already
+      local chip = CHIP_TABLE[id]
+      chip:stop_execution()
+    end
   end
 end)
 
@@ -163,14 +182,15 @@ script.on_event(defines.events.on_gui_text_changed, function(event)
     local entity = get_player_last_chip_entity(event.player_index)
     if entity then
       local id = entity.unit_number
+      -- We add a newline since the gui editor apparently doesn't have EOF
 
       -- Globals
-      GlobalData.write_entity_source(id, text)
+      GlobalData.write_entity_source(id, text.."\n")
 
       -- Local setting
       -- The chip should exist already
       local chip = CHIP_TABLE[id]
-      chip:update_source(text)
+      chip:update_source(text.."\n")
     end
   end
 end)
@@ -206,7 +226,9 @@ script.on_configuration_changed(function()
 end)
 
 script.on_load(function()
-  printer_function = function(msg) player_log_print(msg) end
+  printer_function = function(...)
+    player_info_window_print(...)
+  end
 
   -- recreate the controller table from the global table
   for entity_id, chip_data in pairs(GlobalData.get_all_entities()) do
@@ -228,13 +250,34 @@ function is_entity_flang_chip(entity)
   return entity.name == "flang-chip" and entity.valid
 end
 
-function player_log_print(msg)
+function player_log_print(msg, log_to_console)
   if game == nil then
     return
   end
 
   for index,player in pairs(game.connected_players) do
     player.print(msg)
+  end
+end
+
+function player_info_window_print(msg, should_clear)
+  if game == nil then
+    return
+  end
+
+  for index,player in pairs(game.connected_players) do
+    if player.gui.left.flang_parent_window_flow and player.gui.left.flang_parent_window_flow.flang_info_window then
+      info_window = player.gui.left.flang_parent_window_flow.flang_info_window
+      if (should_clear) then
+        info_window.text = ""
+      end
+
+      if (info_window.text == "") then
+        info_window.text = msg
+      else
+        info_window.text = info_window.text .. "\n" .. msg
+      end
+    end
   end
 end
 

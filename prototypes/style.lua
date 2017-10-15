@@ -13,7 +13,7 @@ data.raw["gui-style"].default.flang_editor_window_style = {
 }
 
 local INFO_WINDOW_WIDTH = WIDTH
-local INFO_WINDOW_HEIGHT = 200
+local INFO_WINDOW_HEIGHT = 350
 data.raw["gui-style"].default.flang_info_window_style = {
   type = "textbox_style",
   minimal_height = INFO_WINDOW_HEIGHT,

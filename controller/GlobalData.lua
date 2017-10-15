@@ -43,6 +43,12 @@ function GlobalData.write_entity_source(entity_id, source)
   GlobalData.write_entity_data(entity_id, data)
 end
 
+function GlobalData.write_entity_is_running(entity_id, is_running)
+  local data = GlobalData.get_entity_data(entity_id)
+  data["is_running"] = is_running
+  GlobalData.write_entity_data(entity_id, data)
+end
+
 function GlobalData.delete_entity_data(entity_id)
   GlobalData.write_entity_data(entity_id, nil)
 end

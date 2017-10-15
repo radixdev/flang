@@ -122,7 +122,6 @@ function Interpreter:Assign(node)
   local token_type = node.assignment_token.type
 
   if (token_type == Symbols.EQUALS) then
-    -- self.symbol_table_global[variable_name] = self:visit(node.right)
     self:set_variable(variable_name, self:visit(node.right))
     return
   end
