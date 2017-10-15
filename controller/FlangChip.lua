@@ -17,7 +17,7 @@ function FlangChip:new(o)
 
     -- debug shit
     -- optional straight to player console function
-    printer = o.printer or nil
+    printer = o.printer
   }
 
   setmetatable(o, self)
@@ -39,10 +39,11 @@ function FlangChip:start_execution()
   -- recreate everything
   local success, result = pcall(create_flang_interpreter,self.source)
   if success then
-    self.printer("success on start")
     self.interpreter = result
     self.is_running = true
+    self.printer("compilation successful", true)
   else
+    self.printer("error in start_execution")
     self:on_error(result)
     self.is_running = false
   end
@@ -61,12 +62,8 @@ end
 function FlangChip:execute()
   if not self.is_running then return end
 
-  -- local success, result = pcall(self.interpreter.interpret, self.interpreter)
-  success = true
-  self.interpreter:interpret()
+  local success, result = pcall(self.interpreter.interpret, self.interpreter)
   if success then
-    self.printer("success on execution")
-
     -- result is our symbol table
     for k,v in pairs(self.interpreter.symbol_table_global) do
       self.printer("key " .. k)
@@ -79,11 +76,9 @@ function FlangChip:execute()
 end
 
 function FlangChip:on_error(error)
+  -- fuck
   self.printer("got error!")
   self.printer(tostring(error))
-  -- fuck
-
-  -- todo Call a callback?
 end
 
 function FlangChip:__tostring()
@@ -99,9 +94,9 @@ end
 
 Flang.DEBUG_LOGGING = true
 
--- Routes all print statements to the player chat.
--- SHOULD NOT BE PRESENT IN PRODUCTION!
-local oldprint = print
-print = function(...)
-  player_log_print(...)
-end
+-- -- Routes all print statements to the player chat.
+-- -- SHOULD NOT BE PRESENT IN PRODUCTION!
+-- local oldprint = print
+-- print = function(...)
+--   player_info_window_print(..., false)
+-- end
