@@ -41,9 +41,9 @@ function FlangChip:start_execution()
   if success then
     self.interpreter = result
     self.is_running = true
-    self.printer("compilation successful", true)
+    self.printer("interpreter execution successful", true)
   else
-    self.printer("error in start_execution")
+    self.printer("interpreter error", true)
     self:on_error(result)
     self.is_running = false
   end
@@ -56,6 +56,9 @@ end
   Does not modify the interpreter
 ]]
 function FlangChip:stop_execution()
+  if (self.is_running) then
+    self.printer("execution stopped.")
+  end
   self.is_running = false
 end
 

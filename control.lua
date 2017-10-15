@@ -63,7 +63,8 @@ function create_editor_window(player, source)
   -- create the info window
   info_window = flang_parent_window_flow.add{
     type="text-box", name="flang_info_window",
-    style="flang_info_window_style"
+    style="flang_info_window_style",
+    text="nothing here... yet"
   }
 end
 
@@ -110,13 +111,9 @@ end
 
 script.on_event(defines.events.on_tick, function(event)
   if (event.tick % (60*5) == 0) then
-    -- for entity_id, chip in pairs(CHIP_TABLE) do
-    --   player_log_print(chip.source)
-    --   chip:start_execution()
-    --   result = chip:execute()
-    --
-    --   print_pairs(result)
-    -- end
+    for entity_id, chip in pairs(CHIP_TABLE) do
+      result = chip:execute()
+    end
   end
 end)
 
@@ -160,7 +157,7 @@ script.on_event(defines.events.on_gui_click, function(event)
       -- The chip should exist already
       local chip = CHIP_TABLE[id]
       chip:start_execution()
-      chip:execute()
+      -- chip:execute()
     end
   elseif event.element.name == "flang_menu_stop_button" then
     local entity = get_player_last_chip_entity(event.player_index)
