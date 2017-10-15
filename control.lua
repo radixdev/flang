@@ -151,6 +151,29 @@ script.on_event(defines.events.on_gui_click, function(event)
   -- if the close button was clicked, close the parent window
 	if event.element.name == "flang_menu_close_button" then
     close_editor_window(player)
+  elseif event.element.name == "flang_menu_play_button" then
+    player_log_print("play button pressed")
+    local entity = get_player_last_chip_entity(event.player_index)
+    if entity then
+      local id = entity.unit_number
+
+      -- Local setting
+      -- The chip should exist already
+      local chip = CHIP_TABLE[id]
+      chip:start_execution()
+      chip:execute()
+    end
+  elseif event.element.name == "flang_menu_stop_button" then
+    player_log_print("stopping execution")
+    local entity = get_player_last_chip_entity(event.player_index)
+    if entity then
+      local id = entity.unit_number
+
+      -- Local setting
+      -- The chip should exist already
+      local chip = CHIP_TABLE[id]
+      chip:stop_execution()
+    end
   end
 end)
 
@@ -170,6 +193,7 @@ script.on_event(defines.events.on_gui_text_changed, function(event)
       -- Local setting
       -- The chip should exist already
       local chip = CHIP_TABLE[id]
+      player_log_print("updating source")
       chip:update_source(text)
     end
   end

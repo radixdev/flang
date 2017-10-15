@@ -11,7 +11,7 @@ function Parser:new(o)
     lexer = o.lexer
   }
 
-  o.current_token = lexer:get()
+  o.current_token = o.lexer:get()
   o.prev_token = nil
 
   setmetatable(o, self)
