@@ -99,8 +99,7 @@ function create_chip_controller(entity)
     GlobalData.write_entity_data(id, object_data)
 
     -- create the local chip
-    printer_function = function(msg) player_log_print(msg) end
-    chip = FlangChip:new({entity = entity, printer = printer_function})
+    chip = FlangChip:new({entity = entity, printer = player_info_window_print})
     CHIP_TABLE[id] = chip
   end
 end
@@ -110,7 +109,7 @@ end
 --------------------------------------------------------------
 
 script.on_event(defines.events.on_tick, function(event)
-  if (event.tick % (60*5) == 0) then
+  if (event.tick % (60*1) == 0) then
     for entity_id, chip in pairs(CHIP_TABLE) do
       result = chip:execute()
     end
@@ -226,17 +225,13 @@ script.on_configuration_changed(function()
 end)
 
 script.on_load(function()
-  printer_function = function(...)
-    player_info_window_print(...)
-  end
-
   -- recreate the controller table from the global table
   for entity_id, chip_data in pairs(GlobalData.get_all_entities()) do
     chip = FlangChip:new({
       entity = chip_data["entity"],
       source = chip_data["source"],
       is_running = chip_data["is_running"],
-      printer = printer_function
+      printer = player_info_window_print
     })
     CHIP_TABLE[entity_id] = chip
   end

@@ -24,7 +24,7 @@ function GlobalData.new_data_object()
   }
 end
 
-function createGlobalTable()
+function create_global_table()
   if not global[GLOBAL_TABLE_NAME] then
     -- create the table
     global[GLOBAL_TABLE_NAME] = {}
@@ -32,9 +32,8 @@ function createGlobalTable()
 end
 
 function GlobalData.write_entity_data(entity_id, data_object)
-  if global[GLOBAL_TABLE_NAME] then
-    global[GLOBAL_TABLE_NAME][entity_id] = data_object
-  end
+  create_global_table()
+  global[GLOBAL_TABLE_NAME][entity_id] = data_object
 end
 
 function GlobalData.write_entity_source(entity_id, source)
@@ -59,7 +58,7 @@ end
   If the entity hasn't been saved, then the data object will be empty
 ]]
 function GlobalData.get_entity_data(entity_id)
-  createGlobalTable()
+  create_global_table()
 
   if not global[GLOBAL_TABLE_NAME][entity_id] then
     global[GLOBAL_TABLE_NAME][entity_id] = GlobalData.new_data_object()

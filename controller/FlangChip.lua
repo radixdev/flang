@@ -83,6 +83,7 @@ function FlangChip:execute()
       self.printer("val " .. v)
     end
   else
+    self.is_running = false
     self.printer("execution error")
     self:on_error(result)
   end
