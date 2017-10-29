@@ -38,7 +38,7 @@ function Interpreter:interpret()
   if (Flang.DEBUG_LOGGING) then
     print("====== PARSE TREE =====")
     self.tree:display(0)
-    print("=======================")
+    print("====== END TREE =======\n")
   end
 
   return self:visit(self.tree)

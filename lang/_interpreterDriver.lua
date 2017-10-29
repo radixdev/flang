@@ -1,14 +1,15 @@
 require("base.flang_import")
 
-filename = "samples/comment1.flang"
+filename = "samples/func1.flang"
 local f = assert(io.open(filename, "r"))
 local t = f:read("*all")
 f:close()
 
-print("===============")
+print("===== SOURCE =======")
 print(t)
-print("===============")
+print("==== END SOURCE ====\n")
 
+Flang.DEBUG_LOGGING = true
 local start_time = os.clock()
 lexer = Flang.Lexer:new({sourceText = t})
 parser = Flang.Parser:new({lexer = lexer})

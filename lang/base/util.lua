@@ -19,7 +19,6 @@ function Util.Set(table)
   return s
 end
 
-
 -- Returns true if element in set, nil otherwise
 function Util.contains(set, element)
   return set[element]
