@@ -33,8 +33,10 @@ end
 ]]
 function Parser:eat(token_type)
   if (self.current_token.type == token_type) then
+    if (Flang.VERBOSE_LOGGING) then
+      print("Ate token " .. dq(token_type) .. " with body: " .. dq(self.current_token))
+    end
     self.current_token = self.lexer:get()
-    -- print("  Ate token " .. dq(token_type))
   else
     self:error("Expected " .. dq(token_type) .. " but got " .. dq(self.current_token.type) ..
                 " at L" .. self.current_token.lineIndex .. ":C" .. self.current_token.columnIndex)
@@ -158,11 +160,17 @@ function Parser:factor()
     self:eat(Symbols.RPAREN)
     return node
 
-  elseif (token.type == Symbols.IDENTIFIER) then
-   return self:variable()
-
   elseif (token.type == Symbols.TRUE or token.type == Symbols.FALSE) then
     return self:boolean()
+
+  elseif (token.type == Symbols.IDENTIFIER) then
+    -- return self:variable()
+    var = self:variable()
+    if (self.current_token.type == Symbols.DOT) then
+      print("issa function call")
+    end
+
+    return var
   else
     return self:empty()
   end

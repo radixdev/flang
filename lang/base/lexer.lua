@@ -152,8 +152,12 @@ function Lexer:getChar()
 
   -- get the concatenation of the current character and the next one
   self.c2 = self.c1 .. self.scanner:lookahead(1)
+
+  if Flang.VERBOSE_LOGGING then
+    self:status()
+  end
 end
 
 function Lexer:status()
-  print("c1: " .. dq(self.c1) .. "\tc2: " .. dq(self.c2) .. "\tchar: " .. tostring(self.character))
+  print("  c1: " .. dq(self.c1) .. "\tc2: " .. dq(self.c2) .. "\tchar: " .. tostring(self.character))
 end

@@ -37,6 +37,7 @@ Symbols.LBRACKET = "{"
 Symbols.RBRACKET = "}"
 Symbols.SEMICOLON = ";"
 Symbols.COMMA = ","
+Symbols.DOT = "."
 
 Symbols.ONE_CHARACTER_SYMBOLS = Flang.Util.Set{
   Symbols.EQUALS,
@@ -48,7 +49,7 @@ Symbols.ONE_CHARACTER_SYMBOLS = Flang.Util.Set{
   Symbols.MODULUS,
   Symbols.SEMICOLON,
   Symbols.COMMA,
-  "."
+  Symbols.DOT
 }
 
 Symbols.GTE = ">="

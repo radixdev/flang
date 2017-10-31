@@ -10,6 +10,8 @@ print(t)
 print("==== END SOURCE ====\n")
 
 Flang.DEBUG_LOGGING = true
+Flang.VERBOSE_LOGGING = true
+
 local start_time = os.clock()
 lexer = Flang.Lexer:new({sourceText = t})
 parser = Flang.Parser:new({lexer = lexer})

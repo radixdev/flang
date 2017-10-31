@@ -28,7 +28,9 @@ function Node:new(o)
 end
 
 function Node.print(msg)
-  -- print(msg)
+  if (Flang.VERBOSE_LOGGING) then
+    print(msg)
+  end
 end
 
 -----------------------------------------------------------------------
@@ -96,6 +98,9 @@ function Node.NoOp()
   })
 end
 
+--[[
+  right: the expression to the right of the operator
+]]
 Node.ASSIGN_TYPE = "Assign"
 function Node.Assign(left, operator, right, assignment_token)
   Node.print("creating assign node: " .. dq(left) .. " and token " .. dq(left.value))
@@ -170,6 +175,22 @@ function Node.For(token, initializer, condition, incrementer, block, enhanced)
     incrementer = incrementer,
     block = block,
     enhanced = enhanced
+  })
+end
+
+--[[
+  object . method ( arguments )
+
+  arguments = { arg1 = something, arg2 = something, etc. }
+]]
+Node.FUNCTION_CALL_TYPE = "FuncCall"
+function Node.FunctionCall(token, object, arguments)
+  Node.print("creating function call node " .. tostring(token))
+  return Node:new({
+    type = Node.FUNCTION_CALL_TYPE,
+    token = token,
+    object = object,
+    arguments = arguments
   })
 end
 
