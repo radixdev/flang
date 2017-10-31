@@ -89,9 +89,9 @@ end
                 | PLUS factor
                 | MINUS factor
                 | NUMBER
-                | LPAREN expr RPAREN
-                | variable
                 | boolean
+                | (variable | function call)
+                | LPAREN expr RPAREN
 
   variable      : IDENTIFIER
   boolean       : (TRUE | FALSE)
@@ -153,13 +153,6 @@ function Parser:factor()
     self:eat(Symbols.NEGATE)
     return Node.Negation(token, self:factor())
 
-  elseif (token.type == Symbols.LPAREN) then
-    -- ( expr )
-    self:eat(Symbols.LPAREN)
-    local node = self:expr()
-    self:eat(Symbols.RPAREN)
-    return node
-
   elseif (token.type == Symbols.TRUE or token.type == Symbols.FALSE) then
     return self:boolean()
 
@@ -171,6 +164,14 @@ function Parser:factor()
     end
 
     return var
+
+  elseif (token.type == Symbols.LPAREN) then
+    -- ( expr )
+    self:eat(Symbols.LPAREN)
+    local node = self:expr()
+    self:eat(Symbols.RPAREN)
+    return node
+
   else
     return self:empty()
   end
