@@ -90,11 +90,14 @@ end
                 | MINUS factor
                 | NUMBER
                 | boolean
-                | (variable | function call)
+                | (variable | function_call)
                 | LPAREN expr RPAREN
 
   variable      : IDENTIFIER
   boolean       : (TRUE | FALSE)
+
+  function_call : IDENTIFIER DOT IDENTIFIER LPAREN (argument COMMA | argument)* RPAREN
+  argument      : expr
 
 ]]
 
@@ -123,12 +126,29 @@ function Parser:boolean()
   end
 end
 
-function Parser:variable()
+function Parser:variable(token)
   -- variable  : IDENTIFIER
-  -- Note that we use the current token since we haven't eaten yet!
-  local node = Node.Variable(Token:copy(self.current_token))
+  if (token == nil) then
+    local node = Node.Variable(Token:copy(self.current_token))
+  else
+    local node = Node.Variable(token)
+  end
+
   self:eat(Symbols.IDENTIFIER)
   return node
+end
+
+--[[
+  Gets the invocation chain
+]]
+function Parser:method_invocation()
+  -- start with the method identifier
+  local method_name = Token:copy(self.current_token)
+  self:eat(Symbols.IDENTIFIER)
+
+  -- now onto the parens and arguments
+  -- Now parse the arguments
+  self:eat(Symbols.LPAREN)
 end
 
 function Parser:factor()
@@ -157,13 +177,22 @@ function Parser:factor()
     return self:boolean()
 
   elseif (token.type == Symbols.IDENTIFIER) then
-    -- return self:variable()
-    var = self:variable()
+    -- Do a lookahead. This identifier can't be assigned just yet
+    local firstIdentifier = Token:copy(self.current_token)
+
+    -- Object.Method(Args)
     if (self.current_token.type == Symbols.DOT) then
-      print("issa function call")
+      -- firstIdentifier is the object
+      self:eat(Symbols.IDENTIFIER)
+      self:eat(Symbols.DOT)
+
+      return Node.FunctionCall(object, firstIdentifier, self:method_invocation())
+    else
+      -- just a regular variable
+      return self:variable(firstIdentifier)
     end
 
-    return var
+    self:error("Expected a variable or object call or method invocation. Or something idk cmon.")
 
   elseif (token.type == Symbols.LPAREN) then
     -- ( expr )
