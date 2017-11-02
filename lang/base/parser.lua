@@ -12,7 +12,7 @@ function Parser:new(o)
   }
 
   o.current_token = o.lexer:get()
-  o.prev_token = nil
+  o.next_token = o.lexer:get()
 
   setmetatable(o, self)
   self.__index = self
@@ -36,7 +36,10 @@ function Parser:eat(token_type)
     if (Flang.VERBOSE_LOGGING) then
       print("Ate token " .. dq(token_type) .. " with body: " .. dq(self.current_token))
     end
-    self.current_token = self.lexer:get()
+
+    -- TODO can we not copy this?
+    self.current_token = Token:copy(self.next_token)
+    self.next_token = Token:copy(self.lexer:get())
   else
     self:error("Expected " .. dq(token_type) .. " but got " .. dq(self.current_token.type) ..
                 " at L" .. self.current_token.lineIndex .. ":C" .. self.current_token.columnIndex)
@@ -128,11 +131,7 @@ end
 
 function Parser:variable(token)
   -- variable  : IDENTIFIER
-  if (token == nil) then
-    local node = Node.Variable(Token:copy(self.current_token))
-  else
-    local node = Node.Variable(token)
-  end
+  local node = Node.Variable(Token:copy(self.current_token))
 
   self:eat(Symbols.IDENTIFIER)
   return node
@@ -147,8 +146,28 @@ function Parser:method_invocation()
   self:eat(Symbols.IDENTIFIER)
 
   -- now onto the parens and arguments
-  -- Now parse the arguments
   self:eat(Symbols.LPAREN)
+
+  -- Now parse the arguments
+  -- Start at 1 to iterate in LUA
+  local num_arguments = 1
+  local args = {}
+
+  while (self.current_token.type ~= Symbols.RPAREN) do
+    local token = Token:copy(self.current_token)
+    -- parse the arguments
+    if (token.type == Symbols.COMMA) then
+      -- prep for the next argument
+      num_arguments = num_arguments + 1
+      self:eat(Symbols.COMMA)
+    else
+      args[num_arguments] = self:expr()
+    end
+  end
+
+  self:eat(Symbols.RPAREN)
+
+  return Node.MethodInvocation(method_name, method_name, args, nil)
 end
 
 function Parser:factor()
@@ -178,18 +197,17 @@ function Parser:factor()
 
   elseif (token.type == Symbols.IDENTIFIER) then
     -- Do a lookahead. This identifier can't be assigned just yet
-    local firstIdentifier = Token:copy(self.current_token)
 
-    -- Object.Method(Args)
-    if (self.current_token.type == Symbols.DOT) then
+    if (self.next_token.type == Symbols.DOT) then
       -- firstIdentifier is the object
+      local firstIdentifier = Token:copy(self.current_token)
       self:eat(Symbols.IDENTIFIER)
       self:eat(Symbols.DOT)
 
-      return Node.FunctionCall(object, firstIdentifier, self:method_invocation())
+      return Node.FunctionCall(firstIdentifier, firstIdentifier, self:method_invocation())
     else
       -- just a regular variable
-      return self:variable(firstIdentifier)
+      return self:variable()
     end
 
     self:error("Expected a variable or object call or method invocation. Or something idk cmon.")
