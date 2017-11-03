@@ -179,11 +179,11 @@ function Node.For(token, initializer, condition, incrementer, block, enhanced)
 end
 
 --[[
-  object .    method ( arguments )
+  object . method ( arguments )
 
   the object is passed as an argument
 
-  arguments = { arg1 = something, arg2 = something, etc. }
+  method_invocation is surprisingly a Node.METHOD_INVOCATION_TYPE
 ]]
 Node.FUNCTION_CALL_TYPE = "FuncCall"
 function Node.FunctionCall(token, object, method_invocation)
@@ -197,7 +197,7 @@ function Node.FunctionCall(token, object, method_invocation)
 end
 
 --[[
-  object . method
+  arguments = { 1 = something, 2 = something else, etc. }
 ]]
 Node.METHOD_INVOCATION_TYPE = "MethodInvocation"
 function Node.MethodInvocation(token, method_name, arguments, next_method_invocation)
