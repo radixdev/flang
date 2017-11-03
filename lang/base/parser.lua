@@ -167,7 +167,14 @@ function Parser:method_invocation()
 
   self:eat(Symbols.RPAREN)
 
-  return Node.MethodInvocation(method_name, method_name, args, nil)
+  if (self.current_token.type == Symbols.DOT) then
+    -- This is for continued method invocations like:
+    -- Foo.add().continued_invocation1().continued_invocation2()
+    self:eat(Symbols.DOT)
+    return Node.MethodInvocation(method_name, method_name, args, self:method_invocation())
+  else
+    return Node.MethodInvocation(method_name, method_name, args, nil)
+  end
 end
 
 function Parser:factor()

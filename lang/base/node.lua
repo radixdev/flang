@@ -203,7 +203,7 @@ Node.METHOD_INVOCATION_TYPE = "MethodInvocation"
 function Node.MethodInvocation(token, method_name, arguments, next_method_invocation)
   Node.print("creating method invocation node " .. tostring(token))
   return Node:new({
-    type = Node.FUNCTION_CALL_TYPE,
+    type = Node.METHOD_INVOCATION_TYPE,
     token = token,
     method_name = method_name,
     arguments = arguments,
@@ -236,6 +236,10 @@ function Node:__tostring()
     m = m .. " num statements: " .. dq(self.num_children)
   elseif (type == Node.FOR_TYPE) then
     m = m .. " for: " .. dq(self.token)
+  elseif (type == Node.FUNCTION_CALL_TYPE) then
+    m = m .. " func call: " .. dq(self.token)
+  elseif (type == Node.METHOD_INVOCATION_TYPE) then
+    m = m .. " method invocation: " .. dq(self.token)
   end
 
   return m or ""
@@ -312,7 +316,19 @@ function Node:display(tabs, info)
     self.incrementer:display(tabs + 1, "INCREMENTER: ")
     self.block:display(tabs + 2)
 
+  elseif (self.type == Node.FUNCTION_CALL_TYPE) then
+    print(tabString .. "func call: " .. dq(self.token.cargo))
+
+    self.method_invocation:display(tabs + 1, "method: ")
+
+  elseif (self.type == Node.METHOD_INVOCATION_TYPE) then
+    print(tabString .. dq(self.method_name.cargo) .. " args: " .. Util.set_to_string(self.arguments))
+
+    if self.next_method_invocation then
+      self.next_method_invocation:display(tabs + 1, "Next method: ")
+    end
+
   else
-    print("Unknown type. Can't display parse tree: " .. dq(type))
+    print("Unknown type. Can't display parse tree: " .. dq(self.type))
   end
 end
