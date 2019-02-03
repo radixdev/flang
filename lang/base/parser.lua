@@ -472,7 +472,7 @@ function Parser:method_definition_statement()
 
   ]]
 
-  -- Check if we actually have a method def method def
+  -- Check if we actually have a method def
   if (self.current_token.type == Symbols.DEF) then
     local token = Token:copy(self.current_token)
     self:eat(Symbols.DEF)
@@ -495,9 +495,7 @@ function Parser:method_definition_statement()
         num_arguments = num_arguments + 1
         self:eat(Symbols.COMMA)
       else
-        -- Each arg is just an IDENTIFIER
-        arguments[num_arguments] = Token:copy(self.current_token)
-        self:eat(Symbols.IDENTIFIER)
+        arguments[num_arguments] = self:method_definition_argument()
       end
     end
 
