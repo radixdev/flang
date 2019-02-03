@@ -215,13 +215,24 @@ function Node.MethodInvocation(token, method_name, arguments, next_method_invoca
 end
 
 Node.METHOD_DEFINITION_TYPE = "MethodDefinition"
-function Node.MethodDefinition(token, method_name, arguments)
+function Node.MethodDefinition(token, method_name, arguments, block)
   Node.print("creating method definition node " .. tostring(token))
   return Node:new({
     type = Node.METHOD_DEFINITION_TYPE,
     token = token,
     method_name = method_name,
-    arguments = arguments
+    arguments = arguments,
+    block = block
+  })
+end
+
+Node.METHOD_ARGUMENT_TYPE = "MethodDefinitionArgument"
+function Node.MethodDefinitionArgument(token)
+  Node.print("creating method definition argument node " .. tostring(token))
+  return Node:new({
+    type = Node.METHOD_ARGUMENT_TYPE,
+    token = token,
+    value = token.cargo
   })
 end
 
@@ -334,6 +345,13 @@ function Node:display(tabs, info)
     print(tabString .. "func call: " .. dq(self.token.cargo))
 
     self.method_invocation:display(tabs + 1, "method: ")
+
+  elseif (self.type == Node.METHOD_DEFINITION_TYPE) then
+    print(tabString .. "method name: " .. dq(self.value) .. " args: " .. Util.set_to_string(self.arguments))
+
+    -- Recursively tell our block node to display itself
+    -- at a (tabs + 1) deeper level
+    self.block:display(tabs + 1, "BLOCK: ")
 
   elseif (self.type == Node.METHOD_INVOCATION_TYPE) then
     print(tabString .. dq(self.method_name.cargo) .. " args: " .. Util.set_to_string(self.arguments))

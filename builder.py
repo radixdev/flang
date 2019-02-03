@@ -36,7 +36,7 @@ release_folder_path = os.path.join("C:\\Users\\jrcontre\\AppData\\Roaming\\Facto
 print("release_folder_path", release_folder_path)
 
 if (os.path.exists(release_folder_path)):
-    print("Release already exists at " + release_folder_path)
+    print("Release already exists at " + release_folder_path + " . Deleting path.")
     shutil.rmtree(release_folder_path, ignore_errors=True)
     # exit(0)
 else:
@@ -47,15 +47,20 @@ else:
 whitelisted_files = ["lang", "controller", "locale", "prototypes", "graphics", "LICENSE", "control.lua", "data.lua", "info.json"]
 
 for file in whitelisted_files:
-    localpath = local_file_path(file)
-    releasepath = release_file_path(file)
+    try:
+        localpath = local_file_path(file)
+        releasepath = release_file_path(file)
 
-    print("localpath", localpath)
-    print("releasepath", releasepath)
-    if (os.path.isfile(localpath)):
-        shutil.copyfile(localpath, releasepath)
-    else:
-        shutil.copytree(localpath, releasepath)
+        print("localpath", localpath)
+        print("releasepath", releasepath)
+        if (os.path.isfile(localpath)):
+            print("Copying file from localpath " + localpath + " to releasepath " + releasepath)
+            shutil.copyfile(localpath, releasepath)
+        else:
+            print("Copying tree from localpath " + localpath + " to releasepath " + releasepath)
+            shutil.copytree(localpath, releasepath)
+    except Exception as e:
+        pass
 
 # create the zip file
 # shutil.make_archive(release_folder_path, 'zip', release_folder_path)
