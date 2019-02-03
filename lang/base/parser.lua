@@ -72,12 +72,14 @@ end
                   | if_statement
                   | for_statement
                   | method_definition_statement
+                  | return_statement
                   | empty
 
   assignment_statement          : variable (ASSIGN | ASSIGN_PLUS | ASSIGN_MINUS | ASSIGN_MUL | ASSIGN_DIV)  expr
   if_statement                  : IF conditional block if_elseif
   for_statement                 : FOR LPAREN assignment_statement SEMICOLON expr (SEMICOLON statement | SEMICOLON expr)? RPAREN block
   method_definition_statement   : DEF IDENTIFIER LPAREN (method_definition_argument COMMA | method_definition_argument)* RPAREN block
+  return_statement              : RETURN expr
   empty                         :
 
   if_elseif     : (ELSEIF conditional block)* if_else
@@ -101,8 +103,8 @@ end
   variable      : IDENTIFIER
   boolean       : (TRUE | FALSE)
 
-  function_call : IDENTIFIER DOT IDENTIFIER LPAREN (argument COMMA | argument)* RPAREN
-  argument      : expr
+  function_call              : IDENTIFIER DOT IDENTIFIER LPAREN (argument COMMA | argument)* RPAREN
+  argument                   : expr
   method_definition_argument : IDENTIFIER
 
 ]]
@@ -507,6 +509,17 @@ function Parser:method_definition_statement()
   end
 end
 
+function Parser:return_statement()
+  -- return_statement : RETURN expr
+  if (self.current_token.type == Symbols.RETURN) then
+    local token = Token:copy(self.current_token)
+    self:eat(Symbols.RETURN)
+
+    local expr = self:expr()
+    return Node.ReturnStatement(token, expr)
+  end
+end
+
 function Parser:statement()
   --[[
 
@@ -527,6 +540,8 @@ function Parser:statement()
     node = self:for_statement()
   elseif (token.type == Symbols.DEF) then
     node = self:method_definition_statement()
+  elseif (token.type == Symbols.RETURN) then
+    node = self:return_statement()
   else
     node = self:empty()
   end

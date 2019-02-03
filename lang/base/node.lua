@@ -236,6 +236,15 @@ function Node.MethodDefinitionArgument(token)
   })
 end
 
+Node.RETURN_STATEMENT_TYPE = "ReturnStatement"
+function Node.ReturnStatement(token, expr)
+  Node.print("creating return statement node " .. tostring(token))
+  return Node:new({
+    type = Node.RETURN_STATEMENT_TYPE,
+    expr = expr
+  })
+end
+
 -----------------------------------------------------------------------
 -- Helper functions
 -----------------------------------------------------------------------
@@ -359,6 +368,10 @@ function Node:display(tabs, info)
     if self.next_method_invocation then
       self.next_method_invocation:display(tabs + 1, "Next method: ")
     end
+
+  elseif (self.type == Node.RETURN_STATEMENT_TYPE) then
+    print(tabString .. "return: " .. dq(self.value))
+    self.expr:display(tabs + 1)
 
   else
     print("Unknown type. Can't display parse tree: " .. dq(self.type))
