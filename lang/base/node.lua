@@ -197,6 +197,9 @@ function Node.FunctionCall(token, object, method_invocation)
 end
 
 --[[
+  method_name . ( arguments )
+  | method_name . ( arguments ) . next_method_invocation
+
   arguments = { 1 = something, 2 = something else, etc. }
 ]]
 Node.METHOD_INVOCATION_TYPE = "MethodInvocation"
@@ -208,6 +211,17 @@ function Node.MethodInvocation(token, method_name, arguments, next_method_invoca
     method_name = method_name,
     arguments = arguments,
     next_method_invocation = next_method_invocation
+  })
+end
+
+Node.METHOD_DEFINITION_TYPE = "MethodDefinition"
+function Node.MethodDefinition(token, method_name, arguments)
+  Node.print("creating method definition node " .. tostring(token))
+  return Node:new({
+    type = Node.METHOD_DEFINITION_TYPE,
+    token = token,
+    method_name = method_name,
+    arguments = arguments
   })
 end
 

@@ -7,5 +7,5 @@ def thing(x, y) {
 z = thing(1, 2)
 sum = 4 + 5
 
-// x = Foo.add(1, 2)
-// y = Bar.sub(1,3).pow(4).zero()
+x = Foo.add(1, 2)
+y = Bar.sub(1,3).pow(4).zero()

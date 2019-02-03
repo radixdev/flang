@@ -40,6 +40,7 @@ if (os.path.exists(release_folder_path)):
     shutil.rmtree(release_folder_path, ignore_errors=True)
     # exit(0)
 else:
+    print("Creating release dir at " + release_folder_path)
     os.mkdir(release_folder_path)
 
 # copy the files to releases
