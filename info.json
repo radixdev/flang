@@ -1,11 +1,13 @@
 {
-    "name": "Flang",
-    "version": "0.0.1",
-    "title": "Flang",
-    "author": "radixdev",
-    "contact": "",
-    "homepage": "",
-    "factorio_version": "0.15",
-    "dependencies": ["base >= 0.15"],
-    "description": "This mod does flang."
+  "name": "Flang",
+  "version": "0.0.1",
+  "title": "Flang",
+  "author": "radixdev",
+  "contact": "",
+  "homepage": "",
+  "factorio_version": "0.16",
+  "dependencies": [
+    "base >= 0.15"
+  ],
+  "description": "This mod does flang."
 }

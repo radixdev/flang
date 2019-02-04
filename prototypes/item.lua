@@ -5,7 +5,8 @@ flangChip.type = "item"
 flangChip.icon = "__Flang__/graphics/flangchip.png"
 flangChip.flags = { "goes-to-quickbar" }
 flangChip.subgroup = "circuit-network"
-flangChip.place_result="flang-chip"
-flangChip.stack_size= 50
+flangChip.place_result = "flang-chip"
+flangChip.stack_size = 50
+flangChip.icon_size = 32
 
 data:extend{flangChip}
