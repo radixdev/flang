@@ -73,6 +73,7 @@ end
                   | for_statement
                   | method_definition_statement
                   | return_statement
+                  | function_call
                   | empty
 
   assignment_statement          : variable (ASSIGN | ASSIGN_PLUS | ASSIGN_MINUS | ASSIGN_MUL | ASSIGN_DIV)  expr
@@ -189,6 +190,16 @@ function Parser:method_invocation()
   end
 end
 
+function Parser:function_invocation()
+  -- This is a `Foo.method()` type call
+  -- firstIdentifier is the object
+  local firstIdentifier = Token:copy(self.current_token)
+  self:eat(Symbols.IDENTIFIER)
+  self:eat(Symbols.DOT)
+
+  return Node.FunctionCall(firstIdentifier, firstIdentifier, self:method_invocation())
+end
+
 function Parser:factor()
   local token = Token:copy(self.current_token)
 
@@ -218,13 +229,15 @@ function Parser:factor()
     -- Do a lookahead. This identifier can't be assigned just yet
 
     if (self.next_token.type == Symbols.DOT) then
-      -- This is a `Foo.method()` type call
-      -- firstIdentifier is the object
-      local firstIdentifier = Token:copy(self.current_token)
-      self:eat(Symbols.IDENTIFIER)
-      self:eat(Symbols.DOT)
+      -- -- This is a `Foo.method()` type call
+      -- -- firstIdentifier is the object
+      -- local firstIdentifier = Token:copy(self.current_token)
+      -- self:eat(Symbols.IDENTIFIER)
+      -- self:eat(Symbols.DOT)
+      --
+      -- return Node.FunctionCall(firstIdentifier, firstIdentifier, self:method_invocation())
 
-      return Node.FunctionCall(firstIdentifier, firstIdentifier, self:method_invocation())
+      return self:function_invocation()
     elseif (self.next_token.type == Symbols.LPAREN) then
       -- This is just a `method()` call
       return self:method_invocation()
@@ -528,25 +541,43 @@ end
 function Parser:statement()
   --[[
 
-    statement     : assignment_statement
-                  | if_statement
-                  | for_statement
-                  | method_definition_statement
-                  | empty
+    statement       : assignment_statement
+                    | if_statement
+                    | for_statement
+                    | method_definition_statement
+                    | return_statement
+                    | function_call
+                    | empty
 
   ]]
 
   local token = self.current_token
+  local nextToken = self.next_token
   if (token.type == Symbols.IDENTIFIER) then
-    node = self:assignment_statement()
+    -- node = self:assignment_statement()
+    -- Do a lookahead. This identifier can't be assigned just yet
+
+    if (nextToken.type == Symbols.DOT) then
+      return self:function_invocation()
+    elseif (nextToken.type == Symbols.LPAREN) then
+      -- This is just a `method()` call
+      return self:method_invocation()
+    else
+      return self:assignment_statement()
+    end
+
   elseif (token.type == Symbols.IF) then
     node = self:if_statement()
+
   elseif (token.type == Symbols.FOR) then
     node = self:for_statement()
+
   elseif (token.type == Symbols.DEF) then
     node = self:method_definition_statement()
+
   elseif (token.type == Symbols.RETURN) then
     node = self:return_statement()
+
   else
     node = self:empty()
   end

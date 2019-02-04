@@ -1,6 +1,6 @@
 def stuff(x, y, zed) {
   // void methods
-  a = a + 3
+  a = 5 + 3
 }
 
 // invocations as statements
