@@ -312,6 +312,7 @@ end
 function Interpreter:MethodInvocation(node)
   -- TODO I assume here is where we'd do our block scoping and all that
 
+  print(node.method_name)
   -- Get the method
   local method = self:get_method(node.method_name)
 

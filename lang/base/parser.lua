@@ -153,7 +153,7 @@ end
 ]]
 function Parser:method_invocation()
   -- start with the method identifier
-  local method_name = Token:copy(self.current_token)
+  local token = Token:copy(self.current_token)
   self:eat(Symbols.IDENTIFIER)
 
   -- now onto the parens and arguments
@@ -178,13 +178,14 @@ function Parser:method_invocation()
 
   self:eat(Symbols.RPAREN)
 
+  local method_name = token.cargo
   if (self.current_token.type == Symbols.DOT) then
     -- This is for continued method invocations like:
     -- Foo.add().continued_invocation1().continued_invocation2()
     self:eat(Symbols.DOT)
-    return Node.MethodInvocation(method_name, method_name, num_arguments, args, self:method_invocation())
+    return Node.MethodInvocation(token, method_name, args, num_arguments, self:method_invocation())
   else
-    return Node.MethodInvocation(method_name, method_name, num_arguments, args, nil)
+    return Node.MethodInvocation(token, method_name, args, num_arguments, nil)
   end
 end
 
@@ -484,7 +485,7 @@ function Parser:method_definition_statement()
     self:eat(Symbols.DEF)
 
     -- method name is just an identifier, so we'll eat it after
-    local method_name = Token:copy(self.current_token)
+    local method_name = self.current_token.cargo
     self:eat(Symbols.IDENTIFIER)
     self:eat(Symbols.LPAREN)
 
