@@ -49,6 +49,8 @@ end
 -----------------------------------------------------------------------
 
 function Interpreter:get_variable(variable_name)
+  -- TODO This should utilize or enforce scoping to blocks
+
   -- Check if this variable has been defined already
   if (self.symbol_table_global[variable_name] == nil) then
     self:error("Undefined variable " .. variable_name)
@@ -58,6 +60,7 @@ function Interpreter:get_variable(variable_name)
 end
 
 function Interpreter:set_variable(variable_name, value)
+  -- TODO This should utilize or enforce scoping to blocks
   self.symbol_table_global[variable_name] = value
 end
 

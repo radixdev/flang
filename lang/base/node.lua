@@ -241,6 +241,7 @@ function Node.ReturnStatement(token, expr)
   Node.print("creating return statement node " .. tostring(token))
   return Node:new({
     type = Node.RETURN_STATEMENT_TYPE,
+    token = token,
     expr = expr
   })
 end
@@ -370,7 +371,7 @@ function Node:display(tabs, info)
     end
 
   elseif (self.type == Node.RETURN_STATEMENT_TYPE) then
-    print(tabString .. "return: " .. dq(self.value))
+    print(tabString .. "return: " .. dq(self.token.type))
     self.expr:display(tabs + 1)
 
   else
