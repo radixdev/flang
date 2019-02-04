@@ -26,7 +26,7 @@ function Token:new(startCharacter)
 end
 
 --[[
-Takes a token as input
+  Takes a token as input
 ]]
 function Token:copy(token)
   if not token then
@@ -46,7 +46,7 @@ function Token:copy(token)
 end
 
 --[[
-Say some nice, informative words about how they messed up
+  Say some nice, informative words about how they messed up
 ]]
 function Token:abort(msg)
   error(msg .. "\n\n" .. tostring(self))

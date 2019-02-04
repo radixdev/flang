@@ -1,13 +1,16 @@
 require("base.flang_import")
 
-filename = "samples/comment1.flang"
+filename = "samples/func1.flang"
 local f = assert(io.open(filename, "r"))
 local t = f:read("*all")
 f:close()
 
-print("===============")
+print("===== SOURCE =======")
 print(t)
-print("===============")
+print("==== END SOURCE ====\n")
+
+Flang.DEBUG_LOGGING = true
+Flang.VERBOSE_LOGGING = false
 
 local start_time = os.clock()
 lexer = Flang.Lexer:new({sourceText = t})
@@ -24,4 +27,4 @@ for key,value in pairs(symbol_table) do
   print(key .. " = " .. tostring(value))
 end
 
-print(string.format("elapsed time: %.4f\n", os.clock() - start_time))
+print(string.format("elapsed time: %.5fs or %.2fms\n", elapsed, elapsed * 1000))

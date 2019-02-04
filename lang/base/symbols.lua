@@ -8,6 +8,8 @@ Symbols.IF = "if"
 Symbols.ELSEIF = "elseif"
 Symbols.ELSE = "else"
 Symbols.FOR = "for"
+Symbols.DEF = "def"
+Symbols.RETURN = "return"
 
 Symbols.KEYWORDS = Flang.Util.Set{
   Symbols.IF,
@@ -17,6 +19,9 @@ Symbols.KEYWORDS = Flang.Util.Set{
   "while",
   Symbols.FOR,
   "print",
+
+  Symbols.DEF,
+  Symbols.RETURN,
 
   Symbols.TRUE,
   Symbols.FALSE
@@ -37,6 +42,7 @@ Symbols.LBRACKET = "{"
 Symbols.RBRACKET = "}"
 Symbols.SEMICOLON = ";"
 Symbols.COMMA = ","
+Symbols.DOT = "."
 
 Symbols.ONE_CHARACTER_SYMBOLS = Flang.Util.Set{
   Symbols.EQUALS,
@@ -48,7 +54,7 @@ Symbols.ONE_CHARACTER_SYMBOLS = Flang.Util.Set{
   Symbols.MODULUS,
   Symbols.SEMICOLON,
   Symbols.COMMA,
-  "."
+  Symbols.DOT
 }
 
 Symbols.GTE = ">="

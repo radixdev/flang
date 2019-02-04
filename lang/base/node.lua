@@ -28,7 +28,9 @@ function Node:new(o)
 end
 
 function Node.print(msg)
-  -- print(msg)
+  if (Flang.VERBOSE_LOGGING) then
+    print(msg)
+  end
 end
 
 -----------------------------------------------------------------------
@@ -96,6 +98,9 @@ function Node.NoOp()
   })
 end
 
+--[[
+  right: the expression to the right of the operator
+]]
 Node.ASSIGN_TYPE = "Assign"
 function Node.Assign(left, operator, right, assignment_token)
   Node.print("creating assign node: " .. dq(left) .. " and token " .. dq(left.value))
@@ -173,6 +178,76 @@ function Node.For(token, initializer, condition, incrementer, block, enhanced)
   })
 end
 
+--[[
+  object . method ( arguments )
+
+  the object is passed as an argument
+
+  method_invocation is surprisingly a Node.METHOD_INVOCATION_TYPE
+]]
+Node.FUNCTION_CALL_TYPE = "FuncCall"
+function Node.FunctionCall(token, object, method_invocation)
+  Node.print("creating function call node " .. tostring(token))
+  return Node:new({
+    type = Node.FUNCTION_CALL_TYPE,
+    token = token,
+    object = object,
+    method_invocation = method_invocation
+  })
+end
+
+--[[
+  method_name . ( arguments )
+  | method_name . ( arguments ) . next_method_invocation
+
+  arguments = { 1 = something, 2 = something else, etc. }
+]]
+Node.METHOD_INVOCATION_TYPE = "MethodInvocation"
+function Node.MethodInvocation(token, method_name, arguments, num_arguments, next_method_invocation)
+  Node.print("creating method invocation node " .. tostring(token))
+  return Node:new({
+    type = Node.METHOD_INVOCATION_TYPE,
+    token = token,
+    method_name = method_name,
+    arguments = arguments,
+    num_arguments = num_arguments,
+    next_method_invocation = next_method_invocation
+  })
+end
+
+Node.METHOD_DEFINITION_TYPE = "MethodDefinition"
+function Node.MethodDefinition(token, method_name, arguments, num_arguments, block)
+  Node.print("creating method definition node " .. tostring(token))
+  return Node:new({
+    type = Node.METHOD_DEFINITION_TYPE,
+    token = token,
+    method_name = method_name,
+    arguments = arguments,
+    num_arguments = num_arguments,
+    block = block
+  })
+end
+
+Node.METHOD_ARGUMENT_TYPE = "MethodDefinitionArgument"
+function Node.MethodDefinitionArgument(token)
+  Node.print("creating method definition argument node " .. tostring(token))
+  return Node:new({
+    type = Node.METHOD_ARGUMENT_TYPE,
+    token = token,
+    value = token.cargo
+  })
+end
+
+Node.RETURN_STATEMENT_TYPE = "ReturnStatement"
+function Node.ReturnStatement(token, expr)
+  Node.print("creating return statement node " .. tostring(token))
+  return Node:new({
+    type = Node.RETURN_STATEMENT_TYPE,
+    token = token,
+    expr = expr
+  })
+end
+
 -----------------------------------------------------------------------
 -- Helper functions
 -----------------------------------------------------------------------
@@ -198,6 +273,10 @@ function Node:__tostring()
     m = m .. " num statements: " .. dq(self.num_children)
   elseif (type == Node.FOR_TYPE) then
     m = m .. " for: " .. dq(self.token)
+  elseif (type == Node.FUNCTION_CALL_TYPE) then
+    m = m .. " func call: " .. dq(self.token)
+  elseif (type == Node.METHOD_INVOCATION_TYPE) then
+    m = m .. " method invocation: " .. dq(self.token)
   end
 
   return m or ""
@@ -274,7 +353,30 @@ function Node:display(tabs, info)
     self.incrementer:display(tabs + 1, "INCREMENTER: ")
     self.block:display(tabs + 2)
 
+  elseif (self.type == Node.FUNCTION_CALL_TYPE) then
+    print(tabString .. "func call on: " .. dq(self.token.cargo))
+
+    self.method_invocation:display(tabs + 1, "method: ")
+
+  elseif (self.type == Node.METHOD_DEFINITION_TYPE) then
+    print(tabString .. "method definition: " .. dq(self.method_name) .. " args: " .. Util.set_to_string(self.arguments))
+
+    -- Recursively tell our block node to display itself
+    -- at a (tabs + 1) deeper level
+    self.block:display(tabs + 1, "BLOCK: ")
+
+  elseif (self.type == Node.METHOD_INVOCATION_TYPE) then
+    print(tabString .. "invocation " .. dq(self.method_name) .. " args: " .. Util.set_to_string(self.arguments))
+
+    if self.next_method_invocation then
+      self.next_method_invocation:display(tabs + 1, "Next method: ")
+    end
+
+  elseif (self.type == Node.RETURN_STATEMENT_TYPE) then
+    print(tabString .. "return: " .. dq(self.token.type))
+    self.expr:display(tabs + 1)
+
   else
-    print("Unknown type. Can't display parse tree: " .. dq(type))
+    print("Unknown type. Can't display parse tree: " .. dq(self.type))
   end
 end

@@ -12,7 +12,7 @@ function Parser:new(o)
   }
 
   o.current_token = o.lexer:get()
-  o.prev_token = nil
+  o.next_token = o.lexer:get()
 
   setmetatable(o, self)
   self.__index = self
@@ -33,8 +33,13 @@ end
 ]]
 function Parser:eat(token_type)
   if (self.current_token.type == token_type) then
-    self.current_token = self.lexer:get()
-    -- print("  Ate token " .. dq(token_type))
+    if (Flang.VERBOSE_LOGGING) then
+      print("Ate token " .. dq(token_type) .. " with body: " .. dq(self.current_token))
+    end
+
+    -- TODO can we not copy this?
+    self.current_token = Token:copy(self.next_token)
+    self.next_token = Token:copy(self.lexer:get())
   else
     self:error("Expected " .. dq(token_type) .. " but got " .. dq(self.current_token.type) ..
                 " at L" .. self.current_token.lineIndex .. ":C" .. self.current_token.columnIndex)
@@ -66,12 +71,17 @@ end
   statement       : assignment_statement
                   | if_statement
                   | for_statement
+                  | method_definition_statement
+                  | return_statement
+                  | function_call
                   | empty
 
-  assignment_statement      : variable (ASSIGN | ASSIGN_PLUS | ASSIGN_MINUS | ASSIGN_MUL | ASSIGN_DIV)  expr
-  if_statement              : IF conditional block if_elseif
-  for_statement             : FOR LPAREN assignment_statement SEMICOLON expr (SEMICOLON statement | SEMICOLON expr)? RPAREN block
-  empty                     :
+  assignment_statement          : variable (ASSIGN | ASSIGN_PLUS | ASSIGN_MINUS | ASSIGN_MUL | ASSIGN_DIV)  expr
+  if_statement                  : IF conditional block if_elseif
+  for_statement                 : FOR LPAREN assignment_statement SEMICOLON expr (SEMICOLON statement | SEMICOLON expr)? RPAREN block
+  method_definition_statement   : DEF IDENTIFIER LPAREN (method_definition_argument COMMA | method_definition_argument)* RPAREN block
+  return_statement              : RETURN expr
+  empty                         :
 
   if_elseif     : (ELSEIF conditional block)* if_else
   if_else       : ELSE block
@@ -87,12 +97,16 @@ end
                 | PLUS factor
                 | MINUS factor
                 | NUMBER
-                | LPAREN expr RPAREN
-                | variable
                 | boolean
+                | (variable | function_call)
+                | LPAREN expr RPAREN
 
   variable      : IDENTIFIER
   boolean       : (TRUE | FALSE)
+
+  function_call              : (IDENTIFIER DOT)? IDENTIFIER LPAREN (argument COMMA | argument)* RPAREN
+  argument                   : expr
+  method_definition_argument : IDENTIFIER
 
 ]]
 
@@ -121,12 +135,69 @@ function Parser:boolean()
   end
 end
 
-function Parser:variable()
+function Parser:variable(token)
   -- variable  : IDENTIFIER
-  -- Note that we use the current token since we haven't eaten yet!
   local node = Node.Variable(Token:copy(self.current_token))
+
   self:eat(Symbols.IDENTIFIER)
   return node
+end
+
+function Parser:method_definition_argument()
+  local token = Token:copy(self.current_token)
+  self:eat(Symbols.IDENTIFIER)
+  return Node.MethodDefinitionArgument(token)
+end
+
+--[[
+  Gets the invocation chain
+]]
+function Parser:method_invocation()
+  -- start with the method identifier
+  local token = Token:copy(self.current_token)
+  self:eat(Symbols.IDENTIFIER)
+
+  -- now onto the parens and arguments
+  self:eat(Symbols.LPAREN)
+
+  -- Now parse the arguments
+  -- Start at 1 to iterate in LUA
+  local num_arguments = 1
+  local args = {}
+
+  while (self.current_token.type ~= Symbols.RPAREN) do
+    local token = Token:copy(self.current_token)
+    -- parse the arguments
+    if (token.type == Symbols.COMMA) then
+      -- prep for the next argument
+      num_arguments = num_arguments + 1
+      self:eat(Symbols.COMMA)
+    else
+      args[num_arguments] = self:expr()
+    end
+  end
+
+  self:eat(Symbols.RPAREN)
+
+  local method_name = token.cargo
+  if (self.current_token.type == Symbols.DOT) then
+    -- This is for continued method invocations like:
+    -- Foo.add().continued_invocation1().continued_invocation2()
+    self:eat(Symbols.DOT)
+    return Node.MethodInvocation(token, method_name, args, num_arguments, self:method_invocation())
+  else
+    return Node.MethodInvocation(token, method_name, args, num_arguments, nil)
+  end
+end
+
+function Parser:function_invocation()
+  -- This is a `Foo.method()` type call
+  -- firstIdentifier is the object
+  local firstIdentifier = Token:copy(self.current_token)
+  self:eat(Symbols.IDENTIFIER)
+  self:eat(Symbols.DOT)
+
+  return Node.FunctionCall(firstIdentifier, firstIdentifier, self:method_invocation())
 end
 
 function Parser:factor()
@@ -151,6 +222,25 @@ function Parser:factor()
     self:eat(Symbols.NEGATE)
     return Node.Negation(token, self:factor())
 
+  elseif (token.type == Symbols.TRUE or token.type == Symbols.FALSE) then
+    return self:boolean()
+
+  elseif (token.type == Symbols.IDENTIFIER) then
+    -- Do a lookahead. This identifier can't be assigned just yet
+
+    if (self.next_token.type == Symbols.DOT) then
+      -- This is a `Foo.method()` type call
+      return self:function_invocation()
+    elseif (self.next_token.type == Symbols.LPAREN) then
+      -- This is just a `method()` call
+      return self:method_invocation()
+    else
+      -- just a regular variable
+      return self:variable()
+    end
+
+    self:error("Expected a variable or object call or method invocation. Or something idk cmon.")
+
   elseif (token.type == Symbols.LPAREN) then
     -- ( expr )
     self:eat(Symbols.LPAREN)
@@ -158,11 +248,6 @@ function Parser:factor()
     self:eat(Symbols.RPAREN)
     return node
 
-  elseif (token.type == Symbols.IDENTIFIER) then
-   return self:variable()
-
-  elseif (token.type == Symbols.TRUE or token.type == Symbols.FALSE) then
-    return self:boolean()
   else
     return self:empty()
   end
@@ -341,7 +426,7 @@ end
 function Parser:for_statement()
   --[[
 
-  for_statement : FOR LPAREN assignment_statement SEMICOLON expr (SEMICOLON statement | SEMICOLON expr)? RPAREN block
+    for_statement : FOR LPAREN assignment_statement SEMICOLON expr (SEMICOLON statement | SEMICOLON expr)? RPAREN block
 
   ]]
 
@@ -391,23 +476,100 @@ function Parser:for_statement()
   end
 end
 
+function Parser:method_definition_statement()
+  --[[
+
+    method_definition_statement   : DEF IDENTIFIER LPAREN method_arguments RPAREN block
+
+    method_arguments : (IDENTIFIER COMMA | IDENTIFIER)*
+
+  ]]
+
+  -- Check if we actually have a method def
+  if (self.current_token.type == Symbols.DEF) then
+    local token = Token:copy(self.current_token)
+    self:eat(Symbols.DEF)
+
+    -- method name is just an identifier, so we'll eat it after
+    local method_name = self.current_token.cargo
+    self:eat(Symbols.IDENTIFIER)
+    self:eat(Symbols.LPAREN)
+
+    -- Parse the arguments
+    -- Start at 1 to iterate in LUA
+    local num_arguments = 1
+    local arguments = {}
+
+    while (self.current_token.type ~= Symbols.RPAREN) do
+      local token = Token:copy(self.current_token)
+      -- parse the arguments
+      if (token.type == Symbols.COMMA) then
+        -- prep for the next argument
+        num_arguments = num_arguments + 1
+        self:eat(Symbols.COMMA)
+      else
+        arguments[num_arguments] = self:method_definition_argument()
+      end
+    end
+
+    self:eat(Symbols.RPAREN)
+    local block = self:block()
+
+    -- All done, now return a definition node
+    return Node.MethodDefinition(token, method_name, arguments, num_arguments, block)
+  end
+end
+
+function Parser:return_statement()
+  -- return_statement : RETURN expr
+  if (self.current_token.type == Symbols.RETURN) then
+    local token = Token:copy(self.current_token)
+    self:eat(Symbols.RETURN)
+
+    local expr = self:expr()
+    return Node.ReturnStatement(token, expr)
+  end
+end
+
 function Parser:statement()
   --[[
 
-    statement     : assignment_statement
-                  | if_statement
-                  | for_statement
-                  | empty
+    statement       : assignment_statement
+                    | if_statement
+                    | for_statement
+                    | method_definition_statement
+                    | return_statement
+                    | function_call
+                    | empty
 
   ]]
 
   local token = self.current_token
+  local nextToken = self.next_token
   if (token.type == Symbols.IDENTIFIER) then
-    node = self:assignment_statement()
+    -- Do a lookahead. This identifier can't be assigned just yet
+
+    if (nextToken.type == Symbols.DOT) then
+      return self:function_invocation()
+    elseif (nextToken.type == Symbols.LPAREN) then
+      -- This is just a `method()` call
+      return self:method_invocation()
+    else
+      return self:assignment_statement()
+    end
+
   elseif (token.type == Symbols.IF) then
     node = self:if_statement()
+
   elseif (token.type == Symbols.FOR) then
     node = self:for_statement()
+
+  elseif (token.type == Symbols.DEF) then
+    node = self:method_definition_statement()
+
+  elseif (token.type == Symbols.RETURN) then
+    node = self:return_statement()
+
   else
     node = self:empty()
   end

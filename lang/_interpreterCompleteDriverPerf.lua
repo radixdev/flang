@@ -17,5 +17,6 @@ for i=0, 100 do
 end
 local elapsed = os.clock() - start_time
 
+time_per_run = elapsed / 100.0000
 print(string.format("elapsed time: %.5f", elapsed))
-print(string.format("elapsed time per execution: %.5f", elapsed / 100.0000))
+print(string.format("elapsed time per execution: %.5fs or %.2fms", time_per_run, time_per_run * 1000))

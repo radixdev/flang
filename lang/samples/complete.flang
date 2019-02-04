@@ -67,3 +67,15 @@ for (i=0; 10000; 2) {
 }
 
 // sooooo coooooool
+
+def add(addArgx, addArgy) {
+  return addArgx + addArgy
+}
+
+def mul(mulArgx, mulArgy) {
+  return mulArgx * mulArgy
+}
+
+methodShouldBe5 = add(6, -1)
+methodShouldBe18 = mul(3, 6)
+methodShouldBe100 = mul(5, add(7, 13))

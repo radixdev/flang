@@ -1,0 +1,11 @@
+var1 = 17 * 8
+
+def thing(x, y) {
+  return x + y
+
+  // This line should not be executed
+  a = 14
+}
+
+z = thing(1, 2)
+sum = 4 + 5
