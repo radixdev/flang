@@ -1,0 +1,7 @@
+def stuff(x, y, zed) {
+  // void methods
+  a = a + 3
+}
+
+// invocations as statements
+stuff(1, 2, 3001)

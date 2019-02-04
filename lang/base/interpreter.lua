@@ -18,6 +18,7 @@ function Interpreter:new(o)
   o = {
     parser = o.parser,
     symbol_table_global = {},
+    method_table_global = {},
     tree = o.parser:parse()
   }
 
@@ -64,6 +65,52 @@ function Interpreter:set_variable(variable_name, value)
   self.symbol_table_global[variable_name] = value
 end
 
+function Interpreter:add_method_definition(method_name, arguments, block)
+  --[[
+    Adds a method to the global namespace
+
+    By default, methods are defined on the current class, "this"
+    Methods defined in other classes are prefixed with their class.
+
+    "bar()" is just named as "bar"
+    "Foo.baz()" is named as "Foo.baz"
+  ]]
+
+  if (method_name == nil) then
+    self:error("Cannot define nil method name")
+  end
+
+  -- We'll construct this method using the above info, and add it to the
+  -- global methods table at the end
+  local method = {
+    method_name = method_name,
+    arguments = arguments,
+    block = block
+  }
+
+  self.method_table_global[method_name] = method
+end
+
+--[[
+  returns ->
+    {
+      method_name = method_name,
+      arguments = arguments,
+      block = block
+    }
+]]
+function Interpreter:get_method(method_name)
+  if (method_name == nil) then
+    self:error("Cannot get method with nil name")
+  end
+
+  if (self.method_table_global[method_name] == nil) then
+    self:error("Method lookup failed for name " .. method_name)
+  end
+
+  return self.method_table_global[method_name]
+end
+
 -----------------------------------------------------------------------
 -- AST traversal
 -- Every node must have a corresponding method here
@@ -72,11 +119,12 @@ end
 function Interpreter:visit(node)
   -- See https://stackoverflow.com/questions/26042599/lua-call-a-function-using-its-name-string-in-a-class
 
-  -- comment out for faster performance
+  -- comment out this logging for faster performance
   local method_name = node.type
   if not self[method_name] then
     self:error("No method in interpreter with name: " .. dq(node.type))
   end
+  -- end section
 
   -- print("visiting " .. method_name)
 
@@ -131,14 +179,12 @@ function Interpreter:Assign(node)
 
   -- We have to make sure
   if (token_type == Symbols.ASSIGN_PLUS) then
-    -- self.symbol_table_global[variable_name] = self:get_variable(variable_name) + self:visit(node.right)
     self:set_variable(variable_name, self:get_variable(variable_name) + self:visit(node.right))
+
   elseif (token_type == Symbols.ASSIGN_MINUS) then
-    -- self.symbol_table_global[variable_name] = self:get_variable(variable_name) - self:visit(node.right)
     self:set_variable(variable_name, self:get_variable(variable_name) - self:visit(node.right))
 
   elseif (token_type == Symbols.ASSIGN_MUL) then
-    -- self.symbol_table_global[variable_name] = self:get_variable(variable_name) * self:visit(node.right)
     self:set_variable(variable_name, self:get_variable(variable_name) * self:visit(node.right))
 
   elseif (token_type == Symbols.ASSIGN_DIV) then
@@ -146,7 +192,6 @@ function Interpreter:Assign(node)
     if (right_value == 0) then
       self:error("Division by Zero")
     end
-    -- self.symbol_table_global[variable_name] = self:get_variable(variable_name) / right_value
     self:set_variable(variable_name, self:get_variable(variable_name) / self:visit(node.right))
   end
 end
@@ -206,11 +251,7 @@ end
 
 function Interpreter:StatementList(node)
   -- Iterate over each of the children
-  -- for _,childNode in ipairs(node.children) do
-  --   self:visit(childNode)
-  -- end
-
-  -- faster than ipairs
+  -- Note, this is faster than ipairs
   local k
   for k=1, node.num_children-1 do
     local childNode = node.children[k]
@@ -261,4 +302,28 @@ function Interpreter:For(node)
       self:visit(node.incrementer)
     end
   end
+end
+
+function Interpreter:MethodDefinition(node)
+  -- So there's a method name, the executable block, and the argument list
+  self:add_method_definition(node.method_name, node.arguments, node.block)
+end
+
+function Interpreter:MethodInvocation(node)
+  -- TODO I assume here is where we'd do our block scoping and all that
+
+  -- Get the method
+  local method = self:get_method(node.method_name)
+
+  -- Translate our arguments
+  local method_arguments = method.arguments
+  local invocation_arguments = node.arguments
+
+  local k
+  for k = 1, node.num_arguments do
+
+  end
+
+  -- Execute the block
+
 end

@@ -40,7 +40,12 @@ function Util.set_to_string(table)
       add_comma = true
     end
 
-    result = result .. tostring(k) .. ":" .. tostring(v.token.cargo)
+    result = result .. tostring(k) .. ":"
+    if (v.token) then
+      result = result .. tostring(v.token.cargo)
+    else
+      result = result .. tostring(v)
+    end
   end
   -- result = result .. "}"
   return result .. "}"

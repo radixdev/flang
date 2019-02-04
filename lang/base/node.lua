@@ -203,25 +203,27 @@ end
   arguments = { 1 = something, 2 = something else, etc. }
 ]]
 Node.METHOD_INVOCATION_TYPE = "MethodInvocation"
-function Node.MethodInvocation(token, method_name, arguments, next_method_invocation)
+function Node.MethodInvocation(token, method_name, arguments, num_arguments, next_method_invocation)
   Node.print("creating method invocation node " .. tostring(token))
   return Node:new({
     type = Node.METHOD_INVOCATION_TYPE,
     token = token,
     method_name = method_name,
     arguments = arguments,
+    num_arguments = num_arguments,
     next_method_invocation = next_method_invocation
   })
 end
 
 Node.METHOD_DEFINITION_TYPE = "MethodDefinition"
-function Node.MethodDefinition(token, method_name, arguments, block)
+function Node.MethodDefinition(token, method_name, arguments, num_arguments, block)
   Node.print("creating method definition node " .. tostring(token))
   return Node:new({
     type = Node.METHOD_DEFINITION_TYPE,
     token = token,
     method_name = method_name,
     arguments = arguments,
+    num_arguments = num_arguments,
     block = block
   })
 end

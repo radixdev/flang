@@ -182,9 +182,9 @@ function Parser:method_invocation()
     -- This is for continued method invocations like:
     -- Foo.add().continued_invocation1().continued_invocation2()
     self:eat(Symbols.DOT)
-    return Node.MethodInvocation(method_name, method_name, args, self:method_invocation())
+    return Node.MethodInvocation(method_name, method_name, num_arguments, args, self:method_invocation())
   else
-    return Node.MethodInvocation(method_name, method_name, args, nil)
+    return Node.MethodInvocation(method_name, method_name, num_arguments, args, nil)
   end
 end
 
@@ -509,7 +509,7 @@ function Parser:method_definition_statement()
     local block = self:block()
 
     -- All done, now return a definition node
-    return Node.MethodDefinition(token, method_name, arguments, block)
+    return Node.MethodDefinition(token, method_name, arguments, num_arguments, block)
   end
 end
 
