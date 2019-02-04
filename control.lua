@@ -47,14 +47,11 @@ function create_editor_window(player, source)
   -- inside the menu we add the buttons and stuff
   button_style = "slot_button_style"
   close_button = menu_flow.add{type = "sprite-button", name = "flang_menu_close_button",
-      sprite = "close",
-      style=button_style}
+      sprite = "close"}
   play_button = menu_flow.add{type = "sprite-button", name = "flang_menu_play_button",
-      sprite = "play",
-      style=button_style}
+      sprite = "play"}
   stop_button = menu_flow.add{type = "sprite-button", name = "flang_menu_stop_button",
-      sprite = "stop",
-      style=button_style}
+      sprite = "stop"}
 
   -- create the editor
   editor_window = flang_parent_window_flow.add{type="text-box", name="flang_editor_window",
@@ -278,7 +275,6 @@ end
 
 function print_pairs(table)
   for k,v in pairs(table) do
-    player_log_print("key " .. k)
-    player_log_print("val " .. v)
+    player_log_print("key" .. k .. " val " .. v)
   end
 end

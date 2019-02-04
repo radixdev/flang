@@ -79,8 +79,7 @@ function FlangChip:execute()
   if success then
     -- result is our symbol table
     for k,v in pairs(self.interpreter.symbol_table_global) do
-      self.printer("key " .. k)
-      self.printer("val " .. v)
+      self.printer("key " .. k .. " val " .. v)
     end
   else
     self.is_running = false
