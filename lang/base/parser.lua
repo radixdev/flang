@@ -229,14 +229,7 @@ function Parser:factor()
     -- Do a lookahead. This identifier can't be assigned just yet
 
     if (self.next_token.type == Symbols.DOT) then
-      -- -- This is a `Foo.method()` type call
-      -- -- firstIdentifier is the object
-      -- local firstIdentifier = Token:copy(self.current_token)
-      -- self:eat(Symbols.IDENTIFIER)
-      -- self:eat(Symbols.DOT)
-      --
-      -- return Node.FunctionCall(firstIdentifier, firstIdentifier, self:method_invocation())
-
+      -- This is a `Foo.method()` type call
       return self:function_invocation()
     elseif (self.next_token.type == Symbols.LPAREN) then
       -- This is just a `method()` call
@@ -554,7 +547,6 @@ function Parser:statement()
   local token = self.current_token
   local nextToken = self.next_token
   if (token.type == Symbols.IDENTIFIER) then
-    -- node = self:assignment_statement()
     -- Do a lookahead. This identifier can't be assigned just yet
 
     if (nextToken.type == Symbols.DOT) then

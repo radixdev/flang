@@ -63,5 +63,9 @@ assertEquals("asShouldBe12", 12)
 assertEquals("asShouldBe2p5", 2.5)
 
 assertEquals("eForShouldBe10000", 10000)
+
+assertEquals("methodShouldBe5", 5)
+assertEquals("methodShouldBe18", 18)
+assertEquals("methodShouldBe100", 100)
 print("========ALL CHECKS PASSED=======")
-print(string.format("elapsed time: %.5f\n", elapsed - start_time))
+print(string.format("elapsed time: %.5fs or %.2fms\n", elapsed, elapsed * 1000))
