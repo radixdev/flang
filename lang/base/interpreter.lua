@@ -65,7 +65,7 @@ function Interpreter:set_variable(variable_name, value)
   self.symbol_table_global[variable_name] = value
 end
 
-function Interpreter:add_method_definition(method_name, arguments, block)
+function Interpreter:add_method_definition(method_name, arguments, num_arguments, block)
   --[[
     Adds a method to the global namespace
 
@@ -85,6 +85,7 @@ function Interpreter:add_method_definition(method_name, arguments, block)
   local method = {
     method_name = method_name,
     arguments = arguments,
+    num_arguments = num_arguments,
     block = block
   }
 
@@ -306,19 +307,26 @@ end
 
 function Interpreter:MethodDefinition(node)
   -- So there's a method name, the executable block, and the argument list
-  self:add_method_definition(node.method_name, node.arguments, node.block)
+  self:add_method_definition(node.method_name, node.arguments, node.num_arguments, node.block)
 end
 
 function Interpreter:MethodInvocation(node)
   -- TODO I assume here is where we'd do our block scoping and all that
 
-  print(node.method_name)
   -- Get the method
   local method = self:get_method(node.method_name)
 
   -- Translate our arguments
   local method_arguments = method.arguments
   local invocation_arguments = node.arguments
+
+  if (method.num_arguments ~= node.num_arguments) then
+    print(node)
+    print(node.num_arguments)
+    print(Util.set_to_string(method))
+    print(method[num_arguments])
+    self:error("Expected " .. method.num_arguments  .. " instead got " .. node.num_arguments)
+  end
 
   local k
   for k = 1, node.num_arguments do
