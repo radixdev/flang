@@ -103,7 +103,7 @@ end
   variable      : IDENTIFIER
   boolean       : (TRUE | FALSE)
 
-  function_call              : IDENTIFIER DOT IDENTIFIER LPAREN (argument COMMA | argument)* RPAREN
+  function_call              : (IDENTIFIER DOT)? IDENTIFIER LPAREN (argument COMMA | argument)* RPAREN
   argument                   : expr
   method_definition_argument : IDENTIFIER
 
@@ -217,12 +217,16 @@ function Parser:factor()
     -- Do a lookahead. This identifier can't be assigned just yet
 
     if (self.next_token.type == Symbols.DOT) then
+      -- This is a `Foo.method()` type call
       -- firstIdentifier is the object
       local firstIdentifier = Token:copy(self.current_token)
       self:eat(Symbols.IDENTIFIER)
       self:eat(Symbols.DOT)
 
       return Node.FunctionCall(firstIdentifier, firstIdentifier, self:method_invocation())
+    elseif (self.next_token.type == Symbols.LPAREN) then
+      -- This is just a `method()` call
+      return self:method_invocation()
     else
       -- just a regular variable
       return self:variable()

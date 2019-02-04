@@ -352,19 +352,19 @@ function Node:display(tabs, info)
     self.block:display(tabs + 2)
 
   elseif (self.type == Node.FUNCTION_CALL_TYPE) then
-    print(tabString .. "func call: " .. dq(self.token.cargo))
+    print(tabString .. "func call on: " .. dq(self.token.cargo))
 
     self.method_invocation:display(tabs + 1, "method: ")
 
   elseif (self.type == Node.METHOD_DEFINITION_TYPE) then
-    print(tabString .. "method definition name: " .. dq(self.method_name.cargo) .. " args: " .. Util.set_to_string(self.arguments))
+    print(tabString .. "method definition: " .. dq(self.method_name.cargo) .. " args: " .. Util.set_to_string(self.arguments))
 
     -- Recursively tell our block node to display itself
     -- at a (tabs + 1) deeper level
     self.block:display(tabs + 1, "BLOCK: ")
 
   elseif (self.type == Node.METHOD_INVOCATION_TYPE) then
-    print(tabString .. dq(self.method_name.cargo) .. " args: " .. Util.set_to_string(self.arguments))
+    print(tabString .. "invocation " .. dq(self.method_name.cargo) .. " args: " .. Util.set_to_string(self.arguments))
 
     if self.next_method_invocation then
       self.next_method_invocation:display(tabs + 1, "Next method: ")
