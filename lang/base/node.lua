@@ -359,7 +359,7 @@ function Node:display(tabs, info)
     self.method_invocation:display(tabs + 1, "method: ")
 
   elseif (self.type == Node.METHOD_DEFINITION_TYPE) then
-    print(tabString .. "method definition: " .. dq(self.method_name.cargo) .. " args: " .. Util.set_to_string(self.arguments))
+    print(tabString .. "method definition: " .. dq(self.method_name) .. " args: " .. Util.set_to_string(self.arguments))
 
     -- Recursively tell our block node to display itself
     -- at a (tabs + 1) deeper level

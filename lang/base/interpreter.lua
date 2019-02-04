@@ -321,16 +321,18 @@ function Interpreter:MethodInvocation(node)
   local invocation_arguments = node.arguments
 
   if (method.num_arguments ~= node.num_arguments) then
-    print(node)
-    print(node.num_arguments)
-    print(Util.set_to_string(method))
-    print(method[num_arguments])
-    self:error("Expected " .. method.num_arguments  .. " instead got " .. node.num_arguments)
+    self:error("Expected " .. method.num_arguments  .. " arguments for method <" .. node.method_name .. "> but instead got " .. node.num_arguments)
   end
 
   local k
   for k = 1, node.num_arguments do
+    -- This is a Node.METHOD_ARGUMENT_TYPE
+    local method_arg = method_arguments[k]
 
+    -- This is some expression that needs to be visited for evaluation
+    local invocation_arg = invocation_arguments[k]
+
+    self:set_variable(method_arg.value, self:visit(invocation_arg))
   end
 
   -- Execute the block
