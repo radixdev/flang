@@ -366,7 +366,7 @@ function Node:display(tabs, info)
     self.block:display(tabs + 1, "BLOCK: ")
 
   elseif (self.type == Node.METHOD_INVOCATION_TYPE) then
-    print(tabString .. "invocation " .. dq(self.method_name.cargo) .. " args: " .. Util.set_to_string(self.arguments))
+    print(tabString .. "invocation " .. dq(self.method_name) .. " args: " .. Util.set_to_string(self.arguments))
 
     if self.next_method_invocation then
       self.next_method_invocation:display(tabs + 1, "Next method: ")

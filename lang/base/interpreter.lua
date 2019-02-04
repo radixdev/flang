@@ -256,7 +256,14 @@ function Interpreter:StatementList(node)
   local k
   for k=1, node.num_children-1 do
     local childNode = node.children[k]
-    self:visit(childNode)
+    -- self:visit(childNode)
+
+    -- Check for the return type
+    if (childNode.type == Node.RETURN_STATEMENT_TYPE) then
+      return self:visit(childNode)
+    else
+      self:visit(childNode)
+    end
   end
 end
 
@@ -311,7 +318,7 @@ function Interpreter:MethodDefinition(node)
 end
 
 function Interpreter:MethodInvocation(node)
-  -- TODO I assume here is where we'd do our block scoping and all that
+  -- TODO I assume here is where we'd declare our block scoping and all that
 
   -- Get the method
   local method = self:get_method(node.method_name)
@@ -336,5 +343,9 @@ function Interpreter:MethodInvocation(node)
   end
 
   -- Execute the block
+  return self:visit(method.block)
+end
 
+function Interpreter:ReturnStatement(node)
+  return self:visit(node.expr)
 end
