@@ -20,3 +20,7 @@ localRequire("lexer")
 localRequire("node")
 localRequire("parser")
 localRequire("interpreter")
+
+-- Start loading lua functions
+if not Flang.LuaFunction then Flang.LuaFunction = {} end
+localRequire("lua_functions/core")

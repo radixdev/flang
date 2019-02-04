@@ -37,7 +37,7 @@ end
 ]]
 function FlangChip:start_execution()
   -- recreate everything
-  local success, result = pcall(create_flang_interpreter,self.source)
+  local success, result = pcall(create_flang_interpreter, self.source)
   if success then
     self.interpreter = result
     self.is_running = true
