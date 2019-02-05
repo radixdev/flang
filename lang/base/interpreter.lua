@@ -17,6 +17,7 @@ function Interpreter:new(o)
 
   o = {
     parser = o.parser,
+    entity = o.entity or {},
     symbol_table_global = {},
     method_table_global = {},
     tree = o.parser:parse()
@@ -370,5 +371,7 @@ function Interpreter:FunctionCall(node)
   local method_invocation = node.method_invocation
   local functionMethod = self:get_function_method(node.class, method_invocation.method_name)
 
-  local functionReturnValue = functionMethod(nil, method_invocation.arguments)
+  -- Each argument needs to be visited first!
+  local functionReturnValue = functionMethod(self, self.entity, method_invocation.arguments)
+  return functionReturnValue.result
 end
