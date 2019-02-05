@@ -7,13 +7,16 @@
 local Core = {}
 Core.__index = Core
 Flang.LuaFunction.Core = Core
-
-print("core lib added")
-
 -- Now start adding your functions below
--- "entity" is the flang chip entity. This argument is passed into every function call
--- "flangArguments" is an array of arguments from the Flang code itself. It is 1 indexed.
-function Core:helloWorld(entity, flangArguments)
+
+--[[
+  * "wrapper" is the flang runner (Factorio) state information for
+    the chip itself. This argument is passed into every function call.
+    See `FlangChip.lua` for the contents. You can expect the chip entity
+    for example.
+  * "flangArguments" is an array of arguments from the Flang code itself. It is 1 indexed.
+]]
+function Core:helloWorld(wrapper, flangArguments)
   -- Your function can return values back to the code in a table
   return {
     -- This key is actually returned to the code

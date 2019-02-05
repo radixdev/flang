@@ -97,7 +97,13 @@ end
 function create_flang_interpreter(source)
   local lexer = Flang.Lexer:new({sourceText = source})
   local parser = Flang.Parser:new({lexer = lexer})
-  local interpreter = Flang.Interpreter:new({parser = parser})
+
+  -- Create our wrapper to pass in for function calls
+  local wrapper = {
+    entity = self.entity,
+    printer = self.printer
+  }
+  local interpreter = Flang.Interpreter:new({parser = parser, wrapper = wrapper})
   return interpreter
 end
 

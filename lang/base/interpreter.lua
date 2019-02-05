@@ -17,7 +17,8 @@ function Interpreter:new(o)
 
   o = {
     parser = o.parser,
-    entity = o.entity or {},
+    -- The wrapper contains info from the runner.
+    wrapper = o.wrapper or {},
     symbol_table_global = {},
     method_table_global = {},
     tree = o.parser:parse()
@@ -381,6 +382,6 @@ function Interpreter:FunctionCall(node)
     visitedArguments[k] = self:visit(invocation_arg)
   end
 
-  local functionReturnValue = functionMethod(self, self.entity, visitedArguments)
+  local functionReturnValue = functionMethod(self, self.wrapper, visitedArguments)
   return functionReturnValue.result
 end
