@@ -197,7 +197,7 @@ function Parser:function_invocation()
   self:eat(Symbols.IDENTIFIER)
   self:eat(Symbols.DOT)
 
-  return Node.FunctionCall(firstIdentifier, firstIdentifier, self:method_invocation())
+  return Node.FunctionCall(firstIdentifier, firstIdentifier.cargo, self:method_invocation())
 end
 
 function Parser:factor()

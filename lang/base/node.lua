@@ -185,13 +185,13 @@ end
 
   method_invocation is surprisingly a Node.METHOD_INVOCATION_TYPE
 ]]
-Node.FUNCTION_CALL_TYPE = "FuncCall"
-function Node.FunctionCall(token, object, method_invocation)
+Node.FUNCTION_CALL_TYPE = "FunctionCall"
+function Node.FunctionCall(token, class, method_invocation)
   Node.print("creating function call node " .. tostring(token))
   return Node:new({
     type = Node.FUNCTION_CALL_TYPE,
     token = token,
-    object = object,
+    class = class,
     method_invocation = method_invocation
   })
 end

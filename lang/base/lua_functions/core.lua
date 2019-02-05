@@ -11,6 +11,8 @@ Flang.LuaFunction.Core = Core
 print("core lib added")
 
 -- Now start adding your functions below
+-- "entity" is the flang chip entity. This argument is passed into every function call
+-- "flangArguments" is an array of arguments from the Flang code itself. It is 1 indexed.
 function Core:helloWorld(entity, flangArguments)
   print("hello world!")
 end

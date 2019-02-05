@@ -112,6 +112,20 @@ function Interpreter:get_method(method_name)
   return self.method_table_global[method_name]
 end
 
+function Interpreter:get_function_method(function_class, method_name)
+  -- hail mary of a call
+  if (Flang.LuaFunction[function_class] == nil) then
+    print(function_class)
+    self:error("Function class lookup failed for name <" .. function_class .. ">")
+  end
+
+  if (Flang.LuaFunction[function_class][method_name] == nil) then
+    self:error("Function class method lookup failed for name <" .. function_class .. "." .. method_name .. ">")
+  end
+
+  return Flang.LuaFunction[function_class][method_name]
+end
+
 -----------------------------------------------------------------------
 -- AST traversal
 -- Every node must have a corresponding method here
@@ -348,4 +362,13 @@ end
 
 function Interpreter:ReturnStatement(node)
   return self:visit(node.expr)
+end
+
+function Interpreter:FunctionCall(node)
+  -- Get the function method
+  -- note that this doesn't do chaining
+  local method_invocation = node.method_invocation
+  local functionMethod = self:get_function_method(node.class, method_invocation.method_name)
+
+  local functionReturnValue = functionMethod(nil, method_invocation.arguments)
 end
