@@ -372,6 +372,15 @@ function Interpreter:FunctionCall(node)
   local functionMethod = self:get_function_method(node.class, method_invocation.method_name)
 
   -- Each argument needs to be visited first!
-  local functionReturnValue = functionMethod(self, self.entity, method_invocation.arguments)
+  local k
+  local visitedArguments = {}
+  for k = 1, method_invocation.num_arguments do
+    -- This is some expression that needs to be visited for evaluation
+    local invocation_arg = method_invocation.arguments[k]
+
+    visitedArguments[k] = self:visit(invocation_arg)
+  end
+
+  local functionReturnValue = functionMethod(self, self.entity, visitedArguments)
   return functionReturnValue.result
 end
