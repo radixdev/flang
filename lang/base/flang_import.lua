@@ -21,6 +21,8 @@ localRequire("node")
 localRequire("parser")
 localRequire("interpreter")
 
--- Start loading lua functions
+-- Create the lua function (mods) namespace
 if not Flang.LuaFunction then Flang.LuaFunction = {} end
+
+-- Start loading lua functions
 localRequire("lua_functions/core")

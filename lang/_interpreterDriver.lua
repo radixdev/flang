@@ -1,6 +1,6 @@
 require("base.flang_import")
 
-filename = "samples/func1.flang"
+filename = "samples/funcCall1.flang"
 local f = assert(io.open(filename, "r"))
 local t = f:read("*all")
 f:close()
