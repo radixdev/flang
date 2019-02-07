@@ -1,6 +1,6 @@
 require("base.flang_import")
 
-filename = "samples/funcCall1.flang"
+filename = "samples/s2.flang"
 local f = assert(io.open(filename, "r"))
 local t = f:read("*all")
 f:close()
@@ -10,7 +10,7 @@ print(t)
 print("==== END SOURCE ====\n")
 
 Flang.DEBUG_LOGGING = true
-Flang.VERBOSE_LOGGING = false
+Flang.VERBOSE_LOGGING = true
 
 local start_time = os.clock()
 lexer = Flang.Lexer:new({sourceText = t})
@@ -28,3 +28,4 @@ for key,value in pairs(symbol_table) do
 end
 
 print(string.format("elapsed time: %.5fs or %.2fms\n", elapsed, elapsed * 1000))
+os.execute 'pause'
