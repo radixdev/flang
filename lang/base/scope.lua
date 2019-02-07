@@ -118,3 +118,33 @@ function Scope:exitCall()
 
   self:error("exitCall called but no call_ptr was available")
 end
+
+-- Returns the scope that contains the variable with "name"
+function Scope:getContainerScopeForVariable(name)
+  -- Check ourselves!
+  if (self.variable_table[name] ~= nil) then
+    return self
+  end
+
+  -- Check our parent
+  if (self.parent_scope_ptr ~= nil) then
+    return self.parent_scope_ptr:getContainerScopeForVariable(name)
+  end
+
+  -- Check the block start
+  if (self.block_start_ptr ~= nil) then
+    return self.block_start_ptr:getContainerScopeForVariable(name)
+  end
+
+  self:error("Variable lookup failed for name <" .. name .. ">")
+end
+
+function Scope:getVariable(name)
+  local containerScope = self:getContainerScopeForVariable(name)
+  return containerScope.variable_table[name]
+end
+
+function Scope:setVariable(name, value)
+  local containerScope = self:getContainerScopeForVariable(name)
+  containerScope.variable_table[name] = value
+end
