@@ -21,6 +21,8 @@ function Interpreter:new(o)
     wrapper = o.wrapper or {},
     symbol_table_global = {},
     method_table_global = {},
+
+    current_symbol_scope = nil,
     tree = o.parser:parse()
   }
 
@@ -44,6 +46,7 @@ function Interpreter:interpret()
     print("====== END TREE =======\n")
   end
 
+  self.current_symbol_scope = Flang.Scope:new({})
   return self:visit(self.tree)
 end
 
@@ -52,19 +55,12 @@ end
 -----------------------------------------------------------------------
 
 function Interpreter:get_variable(variable_name)
-  -- TODO This should utilize or enforce scoping to blocks
-
   -- Check if this variable has been defined already
-  if (self.symbol_table_global[variable_name] == nil) then
-    self:error("Undefined variable " .. variable_name)
-  else
-    return self.symbol_table_global[variable_name]
-  end
+  return self.current_symbol_scope:getVariable(variable_name)
 end
 
 function Interpreter:set_variable(variable_name, value)
-  -- TODO This should utilize or enforce scoping to blocks
-  self.symbol_table_global[variable_name] = value
+  self.current_symbol_scope:setVariable(variable_name, value)
 end
 
 function Interpreter:add_method_definition(method_name, arguments, num_arguments, block)

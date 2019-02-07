@@ -136,15 +136,27 @@ function Scope:getContainerScopeForVariable(name)
     return self.block_start_ptr:getContainerScopeForVariable(name)
   end
 
-  self:error("Variable lookup failed for name <" .. name .. ">")
+  return nil
 end
 
 function Scope:getVariable(name)
   local containerScope = self:getContainerScopeForVariable(name)
+
+  if (containerScope == nil) then
+    -- No scope exists for our variable
+    self:error("Variable lookup failed for name <" .. name .. ">. Undefined.")
+  end
+
   return containerScope.variable_table[name]
 end
 
 function Scope:setVariable(name, value)
   local containerScope = self:getContainerScopeForVariable(name)
+
+  if (containerScope == nil) then
+    -- No scope exists for our variable. Thus WE are the proper scope!
+    containerScope = self
+  end
+
   containerScope.variable_table[name] = value
 end
