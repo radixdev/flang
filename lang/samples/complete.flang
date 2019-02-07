@@ -79,3 +79,5 @@ def mul(mulArgx, mulArgy) {
 methodShouldBe5 = add(6, -1)
 methodShouldBe18 = mul(3, 6)
 methodShouldBe100 = mul(5, add(7, 13))
+
+stringShouldBeHelloWorld = "Hello World!"

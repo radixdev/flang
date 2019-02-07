@@ -80,6 +80,17 @@ function Node.Boolean(token)
   })
 end
 
+Node.STRING_TYPE = "String"
+function Node.String(token)
+  Node.print("creating string node " .. tostring(token))
+  return Node:new({
+    type = Node.STRING_TYPE,
+    token = token,
+    value = token.cargo,
+    parsed_value = token.cargo
+  })
+end
+
 Node.VARIABLE_TYPE = "Var"
 function Node.Variable(token)
   Node.print("creating var node " .. tostring(token))
@@ -295,6 +306,9 @@ function Node:display(tabs, info)
 
   elseif (self.type == Node.BOOLEAN_TYPE) then
     print(tabString .. "boolean: " .. dq(self.value))
+
+  elseif (self.type == Node.STRING_TYPE) then
+    print(tabString .. "string: " .. dq(self.value))
 
   elseif (self.type == Node.VARIABLE_TYPE) then
     print(tabString .. "var: " .. dq(self.value))

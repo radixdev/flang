@@ -67,5 +67,7 @@ assertEquals("eForShouldBe10000", 10000)
 assertEquals("methodShouldBe5", 5)
 assertEquals("methodShouldBe18", 18)
 assertEquals("methodShouldBe100", 100)
+assertEquals("stringShouldBeHelloWorld", "\"Hello World!\"")
+
 print("========ALL CHECKS PASSED=======")
 print(string.format("elapsed time: %.5fs or %.2fms\n", elapsed, elapsed * 1000))

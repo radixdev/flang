@@ -98,6 +98,7 @@ end
                 | MINUS factor
                 | NUMBER
                 | boolean
+                | STRING
                 | (variable | function_call)
                 | LPAREN expr RPAREN
 
@@ -247,6 +248,10 @@ function Parser:factor()
     local node = self:expr()
     self:eat(Symbols.RPAREN)
     return node
+
+  elseif (token.type == Symbols.STRING) then
+    self:eat(Symbols.STRING)
+    return Node.String(token)
 
   else
     print("factor has nothing. returning empty node")

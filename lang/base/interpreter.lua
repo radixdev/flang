@@ -181,6 +181,10 @@ function Interpreter:Num(node)
   return node.parsed_value
 end
 
+function Interpreter:String(node)
+  return node.parsed_value
+end
+
 function Interpreter:NoOp(node)
   -- do nothing
 end

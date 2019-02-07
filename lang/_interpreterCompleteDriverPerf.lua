@@ -1,6 +1,7 @@
 require("base.flang_import")
 
 Flang.DEBUG_LOGGING = false
+Flang.VERBOSE_LOGGING = false
 
 filename = "samples/complete.flang"
 local f = assert(io.open(filename, "r"))
