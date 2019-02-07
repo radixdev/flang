@@ -2,18 +2,9 @@ globalA = 1
 globalB = 10
 globalShouldBe20 = 0
 
-def add(x, y) {
-  return x + y
-}
-
-if (globalA > 0) {
-  x = 2
+if (1 == 1) {
+  x = 3
   if (1 == 1) {
-    y = x + 1
-    globalB = y + 4
-
-    if (add(x, y) == add(y, x)) {
-      globalShouldBe20 = 20
-    }
+    y = 4
   }
 }

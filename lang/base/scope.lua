@@ -46,8 +46,15 @@ function Scope:error(msg)
   error(msg)
 end
 
+function Scope:debugPrint(msg)
+  if (Flang.DEBUG_LOGGING) then
+    print(msg .. " last tbl -> " .. Util.set_to_string_dumb(self))
+  end
+end
+
 -- A block has been entered. Our scope gets 1 level deeper.
 function Scope:enterBlock()
+  self:debugPrint("enterBlock")
   local nextParent = self
 
   -- Determine our block start ptr
@@ -79,6 +86,7 @@ end
 
 -- A block has been exited. Our scope goes up 1 level.
 function Scope:exitBlock()
+  self:debugPrint("exitBlock")
   -- Since the scope tree is static, we just have to return a previously linked node
 
   if (self.parent_scope_ptr ~= nil) then
@@ -95,6 +103,8 @@ function Scope:exitBlock()
 end
 
 function Scope:enterCall()
+  self:debugPrint("enterCall")
+
   -- There's no parent here. Lookup from here should continue from the block_start_ptr instead.
   local nextParent = nil
   local nextBlockStart = self.block_start_ptr
@@ -110,6 +120,8 @@ function Scope:enterCall()
 end
 
 function Scope:exitCall()
+  self:debugPrint("exitCall")
+
   -- The block has ended via explicit return. The call ptr should be followed
   -- to determine which scope to return
   if (self.call_ptr ~= nil) then

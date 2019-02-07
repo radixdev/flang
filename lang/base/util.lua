@@ -50,3 +50,19 @@ function Util.set_to_string(table)
   -- result = result .. "}"
   return result .. "}"
 end
+
+function Util.set_to_string_dumb(table)
+  local result = "{"
+  local add_comma = false
+
+  for k,v in pairs(table) do
+    if add_comma then
+      result = result .. ", "
+    else
+      add_comma = true
+    end
+
+    result = result .. tostring(k) .. ":" .. tostring(v)
+  end
+  return result .. "}"
+end

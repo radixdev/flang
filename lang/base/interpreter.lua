@@ -19,7 +19,6 @@ function Interpreter:new(o)
     parser = o.parser,
     -- The wrapper contains info from the runner.
     wrapper = o.wrapper or {},
-    symbol_table_global = {},
     method_table_global = {},
 
     current_symbol_scope = nil,
@@ -55,7 +54,6 @@ end
 -----------------------------------------------------------------------
 
 function Interpreter:get_variable(variable_name)
-  -- Check if this variable has been defined already
   return self.current_symbol_scope:getVariable(variable_name)
 end
 
@@ -267,6 +265,9 @@ function Interpreter:If(node)
 end
 
 function Interpreter:StatementList(node)
+  -- Our block is starting now. Change scope
+  self.current_symbol_scope = self.current_symbol_scope:enterBlock()
+
   -- Iterate over each of the children
   -- Note, this is faster than ipairs
   local k
@@ -279,6 +280,9 @@ function Interpreter:StatementList(node)
       self:visit(childNode)
     end
   end
+
+  -- Scope has finished. Our block has exited.
+  self.current_symbol_scope = self.current_symbol_scope:exitBlock()
 end
 
 function Interpreter:For(node)
@@ -332,7 +336,8 @@ function Interpreter:MethodDefinition(node)
 end
 
 function Interpreter:MethodInvocation(node)
-  -- TODO I assume here is where we'd declare our block scoping and all that
+  -- Call is starting now.
+  self.current_symbol_scope = self.current_symbol_scope:enterCall()
 
   -- Get the method
   local method = self:get_method(node.method_name)
@@ -357,7 +362,12 @@ function Interpreter:MethodInvocation(node)
   end
 
   -- Execute the block
-  return self:visit(method.block)
+  local blockReturnValue = self:visit(method.block)
+
+  -- Return from our scope
+  self.current_symbol_scope = self.current_symbol_scope:exitCall()
+
+  return blockReturnValue
 end
 
 function Interpreter:ReturnStatement(node)
