@@ -19,6 +19,7 @@ localRequire("lexer")
 
 localRequire("node")
 localRequire("parser")
+localRequire("scope")
 localRequire("interpreter")
 
 -- Create the lua function (mods) namespace

@@ -276,8 +276,6 @@ function Interpreter:StatementList(node)
   local k
   for k=1, node.num_children-1 do
     local childNode = node.children[k]
-    -- self:visit(childNode)
-
     -- Check for the return type
     if (childNode.type == Node.RETURN_STATEMENT_TYPE) then
       return self:visit(childNode)
