@@ -159,5 +159,6 @@ function Lexer:getChar()
 end
 
 function Lexer:status()
-  print("  c1: " .. dq(self.c1) .. "\tc2: " .. dq(self.c2) .. "\tchar: " .. tostring(self.character))
+  local status = "  c1: " .. dq(self.c1) .. "\tc2: " .. dq(self.c2) .. "\tchar: " .. tostring(self.character)
+  print(status:gsub("\n", "\\n"))
 end

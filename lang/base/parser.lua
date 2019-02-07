@@ -249,6 +249,8 @@ function Parser:factor()
     return node
 
   else
+    print("factor has nothing. returning empty node")
+    print(token)
     return self:empty()
   end
 end

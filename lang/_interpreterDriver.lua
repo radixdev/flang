@@ -28,4 +28,3 @@ for key,value in pairs(symbol_table) do
 end
 
 print(string.format("elapsed time: %.5fs or %.2fms\n", elapsed, elapsed * 1000))
-os.execute 'pause'
