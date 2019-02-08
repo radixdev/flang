@@ -87,7 +87,8 @@ function Node.String(token)
     type = Node.STRING_TYPE,
     token = token,
     value = token.cargo,
-    parsed_value = token.cargo
+    -- Remove the quotes lol
+    parsed_value = token.cargo:gsub("\"", "")
   })
 end
 

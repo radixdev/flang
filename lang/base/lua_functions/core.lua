@@ -31,6 +31,15 @@ end
 
 function Core:writeVirtualSignal(wrapper, flangArguments)
   local virtualSignalIndex = flangArguments[1]
+  if (virtualSignalIndex < 0 or virtualSignalIndex > 100) then
+    -- This is a game ending exception...
+    -- Let's just soft crash!
+    return {
+      hasError = true,
+      errorMessage = "Core:writeVirtualSignal cannot accept a signal index outside the bounds [0..100]"
+    }
+  end
+
   local virtualSignalName = flangArguments[2]
 
   local entity = wrapper.entity

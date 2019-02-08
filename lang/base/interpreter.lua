@@ -407,10 +407,15 @@ function Interpreter:FunctionCall(node)
     visitedArguments[k] = self:visit(invocation_arg)
   end
 
-  local functionReturnValue = functionMethod(self, self.wrapper, visitedArguments)
-  if (functionReturnValue == nil) then
+  local functionReturnobject = functionMethod(self, self.wrapper, visitedArguments)
+  if (functionReturnobject == nil) then
     return nil
   else
-    return functionReturnValue.result
+    -- Check if we have an error to throw
+    if  (functionReturnobject.hasError) then
+      self:error(functionReturnobject.errorMessage)
+    end
+
+    return functionReturnobject.result
   end
 end
