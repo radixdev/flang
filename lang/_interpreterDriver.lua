@@ -9,7 +9,7 @@ print("===== SOURCE =======")
 print(t)
 print("==== END SOURCE ====\n")
 
-Flang.DEBUG_LOGGING = not true
+Flang.DEBUG_LOGGING = not false
 Flang.VERBOSE_LOGGING = false
 
 local start_time = os.clock()

@@ -1,7 +1,8 @@
 // comment here
 
 if (true) {
-  // if (add(x, y) == add(y, x)) {
-  //  globalShouldBe20 = 20
-  // }
+  //
+  //
+
+  x = 2
 }
