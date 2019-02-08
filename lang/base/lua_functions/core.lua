@@ -28,3 +28,17 @@ function Core:luaPrint(wrapper, flangArguments)
   print(flangArguments[1])
   return nil
 end
+
+function Core:writeVirtualSignal(wrapper, flangArguments)
+  local virtualSignalIndex = flangArguments[1]
+  local virtualSignalName = flangArguments[2]
+
+  local entity = wrapper.entity
+  local combinatorBehavior = entity.get_control_behavior()
+  combinatorBehavior.set_signal(virtualSignalIndex, {
+    signal = {
+      type = "virtual",
+      name = "signal-" .. virtualSignalName
+    }
+  })
+end

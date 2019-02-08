@@ -37,7 +37,7 @@ end
 ]]
 function FlangChip:start_execution()
   -- recreate everything
-  local success, result = pcall(create_flang_interpreter, self.source)
+  local success, result = pcall(create_flang_interpreter, self.source, self.entity, self.printer)
   if success then
     self.interpreter = result
     self.is_running = true
@@ -78,7 +78,7 @@ function FlangChip:execute()
   local success, result = pcall(self.interpreter.interpret, self.interpreter)
   if success then
     -- result is our symbol table
-    for k,v in pairs(self.interpreter.symbol_table_global) do
+    for k,v in pairs(self.interpreter.global_symbol_scope.variable_table) do
       self.printer("key " .. k .. " val " .. v)
     end
   else
@@ -94,14 +94,14 @@ function FlangChip:on_error(error)
   self.printer(tostring(error))
 end
 
-function create_flang_interpreter(source)
+function create_flang_interpreter(source, entity, printer)
   local lexer = Flang.Lexer:new({sourceText = source})
   local parser = Flang.Parser:new({lexer = lexer})
 
   -- Create our wrapper to pass in for function calls
   local wrapper = {
-    entity = self.entity,
-    printer = self.printer
+    entity = entity,
+    printer = printer
   }
   local interpreter = Flang.Interpreter:new({parser = parser, wrapper = wrapper})
   return interpreter
