@@ -269,7 +269,7 @@ end
 function Interpreter:StatementList(node)
   -- Our block is starting now. Change scope
   self.current_symbol_scope = self.current_symbol_scope:enterBlock()
-  
+
   if (self.global_symbol_scope == nil) then
     -- This is the first scope ever created. Must be PROGRAM global
     self.global_symbol_scope = self.current_symbol_scope
@@ -403,5 +403,9 @@ function Interpreter:FunctionCall(node)
   end
 
   local functionReturnValue = functionMethod(self, self.wrapper, visitedArguments)
-  return functionReturnValue.result
+  if (functionReturnValue == nil) then
+    return nil
+  else
+    return functionReturnValue.result
+  end
 end

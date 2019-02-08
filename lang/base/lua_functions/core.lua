@@ -23,3 +23,8 @@ function Core:helloWorld(wrapper, flangArguments)
     result = flangArguments[1] + 1
   }
 end
+
+function Core:luaPrint(wrapper, flangArguments)
+  print(flangArguments[1])
+  return nil
+end
