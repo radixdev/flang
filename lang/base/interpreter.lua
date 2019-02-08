@@ -302,6 +302,9 @@ function Interpreter:For(node)
     Without this structure, we fallback to the standard for loop
   ]]
 
+  -- We enter scope here since the initializer is inside the forloop scope itself
+  -- e.g. for (i=0... the "i" shouldn't remain in scope afterwards
+  self.current_symbol_scope = self.current_symbol_scope:enterBlock()
   self:visit(node.initializer)
 
   if (node.enhanced) then
@@ -335,6 +338,8 @@ function Interpreter:For(node)
       self:visit(node.incrementer)
     end
   end
+
+  self.current_symbol_scope = self.current_symbol_scope:exitBlock()
 end
 
 function Interpreter:MethodDefinition(node)
