@@ -1,0 +1,5 @@
+for(i = 0 ; 10000) {
+  x = Core.helloWorld(1)
+}
+
+y = 3
