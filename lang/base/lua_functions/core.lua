@@ -41,6 +41,7 @@ function Core:writeVirtualSignal(wrapper, flangArguments)
   end
 
   local virtualSignalName = flangArguments[2]
+  local virtualSignalCount = flangArguments[3]
 
   local entity = wrapper.entity
   local combinatorBehavior = entity.get_control_behavior()
@@ -48,6 +49,24 @@ function Core:writeVirtualSignal(wrapper, flangArguments)
     signal = {
       type = "virtual",
       name = "signal-" .. virtualSignalName
-    }
+    },
+    count = virtualSignalCount
   })
+end
+
+function Core:readVirtualSignal(wrapper, flangArguments)
+  local virtualSignalName = flangArguments[1]
+  local entity = wrapper.entity
+  local combinatorBehavior = entity.get_control_behavior()
+
+  local circuitNetwork = combinatorBehavior.get_circuit_network(defines.wire_type.red)
+  local signal = {
+      type = "virtual",
+      name = "signal-" .. virtualSignalName
+  }
+  local value = circuitNetwork.get_signal(signal)
+
+  return {
+    result = value
+  }
 end
