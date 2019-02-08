@@ -1,8 +1,7 @@
-if (1 == 1) {
-  y = x + 1
-  globalB = y + 4
+// comment here
 
-  //if (add(x, y) == add(y, x)) {
+if (true) {
+  // if (add(x, y) == add(y, x)) {
   //  globalShouldBe20 = 20
-  //}
+  // }
 }
