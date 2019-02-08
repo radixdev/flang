@@ -1,0 +1,10 @@
+def add(x_, y_) {
+  return x_ + y_
+}
+
+globalShouldBe20 = 0
+x = 1
+y = 2
+if (add(x, y) == add(y, x)) {
+  globalShouldBe20 = 20
+}

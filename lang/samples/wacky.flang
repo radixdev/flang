@@ -1,11 +1,8 @@
-a = 10
-a+=1
+if (1 == 1) {
+  y = x + 1
+  globalB = y + 4
 
-b=10
-b-=2
-
-c=4
-c*=3
-
-d=5
-d/=2
+  //if (add(x, y) == add(y, x)) {
+  //  globalShouldBe20 = 20
+  //}
+}

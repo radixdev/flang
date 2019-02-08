@@ -22,6 +22,8 @@ function Interpreter:new(o)
     method_table_global = {},
 
     current_symbol_scope = nil,
+
+    global_symbol_scope = nil,
     tree = o.parser:parse()
   }
 
@@ -267,6 +269,11 @@ end
 function Interpreter:StatementList(node)
   -- Our block is starting now. Change scope
   self.current_symbol_scope = self.current_symbol_scope:enterBlock()
+  
+  if (self.global_symbol_scope == nil) then
+    -- This is the first scope ever created. Must be PROGRAM global
+    self.global_symbol_scope = self.current_symbol_scope
+  end
 
   -- Iterate over each of the children
   -- Note, this is faster than ipairs
@@ -336,9 +343,6 @@ function Interpreter:MethodDefinition(node)
 end
 
 function Interpreter:MethodInvocation(node)
-  -- Call is starting now.
-  self.current_symbol_scope = self.current_symbol_scope:enterCall()
-
   -- Get the method
   local method = self:get_method(node.method_name)
 
@@ -350,15 +354,24 @@ function Interpreter:MethodInvocation(node)
     self:error("Expected " .. method.num_arguments  .. " arguments for method <" .. node.method_name .. "> but instead got " .. node.num_arguments)
   end
 
+  -- Get the proper values for the arguments in the current scope
+  -- THEN change scope and set them!
+
+  local argumentValues = {}
   local k
+  for k = 1, node.num_arguments do
+    -- This is some expression that needs to be visited for evaluation
+    local invocation_arg = invocation_arguments[k]
+    argumentValues[k] = self:visit(invocation_arg)
+  end
+
+  -- Now set the arguments in the invocation scope
+  self.current_symbol_scope = self.current_symbol_scope:enterCall()
+
   for k = 1, node.num_arguments do
     -- This is a Node.METHOD_ARGUMENT_TYPE
     local method_arg = method_arguments[k]
-
-    -- This is some expression that needs to be visited for evaluation
-    local invocation_arg = invocation_arguments[k]
-
-    self:set_variable(method_arg.value, self:visit(invocation_arg))
+    self:set_variable(method_arg.value, argumentValues[k])
   end
 
   -- Execute the block
@@ -366,7 +379,6 @@ function Interpreter:MethodInvocation(node)
 
   -- Return from our scope
   self.current_symbol_scope = self.current_symbol_scope:exitCall()
-
   return blockReturnValue
 end
 

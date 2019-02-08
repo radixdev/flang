@@ -47,9 +47,9 @@ function Scope:error(msg)
 end
 
 function Scope:debugPrint(msg)
-  if (Flang.DEBUG_LOGGING) then
-    print(msg .. " last tbl -> " .. Util.set_to_string_dumb(self))
-  end
+  -- if (Flang.DEBUG_LOGGING) then
+  --   print(msg .. " -> " .. Util.set_to_string_dumb(self) .. " tbl " .. Util.set_to_string_dumb(self.variable_table))
+  -- end
 end
 
 -- A block has been entered. Our scope gets 1 level deeper.
@@ -133,6 +133,7 @@ end
 
 -- Returns the scope that contains the variable with "name"
 function Scope:getContainerScopeForVariable(name)
+  -- print("Variable lookup on " .. name .. " on " .. Util.set_to_string_dumb(self) .. " with table " .. Util.set_to_string_dumb(self.variable_table))
   -- Check ourselves!
   if (self.variable_table[name] ~= nil) then
     return self
@@ -163,11 +164,13 @@ function Scope:getVariable(name)
 end
 
 function Scope:setVariable(name, value)
+  self:debugPrint("Calling set for " .. name)
   local containerScope = self:getContainerScopeForVariable(name)
 
   if (containerScope == nil) then
     -- No scope exists for our variable. Thus WE are the proper scope!
     containerScope = self
+    self:debugPrint("    no scope found for " .. name .. " on set. WE ARE SCOPE!")
   end
 
   containerScope.variable_table[name] = value
