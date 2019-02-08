@@ -30,13 +30,13 @@ function Lexer:get()
     self:getChar()
   end
 
--- Read past any whitespace
+  -- Read past any whitespace
   while Flang.Symbols.isWhitespace(self.c1) do
     self:getChar()
   end
 
-  -- Drop any comments
-  if (self.c2 == Flang.Symbols.SINGLE_LINE_COMMENT_START) then
+  -- Consume any comments until we verifiably get to a non-comment
+  while (self.c2 == Flang.Symbols.SINGLE_LINE_COMMENT_START) do
     self:getChar()
 
     -- Eat everything until the line is over

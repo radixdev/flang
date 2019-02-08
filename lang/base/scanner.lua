@@ -39,7 +39,7 @@ function Scanner:get()
 
   -- maintain the line count
   if (self.sourceIndex > 0) then
-    if (self:getChar(self.sourceIndex-1) == "\n") then
+    if (self:getChar(self.sourceIndex - 1) == "\n") then
       -- The previous character was a newline.
       --  reset the column and increment the line index
       self.lineIndex = self.lineIndex + 1

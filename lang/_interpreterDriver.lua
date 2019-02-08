@@ -1,6 +1,6 @@
 require("base.flang_import")
 
-filename = "samples/funcCall2.flang"
+filename = "samples/wacky.flang"
 local f = assert(io.open(filename, "r"))
 local t = f:read("*all")
 f:close()
@@ -9,7 +9,7 @@ print("===== SOURCE =======")
 print(t)
 print("==== END SOURCE ====\n")
 
-Flang.DEBUG_LOGGING = not true
+Flang.DEBUG_LOGGING = not false
 Flang.VERBOSE_LOGGING = false
 
 local start_time = os.clock()
