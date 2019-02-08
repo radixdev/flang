@@ -20,7 +20,7 @@ local elapsed = os.clock() - start_time
 
 -- print out the symbol table
 print("global symbol table")
-symbol_table = interpreter.symbol_table_global
+symbol_table = interpreter.global_symbol_scope.variable_table
 for key,value in pairs(symbol_table) do
   print(key .. " = " .. tostring(value))
 end
