@@ -63,7 +63,7 @@ end
 -----------------------------------------------------------------------
 
 --[[
-  FLANG 0.0.1 LANGUAGE DEFINITION
+  FLANG LANGUAGE DEFINITION
 
   program         : statement_list
 
@@ -226,6 +226,10 @@ function Parser:factor()
   elseif (token.type == Symbols.TRUE or token.type == Symbols.FALSE) then
     return self:boolean()
 
+  elseif (token.type == Symbols.STRING) then
+    self:eat(Symbols.STRING)
+    return Node.String(token)
+
   elseif (token.type == Symbols.IDENTIFIER) then
     -- Do a lookahead. This identifier can't be assigned just yet
 
@@ -248,10 +252,6 @@ function Parser:factor()
     local node = self:expr()
     self:eat(Symbols.RPAREN)
     return node
-
-  elseif (token.type == Symbols.STRING) then
-    self:eat(Symbols.STRING)
-    return Node.String(token)
 
   else
     print("factor has nothing. returning empty node")
