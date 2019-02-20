@@ -43,6 +43,8 @@ Symbols.RBRACKET = "}"
 Symbols.SEMICOLON = ";"
 Symbols.COMMA = ","
 Symbols.DOT = "."
+Symbols.LSQUAREBRACKET = "["
+Symbols.RSQUAREBRACKET = "]"
 
 Symbols.ONE_CHARACTER_SYMBOLS = Flang.Util.Set{
   Symbols.EQUALS,
@@ -54,7 +56,8 @@ Symbols.ONE_CHARACTER_SYMBOLS = Flang.Util.Set{
   Symbols.MODULUS,
   Symbols.SEMICOLON,
   Symbols.COMMA,
-  Symbols.DOT
+  Symbols.DOT,
+  Symbols.LSQUAREBRACKET, Symbols.RSQUAREBRACKET
 }
 
 Symbols.GTE = ">="
