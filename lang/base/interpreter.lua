@@ -33,7 +33,7 @@ function Interpreter:new(o)
 end
 
 function Interpreter:error(msg)
-  error(msg)
+  error(msg .. "\nat " .. Util.set_to_string_dumb(lastNode.token))
 end
 
 -----------------------------------------------------------------------
@@ -129,7 +129,9 @@ end
 -- Every node must have a corresponding method here
 -----------------------------------------------------------------------
 
+lastNode = nil
 function Interpreter:visit(node)
+  lastNode = node
   -- See https://stackoverflow.com/questions/26042599/lua-call-a-function-using-its-name-string-in-a-class
 
   -- comment out this logging for faster performance
@@ -460,7 +462,14 @@ function Interpreter:ArrayIndexGet(node)
   local identifierName = node.identifier
   local identifierTable = self:get_variable(identifierName)
 
-  -- The +1 is to allow 0 indexing
-  local index = self:visit(node.expr) + 1
-  return self:visit(identifierTable[index])
+  local index = self:visit(node.expr)
+  if (Util.isNumber(index)) then
+    -- The +1 is to allow 0 indexing
+    index = index + 1
+  end
+  local tableValue = identifierTable[index]
+  if (tableValue == nil) then
+    self:error("Array indexing error on: <" .. identifierName .. "> at index: <" .. index .. ">")
+  end
+  return self:visit(tableValue)
 end

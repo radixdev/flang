@@ -71,6 +71,23 @@ function Util.set_to_string_dumb(table)
   return result .. "}"
 end
 
+function Util.set_to_string_nested_nodes(table, dont_print_key)
+  local result = "{"
+  local add_comma = false
+
+  for k,v in pairs(table) do
+    if add_comma then
+      result = result .. ", "
+    else
+      add_comma = true
+    end
+
+    -- v is a node
+    result =  result .. tostring(v.value)
+  end
+  return result .. "}"
+end
+
 function Util.isNumber(val)
   return type(val) == "number"
 end
