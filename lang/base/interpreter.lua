@@ -326,9 +326,9 @@ function Interpreter:For(node)
     end
 
     for i = initializer_value, (condition_value-1), incrementer_value do
-      self:visit(node.block)
       -- set i
       self:set_variable(variable_name, i)
+      self:visit(node.block)
     end
   else
     self:visit(node.initializer)
