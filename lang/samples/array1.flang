@@ -1,7 +1,7 @@
 emptyArray = []
 
 arr = [1, 2, 3]
-arrLength = arr.length()
+// arrLength = arr.length()
 //
 // for (i=0; arr.length) {
 //   v = arr[i]

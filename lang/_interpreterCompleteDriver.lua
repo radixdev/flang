@@ -22,7 +22,11 @@ local elapsed = os.clock() - start_time
 print("global symbol table")
 symbol_table = interpreter.global_symbol_scope.variable_table
 for key,value in pairs(symbol_table) do
-  print(key .. " = " .. tostring(value))
+  if (type(value) == "table") then
+    print(key .. " = " .. Util.set_to_string(value, true))
+  else
+    print(key .. " = " .. tostring(value))
+  end
 end
 
 function assertEquals(var, expected)

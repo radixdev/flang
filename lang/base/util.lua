@@ -29,7 +29,7 @@ end
   Creates strings like:
   {a:1, b:2, c:4}
 ]]
-function Util.set_to_string(table)
+function Util.set_to_string(table, dont_print_key)
   local result = "{"
   local add_comma = false
 
@@ -40,7 +40,11 @@ function Util.set_to_string(table)
       add_comma = true
     end
 
-    result = result .. tostring(k) .. ":"
+    if (dont_print_key) then
+      result = result
+    else
+      result = result .. tostring(k) .. ":"
+    end
     if (v.token) then
       result = result .. tostring(v.token.cargo)
     else
@@ -65,4 +69,12 @@ function Util.set_to_string_dumb(table)
     result = result .. tostring(k) .. ":" .. tostring(v)
   end
   return result .. "}"
+end
+
+function Util.isNumber(val)
+  return type(val) == "number"
+end
+
+function Util.isTable(val)
+  return type(val) == "table"
 end

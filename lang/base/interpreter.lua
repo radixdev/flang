@@ -313,7 +313,7 @@ function Interpreter:For(node)
 
     -- visit the condition value
     local condition_value = self:visit(node.condition)
-    if (type(condition_value) ~= "number") then
+    if (not Util.isNumber(condition_value)) then
       self:error("Expected for loop condition to evaluate to number")
     end
 
@@ -420,11 +420,15 @@ function Interpreter:FunctionCall(node)
   end
 end
 
+-- Note that the array is constructed here
 function Interpreter:Array(node)
+  local backingTable = node.backing_table
+
   -- Populate our table
   local k
   for k = 1, node.length do
-    
+    backingTable[k] = node.arguments[k]
   end
 
+  return backingTable
 end
