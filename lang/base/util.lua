@@ -45,7 +45,7 @@ function Util.set_to_string(table, dont_print_key)
     else
       result = result .. tostring(k) .. ":"
     end
-    if (v.token) then
+    if (Util.isTable(v) and v.token) then
       result = result .. tostring(v.token.cargo)
     else
       result = result .. tostring(v)

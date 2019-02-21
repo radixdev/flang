@@ -272,6 +272,17 @@ function Node.ReturnStatement(token, expr)
   })
 end
 
+Node.ARRAY_INDEX_GET_TYPE = "ArrayIndexGet"
+function Node.ArrayIndexGet(token, identifier, expr)
+  Node.print("creating array index get node " .. tostring(token))
+  return Node:new({
+    type = Node.ARRAY_INDEX_GET_TYPE,
+    token = token,
+    identifier = identifier,
+    expr = expr
+  })
+end
+
 -----------------------------------------------------------------------
 -- Helper functions
 -----------------------------------------------------------------------
@@ -405,6 +416,10 @@ function Node:display(tabs, info)
 
   elseif (self.type == Node.ARRAY_TYPE) then
     print(tabString .. "array constructor with args: " .. Util.set_to_string(self.arguments))
+
+  elseif (self.type == Node.ARRAY_INDEX_GET_TYPE) then
+    print(tabString .. "array index get on var: " .. dq(self.identifier))
+    self.expr:display(tabs + 1)
 
   else
     print("Unknown type. Can't display parse tree: " .. dq(self.type))

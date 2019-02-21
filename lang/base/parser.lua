@@ -100,12 +100,14 @@ end
                 | boolean
                 | STRING
                 | array_init
-                | (variable | function_call)
+                | (variable | function_call | array_index_get)
                 | LPAREN expr RPAREN
 
   variable      : IDENTIFIER
   boolean       : (TRUE | FALSE)
-  array_init    : LSQUAREBRACKET (expr COMMA | expr)* RSQUAREBRACKET
+
+  array_init        : LSQUAREBRACKET (expr COMMA | expr)* RSQUAREBRACKET
+  array_index_get   : IDENTIFIER LSQUAREBRACKET expr RSQUAREBRACKET
 
   function_call              : (IDENTIFIER DOT)? IDENTIFIER LPAREN (argument COMMA | argument)* RPAREN
   argument                   : expr
@@ -193,6 +195,21 @@ function Parser:method_invocation()
   end
 end
 
+function Parser:array_index_get()
+  -- start with the array identifier
+  local token = Token:copy(self.current_token)
+  self:eat(Symbols.IDENTIFIER)
+
+  -- now onto the index
+  self:eat(Symbols.LSQUAREBRACKET)
+
+  -- There's some expr inside the []
+  local expr = self:expr()
+
+  self:eat(Symbols.RSQUAREBRACKET)
+  return Node.ArrayIndexGet(token, token.cargo, expr)
+end
+
 function Parser:function_invocation()
   -- This is a `Foo.method()` type call
   -- firstIdentifier is the object
@@ -270,9 +287,15 @@ function Parser:factor()
     if (self.next_token.type == Symbols.DOT) then
       -- This is a `Foo.method()` type call
       return self:function_invocation()
+
     elseif (self.next_token.type == Symbols.LPAREN) then
       -- This is just a `method()` call
       return self:method_invocation()
+
+    elseif (self.next_token.type == Symbols.LSQUAREBRACKET) then
+      -- This is an array indexing call `arr[i]`
+      return self:array_index_get()
+
     else
       -- just a regular variable
       return self:variable()

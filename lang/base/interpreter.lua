@@ -454,3 +454,13 @@ function Interpreter:Array(node)
 
   return backingTable
 end
+
+function Interpreter:ArrayIndexGet(node)
+  -- Get the variable
+  local identifierName = node.identifier
+  local identifierTable = self:get_variable(identifierName)
+
+  -- The +1 is to allow 0 indexing
+  local index = self:visit(node.expr) + 1
+  return self:visit(identifierTable[index])
+end
