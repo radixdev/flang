@@ -395,16 +395,38 @@ function Interpreter:FunctionCall(node)
   -- Get the function method
   -- note that this doesn't do chaining
   local method_invocation = node.method_invocation
-  local functionMethod = self:get_function_method(node.class, method_invocation.method_name)
+  local classOrIdentifier = node.class
 
-  -- Each argument needs to be visited first!
-  local k
-  local visitedArguments = {}
-  for k = 1, method_invocation.num_arguments do
-    -- This is some expression that needs to be visited for evaluation
-    local invocation_arg = method_invocation.arguments[k]
+  -- If the "class" is actually a variable, then do a self class invocation
+  -- E.g.
+  --[[
+    str = ""
+    str.length <==> String.length(str)
+  ]]
 
-    visitedArguments[k] = self:visit(invocation_arg)
+  local functionMethod
+  local visitedArguments
+
+  local identifierValue = self.current_symbol_scope:getVariable(classOrIdentifier, false)
+  if (identifierValue ~= nil) then
+    -- This is a self call on the variable stringVariable.length()
+    -- function class name is the type itself
+    functionMethod = self:get_function_method(type(identifierValue), method_invocation.method_name)
+
+    -- The argument is just our variable
+    visitedArguments = {identifierValue}
+  else
+    -- This is a standard function call Foo.doThing()
+    functionMethod = self:get_function_method(classOrIdentifier, method_invocation.method_name)
+
+    -- Each argument needs to be visited first!
+    local k
+    visitedArguments = {}
+    for k = 1, method_invocation.num_arguments do
+      -- This is some expression that needs to be visited for evaluation
+      local invocation_arg = method_invocation.arguments[k]
+      visitedArguments[k] = self:visit(invocation_arg)
+    end
   end
 
   local functionReturnobject = functionMethod(self, self.wrapper, visitedArguments)
