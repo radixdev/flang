@@ -99,11 +99,13 @@ end
                 | NUMBER
                 | boolean
                 | STRING
+                | array_init
                 | (variable | function_call)
                 | LPAREN expr RPAREN
 
   variable      : IDENTIFIER
   boolean       : (TRUE | FALSE)
+  array_init    : LSQUAREBRACKET (expr COMMA | expr)* RSQUAREBRACKET
 
   function_call              : (IDENTIFIER DOT)? IDENTIFIER LPAREN (argument COMMA | argument)* RPAREN
   argument                   : expr
@@ -201,6 +203,34 @@ function Parser:function_invocation()
   return Node.FunctionCall(firstIdentifier, firstIdentifier.cargo, self:method_invocation())
 end
 
+function Parser:array_constructor()
+  -- start with the bracket
+  local token = Token:copy(self.current_token)
+  self:eat(Symbols.LSQUAREBRACKET)
+
+  -- Now parse the arguments
+  -- Start at 1 to iterate in LUA
+  local length = 1
+  local args = {}
+
+  while (self.current_token.type ~= Symbols.RSQUAREBRACKET) do
+    local token = Token:copy(self.current_token)
+    -- parse the arguments
+    if (token.type == Symbols.COMMA) then
+      -- prep for the next argument
+      length = length + 1
+      self:eat(Symbols.COMMA)
+    else
+      args[length] = self:expr()
+    end
+  end
+
+  self:eat(Symbols.RSQUAREBRACKET)
+
+  -- return a constructor node
+  return Node.ArrayConstructor(token, args, length)
+end
+
 function Parser:factor()
   local token = Token:copy(self.current_token)
 
@@ -229,6 +259,10 @@ function Parser:factor()
   elseif (token.type == Symbols.STRING) then
     self:eat(Symbols.STRING)
     return Node.String(token)
+
+  elseif (token.type == Symbols.LSQUAREBRACKET) then
+    -- Array construction
+    return self:array_constructor()
 
   elseif (token.type == Symbols.IDENTIFIER) then
     -- Do a lookahead. This identifier can't be assigned just yet

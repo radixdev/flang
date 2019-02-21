@@ -419,3 +419,12 @@ function Interpreter:FunctionCall(node)
     return functionReturnobject.result
   end
 end
+
+function Interpreter:Array(node)
+  -- Populate our table
+  local k
+  for k = 1, node.length do
+    
+  end
+
+end

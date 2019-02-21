@@ -37,27 +37,6 @@ end
 -- Static node constructors
 -----------------------------------------------------------------------
 
-Node.BINARY_OPERATOR_TYPE = "BinOp"
-function Node.BinaryOperator(left, operator, right)
-  Node.print("creating bin op node " .. tostring(operator))
-  return Node:new({
-    type = Node.BINARY_OPERATOR_TYPE,
-    left = left,
-    token = operator,
-    right = right
-  })
-end
-
-Node.UNARY_OPERATOR_TYPE = "UnaryOp"
-function Node.UnaryOperator(operator, expr)
-  Node.print("creating unary op node " .. tostring(operator))
-  return Node:new({
-    type = Node.UNARY_OPERATOR_TYPE,
-    token = operator,
-    expr = expr
-  })
-end
-
 Node.NUMBER_TYPE = "Num"
 function Node.Number(token)
   Node.print("creating num node " .. tostring(token))
@@ -92,6 +71,18 @@ function Node.String(token)
   })
 end
 
+Node.ARRAY_TYPE = "Array"
+function Node.ArrayConstructor(token, arguments, length)
+  Node.print("creating array constructor node " .. tostring(token))
+  return Node:new({
+    type = Node.ARRAY_TYPE,
+    token = token,
+    arguments = arguments,
+    length = length,
+    backing_table = {}
+  })
+end
+
 Node.VARIABLE_TYPE = "Var"
 function Node.Variable(token)
   Node.print("creating var node " .. tostring(token))
@@ -99,6 +90,27 @@ function Node.Variable(token)
     type = Node.VARIABLE_TYPE,
     token = token,
     value = token.cargo
+  })
+end
+
+Node.BINARY_OPERATOR_TYPE = "BinOp"
+function Node.BinaryOperator(left, operator, right)
+  Node.print("creating bin op node " .. tostring(operator))
+  return Node:new({
+    type = Node.BINARY_OPERATOR_TYPE,
+    left = left,
+    token = operator,
+    right = right
+  })
+end
+
+Node.UNARY_OPERATOR_TYPE = "UnaryOp"
+function Node.UnaryOperator(operator, expr)
+  Node.print("creating unary op node " .. tostring(operator))
+  return Node:new({
+    type = Node.UNARY_OPERATOR_TYPE,
+    token = operator,
+    expr = expr
   })
 end
 
@@ -390,6 +402,9 @@ function Node:display(tabs, info)
   elseif (self.type == Node.RETURN_STATEMENT_TYPE) then
     print(tabString .. "return: " .. dq(self.token.type))
     self.expr:display(tabs + 1)
+
+  elseif (self.type == Node.ARRAY_TYPE) then
+    print(tabString .. "array constructor with args: " .. Util.set_to_string(self.arguments))
 
   else
     print("Unknown type. Can't display parse tree: " .. dq(self.type))
