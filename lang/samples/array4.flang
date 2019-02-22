@@ -1,0 +1,3 @@
+star = ["fish"]
+star[0] = 4
+y = star[0]

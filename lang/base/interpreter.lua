@@ -33,7 +33,11 @@ function Interpreter:new(o)
 end
 
 function Interpreter:error(msg)
-  error(msg .. "\nat " .. Util.set_to_string_dumb(lastVisitedNode.token))
+  if (lastVisitedNode and lastVisitedNode.token and Util.isTable(lastVisitedNode.token)) then
+    error(msg .. "\nat " .. Util.set_to_string_dumb(lastVisitedNode.token))
+  else
+    error(msg)
+  end
 end
 
 -----------------------------------------------------------------------
@@ -131,7 +135,10 @@ end
 
 lastVisitedNode = nil
 function Interpreter:visit(node)
-  lastVisitedNode = node
+  if (node == nil) then
+    self:error("Interpreter got nil node!")
+  end
+
   -- See https://stackoverflow.com/questions/26042599/lua-call-a-function-using-its-name-string-in-a-class
 
   -- comment out this logging for faster performance
@@ -141,7 +148,8 @@ function Interpreter:visit(node)
   end
   -- end section
 
-  -- print("visiting " .. method_name)
+  lastVisitedNode = node
+  print("visiting " .. method_name)
 
   -- Call and return the method
   return self[node.type](self, node)
