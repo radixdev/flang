@@ -33,7 +33,7 @@ function Interpreter:new(o)
 end
 
 function Interpreter:error(msg)
-  error(msg .. "\nat " .. Util.set_to_string_dumb(lastNode.token))
+  error(msg .. "\nat " .. Util.set_to_string_dumb(lastVisitedNode.token))
 end
 
 -----------------------------------------------------------------------
@@ -129,9 +129,9 @@ end
 -- Every node must have a corresponding method here
 -----------------------------------------------------------------------
 
-lastNode = nil
+lastVisitedNode = nil
 function Interpreter:visit(node)
-  lastNode = node
+  lastVisitedNode = node
   -- See https://stackoverflow.com/questions/26042599/lua-call-a-function-using-its-name-string-in-a-class
 
   -- comment out this logging for faster performance
@@ -196,7 +196,6 @@ function Interpreter:Assign(node)
     return
   end
 
-  -- We have to make sure
   if (token_type == Symbols.ASSIGN_PLUS) then
     self:set_variable(variable_name, self:get_variable(variable_name) + self:visit(node.right))
 
@@ -212,6 +211,44 @@ function Interpreter:Assign(node)
       self:error("Division by Zero")
     end
     self:set_variable(variable_name, self:get_variable(variable_name) / self:visit(node.right))
+  end
+end
+
+function Interpreter:ArrayAssign(node)
+  local variable_name = node.left.value
+  local token_type = node.assignment_token.type
+
+  -- There's a table out there with our variable_name, go get it
+  local arrayValue = self:get_variable(variable_name)
+  if (not Util.isTable(arrayValue)) then
+    self:error("Expected a table. Got something else")
+  end
+
+  -- The "+1" is to enable 0 indexing in Flang
+  local indexValue = self:visit(node.indexExpr) + 1
+  local rightExprValue = self:visit(node.right)
+
+  if (token_type == Symbols.EQUALS) then
+    arrayValue[indexValue] = rightExprValue
+    return
+  end
+
+  local existingValueAtIndex = self:visit(arrayValue[indexValue])
+
+  if (token_type == Symbols.ASSIGN_PLUS) then
+    arrayValue[indexValue] = existingValueAtIndex + rightExprValue
+
+  elseif (token_type == Symbols.ASSIGN_MINUS) then
+    arrayValue[indexValue] = existingValueAtIndex - rightExprValue
+
+  elseif (token_type == Symbols.ASSIGN_MUL) then
+    arrayValue[indexValue] = existingValueAtIndex * rightExprValue
+
+  elseif (token_type == Symbols.ASSIGN_DIV) then
+    if (rightExprValue == 0) then
+      self:error("Division by Zero")
+    end
+    arrayValue[indexValue] = existingValueAtIndex / rightExprValue
   end
 end
 
