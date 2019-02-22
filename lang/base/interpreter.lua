@@ -235,7 +235,11 @@ function Interpreter:ArrayAssign(node)
   end
 
   -- The "+1" is to enable 0 indexing in Flang
-  local indexValue = self:visit(node.indexExpr) + 1
+  local indexValue = self:visit(node.indexExpr)
+  if (Util.isNumber(indexValue)) then
+    -- The +1 is to allow 0 indexing
+    indexValue = indexValue + 1
+  end
   local rightExprValue = self:visit(node.right)
 
   if (token_type == Symbols.EQUALS) then
@@ -243,6 +247,7 @@ function Interpreter:ArrayAssign(node)
     return
   end
 
+  -- Everything in the array has already been visited!
   local existingValueAtIndex = arrayValue[indexValue]
 
   if (token_type == Symbols.ASSIGN_PLUS) then

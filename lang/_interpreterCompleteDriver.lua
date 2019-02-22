@@ -73,5 +73,13 @@ assertEquals("methodShouldBe18", 18)
 assertEquals("methodShouldBe100", 100)
 assertEquals("stringShouldBeHelloWorld", "Hello World!")
 
+assertEquals("arrayShouldBe20", 20)
+assertEquals("arrayShouldBe22", 22)
+assertEquals("arrayShouldBe24", 24)
+assertEquals("arrayShouldBeNeg17", -17)
+assertEquals("arrayShouldBe80", 80)
+assertEquals("arrayShouldBeOhh25", 0.25)
+assertEquals("arrayShouldBeMoon", "moon")
+
 print("========ALL CHECKS PASSED=======")
 print(string.format("elapsed time: %.5fs or %.2fms\n", elapsed, elapsed * 1000))
