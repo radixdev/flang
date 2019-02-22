@@ -137,6 +137,19 @@ function Node.Assign(left, operator, right, assignment_token)
   })
 end
 
+Node.ARRAY_INDEX_ASSIGN_TYPE = "ArrayAssign"
+function Node.ArrayAssign(left, indexExpr, operator, right, assignment_token)
+  Node.print("creating array assign node: " .. dq(left) .. " and token " .. dq(left.value))
+  return Node:new({
+    type = Node.ARRAY_INDEX_ASSIGN_TYPE,
+    left = left,
+    indexExpr = indexExpr,
+    token = operator,
+    right = right,
+    assignment_token = assignment_token
+  })
+end
+
 Node.COMPARATOR_TYPE = "Cmp"
 function Node.Comparator(left, operator, right)
   Node.print("creating comparator node: " .. dq(operator))
@@ -420,6 +433,12 @@ function Node:display(tabs, info)
   elseif (self.type == Node.ARRAY_INDEX_GET_TYPE) then
     print(tabString .. "array index get on var: " .. dq(self.identifier))
     self.expr:display(tabs + 1)
+
+  elseif (self.type == Node.ARRAY_INDEX_ASSIGN_TYPE) then
+    print(tabString .. "statement array assign: " .. tostring(self.left.value) .. " sym: " .. dq(self.assignment_token.type))
+    self.left:display(tabs + 1, "IDENTIFIER: ")
+    self.indexExpr:display(tabs + 1, "INDEX: ")
+    self.right:display(tabs + 1, "ASSIGNMENT: ")
 
   else
     print("Unknown type. Can't display parse tree: " .. dq(self.type))

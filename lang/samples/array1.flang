@@ -1,15 +1,14 @@
 emptyArray = []
 
-arr = [1, 2, 3, [1,2,3,3,534,43,2434,3]]
+arr = [1, 2, 3]
 arrLength = arr.length()
 
 for (i=0; arr.length()) {
   v = arr[i]
-  Core.luaPrint(v)
+  // Core.luaPrint(v)
 }
 
-d = arr[3]
-Core.luaPrint(d)
+arr[0] = 2
 
 // for (i in arr) {
 //   Core.luaPrint(i)

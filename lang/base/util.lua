@@ -83,7 +83,7 @@ function Util.set_to_string_nested_nodes(table, dont_print_key)
     end
 
     -- v is a node
-    result =  result .. tostring(v.value)
+    result = result .. tostring(v.value)
   end
   return result .. "}"
 end

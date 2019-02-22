@@ -69,6 +69,7 @@ end
 
   statement_list  : (statement)*
   statement       : assignment_statement
+                  | array_index_assign_statement
                   | if_statement
                   | for_statement
                   | method_definition_statement
@@ -76,7 +77,8 @@ end
                   | function_call
                   | empty
 
-  assignment_statement          : variable (ASSIGN | ASSIGN_PLUS | ASSIGN_MINUS | ASSIGN_MUL | ASSIGN_DIV)  expr
+  assignment_statement          : variable (ASSIGN | ASSIGN_PLUS | ASSIGN_MINUS | ASSIGN_MUL | ASSIGN_DIV) expr
+  array_index_assign_statement  : variable LSQUAREBRACKET expr RSQUAREBRACKET (ASSIGN | ASSIGN_PLUS | ASSIGN_MINUS | ASSIGN_MUL | ASSIGN_DIV) expr
   if_statement                  : IF conditional block if_elseif
   for_statement                 : FOR LPAREN assignment_statement SEMICOLON expr (SEMICOLON statement | SEMICOLON expr)? RPAREN block
   method_definition_statement   : DEF IDENTIFIER LPAREN (method_definition_argument COMMA | method_definition_argument)* RPAREN block
@@ -193,6 +195,26 @@ function Parser:method_invocation()
   else
     return Node.MethodInvocation(token, method_name, args, num_arguments, nil)
   end
+end
+
+function Parser:array_index_assign()
+  -- start with the array identifier
+  local var_token = Token:copy(self.current_token)
+  local left = self:variable()
+
+  -- now onto the index
+  self:eat(Symbols.LSQUAREBRACKET)
+  local indexExpr = self:expr()
+  self:eat(Symbols.RSQUAREBRACKET)
+
+  -- Now onto the rest of the statement
+  local assignment_token = Token:copy(self.current_token)
+  valid_tokens = Util.Set{Symbols.EQUALS, Symbols.ASSIGN_PLUS,
+      Symbols.ASSIGN_MINUS, Symbols.ASSIGN_MUL, Symbols.ASSIGN_DIV}
+  self:eat_several(self.current_token.type, valid_tokens)
+
+  local right = self:expr()
+  return Node.ArrayAssign(left, indexExpr, var_token, right, assignment_token)
 end
 
 function Parser:array_index_get()
@@ -615,9 +637,15 @@ function Parser:statement()
 
     if (nextToken.type == Symbols.DOT) then
       return self:function_invocation()
+
     elseif (nextToken.type == Symbols.LPAREN) then
       -- This is just a `method()` call
       return self:method_invocation()
+
+    elseif (nextToken.type == Symbols.LSQUAREBRACKET) then
+      -- This is an array set `array[index] = blah`
+      return self:array_index_assign()
+
     else
       return self:assignment_statement()
     end
