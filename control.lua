@@ -121,6 +121,36 @@ script.on_event(defines.events.on_robot_built_entity, function(event)
   create_chip_controller(event.created_entity)
 end)
 
+script.on_event(defines.events.on_entity_settings_pasted, function(event)
+  --[[
+    on_entity_settings_pasted
+      Called after entity copy-paste is done.
+
+      Contains
+      player_index :: uint
+      source :: LuaEntity: The source entity settings have been copied from.
+      destination :: LuaEntity: The destination entity settings have been copied to.
+  ]]
+  -- Copy over the source to the new chip
+
+  -- Get the entities
+  local sourceEntity = event.source
+  local destinationEntity = event.destination
+  if (is_entity_flang_chip(sourceEntity) and is_entity_flang_chip(destinationEntity)) then
+    local sourceId = sourceEntity.unit_number
+    local destinationId = destinationEntity.unit_number
+
+    -- Write to the global data
+    local sourceChipData = GlobalData.get_entity_data(sourceId)
+    local sourceCode = sourceChipData.source
+    GlobalData.write_entity_source(destinationId, sourceCode)
+
+    -- Write to the local data
+    local chip = CHIP_TABLE[destinationId]
+    chip:update_source(sourceCode)
+  end
+end)
+
 -------------------------- GUI -------------------------------
 
 --------------------------------------------------------------
