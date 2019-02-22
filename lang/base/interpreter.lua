@@ -33,7 +33,11 @@ function Interpreter:new(o)
 end
 
 function Interpreter:error(msg)
-  error(msg)
+  if (lastVisitedNode and lastVisitedNode.token and Util.isTable(lastVisitedNode.token)) then
+    error(msg .. "\nat " .. Util.set_to_string_dumb(lastVisitedNode.token))
+  else
+    error(msg)
+  end
 end
 
 -----------------------------------------------------------------------
@@ -129,7 +133,12 @@ end
 -- Every node must have a corresponding method here
 -----------------------------------------------------------------------
 
+lastVisitedNode = nil
 function Interpreter:visit(node)
+  if (node == nil) then
+    self:error("Interpreter got nil node!")
+  end
+
   -- See https://stackoverflow.com/questions/26042599/lua-call-a-function-using-its-name-string-in-a-class
 
   -- comment out this logging for faster performance
@@ -139,6 +148,7 @@ function Interpreter:visit(node)
   end
   -- end section
 
+  lastVisitedNode = node
   -- print("visiting " .. method_name)
 
   -- Call and return the method
@@ -189,27 +199,71 @@ function Interpreter:Assign(node)
   local variable_name = node.left.value
   local token_type = node.assignment_token.type
 
+  local visitedRightNode = self:visit(node.right)
+
   if (token_type == Symbols.EQUALS) then
-    self:set_variable(variable_name, self:visit(node.right))
+    self:set_variable(variable_name, visitedRightNode)
     return
   end
 
-  -- We have to make sure
   if (token_type == Symbols.ASSIGN_PLUS) then
-    self:set_variable(variable_name, self:get_variable(variable_name) + self:visit(node.right))
+    self:set_variable(variable_name, self:get_variable(variable_name) + visitedRightNode)
 
   elseif (token_type == Symbols.ASSIGN_MINUS) then
-    self:set_variable(variable_name, self:get_variable(variable_name) - self:visit(node.right))
+    self:set_variable(variable_name, self:get_variable(variable_name) - visitedRightNode)
 
   elseif (token_type == Symbols.ASSIGN_MUL) then
-    self:set_variable(variable_name, self:get_variable(variable_name) * self:visit(node.right))
+    self:set_variable(variable_name, self:get_variable(variable_name) * visitedRightNode)
 
   elseif (token_type == Symbols.ASSIGN_DIV) then
-    local right_value = self:visit(node.right)
+    local right_value = visitedRightNode
     if (right_value == 0) then
       self:error("Division by Zero")
     end
-    self:set_variable(variable_name, self:get_variable(variable_name) / self:visit(node.right))
+    self:set_variable(variable_name, self:get_variable(variable_name) / visitedRightNode)
+  end
+end
+
+function Interpreter:ArrayAssign(node)
+  local variable_name = node.left.value
+  local token_type = node.assignment_token.type
+
+  -- There's a table out there with our variable_name, go get it
+  local arrayValue = self:get_variable(variable_name)
+  if (not Util.isTable(arrayValue)) then
+    self:error("Expected a table. Got something else")
+  end
+
+  -- The "+1" is to enable 0 indexing in Flang
+  local indexValue = self:visit(node.indexExpr)
+  if (Util.isNumber(indexValue)) then
+    -- The +1 is to allow 0 indexing
+    indexValue = indexValue + 1
+  end
+  local rightExprValue = self:visit(node.right)
+
+  if (token_type == Symbols.EQUALS) then
+    arrayValue[indexValue] = rightExprValue
+    return
+  end
+
+  -- Everything in the array has already been visited!
+  local existingValueAtIndex = arrayValue[indexValue]
+
+  if (token_type == Symbols.ASSIGN_PLUS) then
+    arrayValue[indexValue] = existingValueAtIndex + rightExprValue
+
+  elseif (token_type == Symbols.ASSIGN_MINUS) then
+    arrayValue[indexValue] = existingValueAtIndex - rightExprValue
+
+  elseif (token_type == Symbols.ASSIGN_MUL) then
+    arrayValue[indexValue] = existingValueAtIndex * rightExprValue
+
+  elseif (token_type == Symbols.ASSIGN_DIV) then
+    if (rightExprValue == 0) then
+      self:error("Division by Zero")
+    end
+    arrayValue[indexValue] = existingValueAtIndex / rightExprValue
   end
 end
 
@@ -313,7 +367,7 @@ function Interpreter:For(node)
 
     -- visit the condition value
     local condition_value = self:visit(node.condition)
-    if (type(condition_value) ~= "number") then
+    if (not Util.isNumber(condition_value)) then
       self:error("Expected for loop condition to evaluate to number")
     end
 
@@ -326,9 +380,9 @@ function Interpreter:For(node)
     end
 
     for i = initializer_value, (condition_value-1), incrementer_value do
-      self:visit(node.block)
       -- set i
       self:set_variable(variable_name, i)
+      self:visit(node.block)
     end
   else
     self:visit(node.initializer)
@@ -395,16 +449,38 @@ function Interpreter:FunctionCall(node)
   -- Get the function method
   -- note that this doesn't do chaining
   local method_invocation = node.method_invocation
-  local functionMethod = self:get_function_method(node.class, method_invocation.method_name)
+  local classOrIdentifier = node.class
 
-  -- Each argument needs to be visited first!
-  local k
-  local visitedArguments = {}
-  for k = 1, method_invocation.num_arguments do
-    -- This is some expression that needs to be visited for evaluation
-    local invocation_arg = method_invocation.arguments[k]
+  -- If the "class" is actually a variable, then do a self class invocation
+  -- E.g.
+  --[[
+    str = ""
+    str.length <==> String.length(str)
+  ]]
 
-    visitedArguments[k] = self:visit(invocation_arg)
+  local functionMethod
+  local visitedArguments
+
+  local identifierValue = self.current_symbol_scope:getVariable(classOrIdentifier, false)
+  if (identifierValue ~= nil) then
+    -- This is a self call on the variable stringVariable.length()
+    -- function class name is the type itself
+    functionMethod = self:get_function_method(type(identifierValue), method_invocation.method_name)
+
+    -- The argument is just our variable
+    visitedArguments = {identifierValue}
+  else
+    -- This is a standard function call Foo.doThing()
+    functionMethod = self:get_function_method(classOrIdentifier, method_invocation.method_name)
+
+    -- Each argument needs to be visited first!
+    local k
+    visitedArguments = {}
+    for k = 1, method_invocation.num_arguments do
+      -- This is some expression that needs to be visited for evaluation
+      local invocation_arg = method_invocation.arguments[k]
+      visitedArguments[k] = self:visit(invocation_arg)
+    end
   end
 
   local functionReturnobject = functionMethod(self, self.wrapper, visitedArguments)
@@ -418,4 +494,37 @@ function Interpreter:FunctionCall(node)
 
     return functionReturnobject.result
   end
+end
+
+-- Note that the array is constructed here
+function Interpreter:Array(node)
+  local backingTable = node.backing_table
+
+  -- Populate our table
+  local k
+  for k = 1, node.length do
+    -- We have to visit everything before it reaches the array contents
+    backingTable[k] = self:visit(node.arguments[k])
+  end
+
+  return backingTable
+end
+
+function Interpreter:ArrayIndexGet(node)
+  -- Get the variable
+  local identifierName = node.identifier
+  local identifierTable = self:get_variable(identifierName)
+
+  local index = self:visit(node.expr)
+  if (Util.isNumber(index)) then
+    -- The +1 is to allow 0 indexing
+    index = index + 1
+  end
+
+  local tableValue = identifierTable[index]
+  if (tableValue == nil) then
+    self:error("Array indexing error on: <" .. identifierName .. "> at index: <" .. index .. ">")
+  end
+
+  return tableValue
 end

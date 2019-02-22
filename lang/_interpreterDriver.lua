@@ -1,6 +1,6 @@
 require("base.flang_import")
 
-filename = "samples/wacky.flang"
+filename = "samples/array3.flang"
 local f = assert(io.open(filename, "r"))
 local t = f:read("*all")
 f:close()
@@ -24,7 +24,11 @@ print("===============")
 print("global symbol table")
 symbol_table = interpreter.global_symbol_scope.variable_table
 for key,value in pairs(symbol_table) do
-  print(key .. " = " .. tostring(value))
+  if (Util.isTable(value)) then
+    print(key .. " = " .. Util.set_to_string(value, true))
+  else
+    print(key .. " = " .. tostring(value))
+  end
 end
 
 print(string.format("elapsed time: %.5fs or %.2fms\n", elapsed, elapsed * 1000))

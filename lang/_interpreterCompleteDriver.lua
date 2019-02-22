@@ -22,7 +22,11 @@ local elapsed = os.clock() - start_time
 print("global symbol table")
 symbol_table = interpreter.global_symbol_scope.variable_table
 for key,value in pairs(symbol_table) do
-  print(key .. " = " .. tostring(value))
+  if (type(value) == "table") then
+    print(key .. " = " .. Util.set_to_string(value, true))
+  else
+    print(key .. " = " .. tostring(value))
+  end
 end
 
 function assertEquals(var, expected)
@@ -68,6 +72,14 @@ assertEquals("methodShouldBe5", 5)
 assertEquals("methodShouldBe18", 18)
 assertEquals("methodShouldBe100", 100)
 assertEquals("stringShouldBeHelloWorld", "Hello World!")
+
+assertEquals("arrayShouldBe20", 20)
+assertEquals("arrayShouldBe22", 22)
+assertEquals("arrayShouldBe24", 24)
+assertEquals("arrayShouldBeNeg17", -17)
+assertEquals("arrayShouldBe80", 80)
+assertEquals("arrayShouldBeOhh25", 0.25)
+assertEquals("arrayShouldBeMoon", "moon")
 
 print("========ALL CHECKS PASSED=======")
 print(string.format("elapsed time: %.5fs or %.2fms\n", elapsed, elapsed * 1000))

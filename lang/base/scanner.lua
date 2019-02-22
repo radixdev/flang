@@ -20,7 +20,8 @@ function Scanner:new(o)
     sourceText = o.sourceText,
     lastIndex = string.len(o.sourceText) - 1,
     sourceIndex = 0,
-    lineIndex = 0,
+    -- Lines should start at 1
+    lineIndex = 1,
     columnIndex = -1
   }
 

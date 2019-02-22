@@ -25,7 +25,12 @@ function Core:helloWorld(wrapper, flangArguments)
 end
 
 function Core:luaPrint(wrapper, flangArguments)
-  print(flangArguments[1])
+  local msg = flangArguments[1]
+  if (Util.isTable(msg)) then
+    print(Util.set_to_string_nested_nodes(msg))
+  else
+    print(msg)
+  end
   return nil
 end
 

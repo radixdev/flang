@@ -63,12 +63,13 @@ end
 -----------------------------------------------------------------------
 
 --[[
-  FLANG 0.0.1 LANGUAGE DEFINITION
+  FLANG LANGUAGE DEFINITION
 
   program         : statement_list
 
   statement_list  : (statement)*
   statement       : assignment_statement
+                  | array_index_assign_statement
                   | if_statement
                   | for_statement
                   | method_definition_statement
@@ -76,7 +77,8 @@ end
                   | function_call
                   | empty
 
-  assignment_statement          : variable (ASSIGN | ASSIGN_PLUS | ASSIGN_MINUS | ASSIGN_MUL | ASSIGN_DIV)  expr
+  assignment_statement          : variable (ASSIGN | ASSIGN_PLUS | ASSIGN_MINUS | ASSIGN_MUL | ASSIGN_DIV) expr
+  array_index_assign_statement  : variable LSQUAREBRACKET expr RSQUAREBRACKET (ASSIGN | ASSIGN_PLUS | ASSIGN_MINUS | ASSIGN_MUL | ASSIGN_DIV) expr
   if_statement                  : IF conditional block if_elseif
   for_statement                 : FOR LPAREN assignment_statement SEMICOLON expr (SEMICOLON statement | SEMICOLON expr)? RPAREN block
   method_definition_statement   : DEF IDENTIFIER LPAREN (method_definition_argument COMMA | method_definition_argument)* RPAREN block
@@ -99,11 +101,15 @@ end
                 | NUMBER
                 | boolean
                 | STRING
-                | (variable | function_call)
+                | array_init
+                | (variable | function_call | array_index_get)
                 | LPAREN expr RPAREN
 
   variable      : IDENTIFIER
   boolean       : (TRUE | FALSE)
+
+  array_init        : LSQUAREBRACKET (expr COMMA | expr)* RSQUAREBRACKET
+  array_index_get   : IDENTIFIER LSQUAREBRACKET expr RSQUAREBRACKET
 
   function_call              : (IDENTIFIER DOT)? IDENTIFIER LPAREN (argument COMMA | argument)* RPAREN
   argument                   : expr
@@ -191,6 +197,41 @@ function Parser:method_invocation()
   end
 end
 
+function Parser:array_index_assign()
+  -- start with the array identifier
+  local var_token = Token:copy(self.current_token)
+  local left = self:variable()
+
+  -- now onto the index
+  self:eat(Symbols.LSQUAREBRACKET)
+  local indexExpr = self:expr()
+  self:eat(Symbols.RSQUAREBRACKET)
+
+  -- Now onto the rest of the statement
+  local assignment_token = Token:copy(self.current_token)
+  valid_tokens = Util.Set{Symbols.EQUALS, Symbols.ASSIGN_PLUS,
+      Symbols.ASSIGN_MINUS, Symbols.ASSIGN_MUL, Symbols.ASSIGN_DIV}
+  self:eat_several(self.current_token.type, valid_tokens)
+
+  local right = self:expr()
+  return Node.ArrayAssign(left, indexExpr, var_token, right, assignment_token)
+end
+
+function Parser:array_index_get()
+  -- start with the array identifier
+  local token = Token:copy(self.current_token)
+  self:eat(Symbols.IDENTIFIER)
+
+  -- now onto the index
+  self:eat(Symbols.LSQUAREBRACKET)
+
+  -- There's some expr inside the []
+  local expr = self:expr()
+
+  self:eat(Symbols.RSQUAREBRACKET)
+  return Node.ArrayIndexGet(token, token.cargo, expr)
+end
+
 function Parser:function_invocation()
   -- This is a `Foo.method()` type call
   -- firstIdentifier is the object
@@ -199,6 +240,34 @@ function Parser:function_invocation()
   self:eat(Symbols.DOT)
 
   return Node.FunctionCall(firstIdentifier, firstIdentifier.cargo, self:method_invocation())
+end
+
+function Parser:array_constructor()
+  -- start with the bracket
+  local token = Token:copy(self.current_token)
+  self:eat(Symbols.LSQUAREBRACKET)
+
+  -- Now parse the arguments
+  -- Start at 1 to iterate in LUA
+  local length = 1
+  local args = {}
+
+  while (self.current_token.type ~= Symbols.RSQUAREBRACKET) do
+    local token = Token:copy(self.current_token)
+    -- parse the arguments
+    if (token.type == Symbols.COMMA) then
+      -- prep for the next argument
+      length = length + 1
+      self:eat(Symbols.COMMA)
+    else
+      args[length] = self:expr()
+    end
+  end
+
+  self:eat(Symbols.RSQUAREBRACKET)
+
+  -- return a constructor node
+  return Node.ArrayConstructor(token, args, length)
 end
 
 function Parser:factor()
@@ -226,15 +295,29 @@ function Parser:factor()
   elseif (token.type == Symbols.TRUE or token.type == Symbols.FALSE) then
     return self:boolean()
 
+  elseif (token.type == Symbols.STRING) then
+    self:eat(Symbols.STRING)
+    return Node.String(token)
+
+  elseif (token.type == Symbols.LSQUAREBRACKET) then
+    -- Array construction
+    return self:array_constructor()
+
   elseif (token.type == Symbols.IDENTIFIER) then
     -- Do a lookahead. This identifier can't be assigned just yet
 
     if (self.next_token.type == Symbols.DOT) then
       -- This is a `Foo.method()` type call
       return self:function_invocation()
+
     elseif (self.next_token.type == Symbols.LPAREN) then
       -- This is just a `method()` call
       return self:method_invocation()
+
+    elseif (self.next_token.type == Symbols.LSQUAREBRACKET) then
+      -- This is an array indexing call `arr[i]`
+      return self:array_index_get()
+
     else
       -- just a regular variable
       return self:variable()
@@ -248,10 +331,6 @@ function Parser:factor()
     local node = self:expr()
     self:eat(Symbols.RPAREN)
     return node
-
-  elseif (token.type == Symbols.STRING) then
-    self:eat(Symbols.STRING)
-    return Node.String(token)
 
   else
     print("factor has nothing. returning empty node")
@@ -558,9 +637,15 @@ function Parser:statement()
 
     if (nextToken.type == Symbols.DOT) then
       return self:function_invocation()
+
     elseif (nextToken.type == Symbols.LPAREN) then
       -- This is just a `method()` call
       return self:method_invocation()
+
+    elseif (nextToken.type == Symbols.LSQUAREBRACKET) then
+      -- This is an array set `array[index] = blah`
+      return self:array_index_assign()
+
     else
       return self:assignment_statement()
     end

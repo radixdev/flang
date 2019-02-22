@@ -152,12 +152,19 @@ function Scope:getContainerScopeForVariable(name)
   return nil
 end
 
-function Scope:getVariable(name)
+function Scope:getVariable(name, throw_undefined_error)
+  if (throw_undefined_error == nil) then
+    throw_undefined_error = true
+  end
   local containerScope = self:getContainerScopeForVariable(name)
 
   if (containerScope == nil) then
     -- No scope exists for our variable
-    self:error("Variable lookup failed for name <" .. name .. ">. Undefined.")
+    if (throw_undefined_error) then
+      self:error("Variable lookup failed for name <" .. name .. ">. Undefined.")
+    else
+      return nil
+    end
   end
 
   return containerScope.variable_table[name]

@@ -37,27 +37,6 @@ end
 -- Static node constructors
 -----------------------------------------------------------------------
 
-Node.BINARY_OPERATOR_TYPE = "BinOp"
-function Node.BinaryOperator(left, operator, right)
-  Node.print("creating bin op node " .. tostring(operator))
-  return Node:new({
-    type = Node.BINARY_OPERATOR_TYPE,
-    left = left,
-    token = operator,
-    right = right
-  })
-end
-
-Node.UNARY_OPERATOR_TYPE = "UnaryOp"
-function Node.UnaryOperator(operator, expr)
-  Node.print("creating unary op node " .. tostring(operator))
-  return Node:new({
-    type = Node.UNARY_OPERATOR_TYPE,
-    token = operator,
-    expr = expr
-  })
-end
-
 Node.NUMBER_TYPE = "Num"
 function Node.Number(token)
   Node.print("creating num node " .. tostring(token))
@@ -92,6 +71,18 @@ function Node.String(token)
   })
 end
 
+Node.ARRAY_TYPE = "Array"
+function Node.ArrayConstructor(token, arguments, length)
+  Node.print("creating array constructor node " .. tostring(token))
+  return Node:new({
+    type = Node.ARRAY_TYPE,
+    token = token,
+    arguments = arguments,
+    length = length,
+    backing_table = {}
+  })
+end
+
 Node.VARIABLE_TYPE = "Var"
 function Node.Variable(token)
   Node.print("creating var node " .. tostring(token))
@@ -99,6 +90,27 @@ function Node.Variable(token)
     type = Node.VARIABLE_TYPE,
     token = token,
     value = token.cargo
+  })
+end
+
+Node.BINARY_OPERATOR_TYPE = "BinOp"
+function Node.BinaryOperator(left, operator, right)
+  Node.print("creating bin op node " .. tostring(operator))
+  return Node:new({
+    type = Node.BINARY_OPERATOR_TYPE,
+    left = left,
+    token = operator,
+    right = right
+  })
+end
+
+Node.UNARY_OPERATOR_TYPE = "UnaryOp"
+function Node.UnaryOperator(operator, expr)
+  Node.print("creating unary op node " .. tostring(operator))
+  return Node:new({
+    type = Node.UNARY_OPERATOR_TYPE,
+    token = operator,
+    expr = expr
   })
 end
 
@@ -119,6 +131,19 @@ function Node.Assign(left, operator, right, assignment_token)
   return Node:new({
     type = Node.ASSIGN_TYPE,
     left = left,
+    token = operator,
+    right = right,
+    assignment_token = assignment_token
+  })
+end
+
+Node.ARRAY_INDEX_ASSIGN_TYPE = "ArrayAssign"
+function Node.ArrayAssign(left, indexExpr, operator, right, assignment_token)
+  Node.print("creating array assign node: " .. dq(left) .. " and token " .. dq(left.value))
+  return Node:new({
+    type = Node.ARRAY_INDEX_ASSIGN_TYPE,
+    left = left,
+    indexExpr = indexExpr,
     token = operator,
     right = right,
     assignment_token = assignment_token
@@ -260,6 +285,17 @@ function Node.ReturnStatement(token, expr)
   })
 end
 
+Node.ARRAY_INDEX_GET_TYPE = "ArrayIndexGet"
+function Node.ArrayIndexGet(token, identifier, expr)
+  Node.print("creating array index get node " .. tostring(token))
+  return Node:new({
+    type = Node.ARRAY_INDEX_GET_TYPE,
+    token = token,
+    identifier = identifier,
+    expr = expr
+  })
+end
+
 -----------------------------------------------------------------------
 -- Helper functions
 -----------------------------------------------------------------------
@@ -390,6 +426,19 @@ function Node:display(tabs, info)
   elseif (self.type == Node.RETURN_STATEMENT_TYPE) then
     print(tabString .. "return: " .. dq(self.token.type))
     self.expr:display(tabs + 1)
+
+  elseif (self.type == Node.ARRAY_TYPE) then
+    print(tabString .. "array constructor with args: " .. Util.set_to_string(self.arguments))
+
+  elseif (self.type == Node.ARRAY_INDEX_GET_TYPE) then
+    print(tabString .. "array index get on var: " .. dq(self.identifier))
+    self.expr:display(tabs + 1)
+
+  elseif (self.type == Node.ARRAY_INDEX_ASSIGN_TYPE) then
+    print(tabString .. "statement array assign: " .. tostring(self.left.value) .. " sym: " .. dq(self.assignment_token.type))
+    self.left:display(tabs + 1, "IDENTIFIER: ")
+    self.indexExpr:display(tabs + 1, "INDEX: ")
+    self.right:display(tabs + 1, "ASSIGNMENT: ")
 
   else
     print("Unknown type. Can't display parse tree: " .. dq(self.type))

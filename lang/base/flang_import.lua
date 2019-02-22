@@ -27,3 +27,4 @@ if not Flang.LuaFunction then Flang.LuaFunction = {} end
 
 -- Start loading lua functions
 localRequire("lua_functions/core")
+localRequire("lua_functions/table")

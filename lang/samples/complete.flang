@@ -84,3 +84,27 @@ methodShouldBe18 = mul(3, 6)
 methodShouldBe100 = mul(5, add(7, 13))
 
 stringShouldBeHelloWorld = "Hello World!"
+
+table = [1, 2, 3, 4, 5]
+table[0] = 20
+table[1] += 20
+table[2] -= 20
+table[3] *= 20
+table[4] /= 20
+
+barr = [2]
+barr[5 - 5] = 0
+
+star = [4, 23]
+star[1] = "fish"
+
+arrayShouldBe20 = table[0]
+arrayShouldBe22 = table[1]
+arrayShouldBe24 = arrayShouldBe20 + 4
+arrayShouldBeNeg17 = table[2]
+arrayShouldBe80 = table[3]
+arrayShouldBeOhh25 = table[4]
+
+strTable = ["fish", 1]
+strTable["cat"] = "moon"
+arrayShouldBeMoon = strTable["cat"]
