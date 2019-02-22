@@ -78,8 +78,12 @@ function FlangChip:execute()
   local success, result = pcall(self.interpreter.interpret, self.interpreter)
   if success then
     -- result is our symbol table
-    for k,v in pairs(self.interpreter.global_symbol_scope.variable_table) do
-      self.printer("key " .. k .. " val " .. v)
+    for k,value in pairs(self.interpreter.global_symbol_scope.variable_table) do
+      if (Util.isTable(value)) then
+        self.printer(k .. " = " .. Util.set_to_string(value, true))
+      else
+        self.printer(k .. " = " .. tostring(value))
+      end
     end
   else
     self.is_running = false
