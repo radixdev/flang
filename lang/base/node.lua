@@ -400,16 +400,16 @@ function Node:display(tabs, info)
     end
 
   elseif (self.type == Node.FOR_TYPE) then
-    if (self.enhanced) then
+    if (self.isCollectionIteration) then
+      print(tabString .. "for: " .. dq(self.token.type) .. " var: " .. dq(self.collectionVar) .. " collectionIteration: " .. dq(self.isCollectionIteration))
+
+      self.arrayExpr:display(tabs + 1, "ARRAY EXPR: ")
+    else
       print(tabString .. "for: " .. dq(self.token.type) .. " enhanced: " .. dq(self.enhanced))
 
       self.initializer:display(tabs + 1, "INITIALIZER: ")
       self.condition:display(tabs + 1, "CONDITIONAL: ")
       self.incrementer:display(tabs + 1, "INCREMENTER: ")
-    else
-      print(tabString .. "for: " .. dq(self.token.type) .. " var: " .. dq(self.collectionVar) .. " collectionIteration: " .. dq(self.isCollectionIteration))
-
-      self.arrayExpr:display(tabs + 1, "ARRAY EXPR: ")
     end
 
     self.block:display(tabs + 2)

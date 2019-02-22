@@ -108,3 +108,9 @@ arrayShouldBeOhh25 = table[4]
 strTable = ["fish", 1]
 strTable["cat"] = "moon"
 arrayShouldBeMoon = strTable["cat"]
+
+sumTable = [1, 2, 3, 4, 5]
+arrayIteratorShouldBe15 = 0
+for (i in sumTable) {
+  arrayIteratorShouldBe15 += i
+}

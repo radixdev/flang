@@ -348,7 +348,7 @@ end
 
 function Interpreter:For(node)
   --[[
-    This is either a standard for loop or an enhanced for loop.
+    This is either a standard for loop, an enhanced for loop, or an iteration loop.
 
     Enhanced for-loops have the following structure:
     for (assignment ; number (; number) ) block
@@ -359,37 +359,48 @@ function Interpreter:For(node)
   -- We enter scope here since the initializer is inside the forloop scope itself
   -- e.g. for (i=0... the "i" shouldn't remain in scope afterwards
   self.current_symbol_scope = self.current_symbol_scope:enterBlock()
-  self:visit(node.initializer)
 
-  if (node.enhanced) then
-    -- extract the variable
-    local variable_name = node.initializer.left.value
+  if (node.isCollectionIteration) then
+    local iterator_variable_name = node.collectionVar
+    local array_variable = self:visit(node.arrayExpr)
 
-    -- visit the condition value
-    local condition_value = self:visit(node.condition)
-    if (not Util.isNumber(condition_value)) then
-      self:error("Expected for loop condition to evaluate to number")
-    end
-
-    local initializer_value = self:get_variable(variable_name)
-
-    if (node.incrementer.type == Node.NO_OP_TYPE) then
-      incrementer_value = 1
-    else
-      incrementer_value = self:visit(node.incrementer)
-    end
-
-    for i = initializer_value, (condition_value-1), incrementer_value do
-      -- set i
-      self:set_variable(variable_name, i)
+    for elementValue in pairs(array_variable) do
+      self:set_variable(iterator_variable_name, elementValue)
       self:visit(node.block)
     end
   else
     self:visit(node.initializer)
 
-    while self:visit(node.condition) do
-      self:visit(node.block)
-      self:visit(node.incrementer)
+    if (node.enhanced) then
+      -- extract the variable
+      local variable_name = node.initializer.left.value
+
+      -- visit the condition value
+      local condition_value = self:visit(node.condition)
+      if (not Util.isNumber(condition_value)) then
+        self:error("Expected for loop condition to evaluate to number")
+      end
+
+      local initializer_value = self:get_variable(variable_name)
+
+      if (node.incrementer.type == Node.NO_OP_TYPE) then
+        incrementer_value = 1
+      else
+        incrementer_value = self:visit(node.incrementer)
+      end
+
+      for i = initializer_value, (condition_value-1), incrementer_value do
+        -- set i
+        self:set_variable(variable_name, i)
+        self:visit(node.block)
+      end
+    else
+      self:visit(node.initializer)
+
+      while self:visit(node.condition) do
+        self:visit(node.block)
+        self:visit(node.incrementer)
+      end
     end
   end
 

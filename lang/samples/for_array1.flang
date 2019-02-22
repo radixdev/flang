@@ -1,5 +1,13 @@
 arr = [1, 2, 3]
 
+arr["fish"] = 3434
+arr[10000] = 9
+
 for (i in arr) {
   Core.luaPrint(i)
+}
+
+arrayIteratorShouldBe15 = 0
+for (i in [1, 2, 3, 4, 5]) {
+  arrayIteratorShouldBe15 += i
 }
