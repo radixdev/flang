@@ -149,7 +149,7 @@ function Interpreter:visit(node)
   -- end section
 
   lastVisitedNode = node
-  print("visiting " .. method_name)
+  -- print("visiting " .. method_name)
 
   -- Call and return the method
   return self[node.type](self, node)
@@ -199,26 +199,28 @@ function Interpreter:Assign(node)
   local variable_name = node.left.value
   local token_type = node.assignment_token.type
 
+  local visitedRightNode = self:visit(node.right)
+
   if (token_type == Symbols.EQUALS) then
-    self:set_variable(variable_name, self:visit(node.right))
+    self:set_variable(variable_name, visitedRightNode)
     return
   end
 
   if (token_type == Symbols.ASSIGN_PLUS) then
-    self:set_variable(variable_name, self:get_variable(variable_name) + self:visit(node.right))
+    self:set_variable(variable_name, self:get_variable(variable_name) + visitedRightNode)
 
   elseif (token_type == Symbols.ASSIGN_MINUS) then
-    self:set_variable(variable_name, self:get_variable(variable_name) - self:visit(node.right))
+    self:set_variable(variable_name, self:get_variable(variable_name) - visitedRightNode)
 
   elseif (token_type == Symbols.ASSIGN_MUL) then
-    self:set_variable(variable_name, self:get_variable(variable_name) * self:visit(node.right))
+    self:set_variable(variable_name, self:get_variable(variable_name) * visitedRightNode)
 
   elseif (token_type == Symbols.ASSIGN_DIV) then
-    local right_value = self:visit(node.right)
+    local right_value = visitedRightNode
     if (right_value == 0) then
       self:error("Division by Zero")
     end
-    self:set_variable(variable_name, self:get_variable(variable_name) / self:visit(node.right))
+    self:set_variable(variable_name, self:get_variable(variable_name) / visitedRightNode)
   end
 end
 
@@ -241,7 +243,7 @@ function Interpreter:ArrayAssign(node)
     return
   end
 
-  local existingValueAtIndex = self:visit(arrayValue[indexValue])
+  local existingValueAtIndex = arrayValue[indexValue]
 
   if (token_type == Symbols.ASSIGN_PLUS) then
     arrayValue[indexValue] = existingValueAtIndex + rightExprValue
@@ -496,7 +498,8 @@ function Interpreter:Array(node)
   -- Populate our table
   local k
   for k = 1, node.length do
-    backingTable[k] = node.arguments[k]
+    -- We have to visit everything before it reaches the array contents
+    backingTable[k] = self:visit(node.arguments[k])
   end
 
   return backingTable
@@ -512,9 +515,11 @@ function Interpreter:ArrayIndexGet(node)
     -- The +1 is to allow 0 indexing
     index = index + 1
   end
+
   local tableValue = identifierTable[index]
   if (tableValue == nil) then
     self:error("Array indexing error on: <" .. identifierName .. "> at index: <" .. index .. ">")
   end
-  return self:visit(tableValue)
+
+  return tableValue
 end

@@ -1,6 +1,6 @@
 require("base.flang_import")
 
-filename = "samples/array4.flang"
+filename = "samples/array3.flang"
 local f = assert(io.open(filename, "r"))
 local t = f:read("*all")
 f:close()

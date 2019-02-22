@@ -8,8 +8,9 @@ arr[4] /= 20000
 barr = [2]
 barr[5 - 5] = 0
 
-star = ["yeet", 23]
+star = [4, 23]
 star[1] = "fish"
 
 x = star[0]
 y = star[1]
+z = x + 4

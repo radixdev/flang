@@ -1,3 +1,6 @@
-star = ["fish"]
+star = ["fish", 1]
 star[0] = 4
 y = star[0]
+
+x = star[1]
+z = x + 4
