@@ -71,7 +71,7 @@ end
   statement       : assignment_statement
                   | array_index_assign_statement
                   | if_statement
-                  | for_statement
+                  | (for_statement | for_collection_statement)
                   | method_definition_statement
                   | return_statement
                   | function_call
@@ -80,10 +80,13 @@ end
   assignment_statement          : variable (ASSIGN | ASSIGN_PLUS | ASSIGN_MINUS | ASSIGN_MUL | ASSIGN_DIV) expr
   array_index_assign_statement  : variable LSQUAREBRACKET expr RSQUAREBRACKET (ASSIGN | ASSIGN_PLUS | ASSIGN_MINUS | ASSIGN_MUL | ASSIGN_DIV) expr
   if_statement                  : IF conditional block if_elseif
-  for_statement                 : FOR LPAREN assignment_statement SEMICOLON expr (SEMICOLON statement | SEMICOLON expr)? RPAREN block
+  for_statement                 : FOR LPAREN (for_body_standard | for_body_collection) RPAREN block
   method_definition_statement   : DEF IDENTIFIER LPAREN (method_definition_argument COMMA | method_definition_argument)* RPAREN block
   return_statement              : RETURN expr
   empty                         :
+
+  for_body_standard             : assignment_statement SEMICOLON expr (SEMICOLON statement | SEMICOLON expr)?
+  for_body_collection           : variable IN ARRAY
 
   if_elseif     : (ELSEIF conditional block)* if_else
   if_else       : ELSE block
@@ -512,7 +515,9 @@ end
 function Parser:for_statement()
   --[[
 
-    for_statement : FOR LPAREN assignment_statement SEMICOLON expr (SEMICOLON statement | SEMICOLON expr)? RPAREN block
+    for_statement         : FOR LPAREN (for_body_standard | for_body_collection) RPAREN block
+    for_body_standard     : assignment_statement SEMICOLON expr (SEMICOLON statement | SEMICOLON expr)?
+    for_body_collection   : variable IN ARRAY
 
   ]]
 
@@ -521,44 +526,60 @@ function Parser:for_statement()
     self:eat(Symbols.FOR)
     self:eat(Symbols.LPAREN)
 
-    local initializer = self:statement()
-    self:eat(Symbols.SEMICOLON)
+    local initializer
+    local incrementer
+    local arrayExpr
+    local enhanced
+    local condition
+    local isCollectionIteration
+    -- This could be a iterator type loop `for (i in array)`
+    -- The next token would be `in`
+    if (self.current_token.type == Symbols.IDENTIFIER and self.next_token.type == Symbols.IN) then
+      isCollectionIteration = true
+      -- Get the iterator variable
+      token = self.current_token
+      self:eat(Symbols.IDENTIFIER)
+      self:eat(Symbols.IN)
 
-    local condition = self:expr()
-
-    --[[
-      the incrementer is either a number or empty (ENHANCED FOR) or a statement (STANDARD FOR)
-      the incrementer can be an expression in the case of:
-      for (i=0; 10; 2) {
-        *BLOCK*
-      }
-
-
-    ]]
-    local incrementer = self:empty()
-    local enhanced = false
-    if (self.current_token.type == Symbols.SEMICOLON) then
+      -- Get the collection
+      arrayExpr = self:expr()
+    else
+      -- standard for body
+      initializer = self:statement()
       self:eat(Symbols.SEMICOLON)
 
-      incrementer = self:statement()
-      if (incrementer.type == Node.NO_OP_TYPE) then
-        -- no statement, check for an expression
-        incrementer = self:expr()
+      condition = self:expr()
 
-        if (incrementer.type ~= Node.NO_OP_TYPE) then
-          -- enhanced loop
-          enhanced = true
+      --[[
+        the incrementer is either a number or empty (ENHANCED FOR) or a statement (STANDARD FOR)
+        the incrementer can be an expression in the case of:
+        for (i=0; 10; 2) {
+          *BLOCK*
+        }
+      ]]
+      incrementer = self:empty()
+      enhanced = false
+      if (self.current_token.type == Symbols.SEMICOLON) then
+        self:eat(Symbols.SEMICOLON)
+
+        incrementer = self:statement()
+        if (incrementer.type == Node.NO_OP_TYPE) then
+          -- no statement, check for an expression
+          incrementer = self:expr()
+
+          if (incrementer.type ~= Node.NO_OP_TYPE) then
+            -- enhanced loop
+            enhanced = true
+          end
         end
+      else
+        enhanced = true
       end
-    else
-      enhanced = true
     end
 
     self:eat(Symbols.RPAREN)
-
     local block = self:block()
-
-    return Node.For(token, initializer, condition, incrementer, block, enhanced)
+    return Node.For(token, initializer, condition, incrementer, block, enhanced, token.cargo, arrayExpr, isCollectionIteration)
   end
 end
 

@@ -202,7 +202,7 @@ function Node.StatementList()
 end
 
 Node.FOR_TYPE = "For"
-function Node.For(token, initializer, condition, incrementer, block, enhanced)
+function Node.For(token, initializer, condition, incrementer, block, enhanced, collectionVar, arrayExpr, isCollectionIteration)
   Node.print("creating for node " .. tostring(token))
   return Node:new({
     type = Node.FOR_TYPE,
@@ -211,7 +211,10 @@ function Node.For(token, initializer, condition, incrementer, block, enhanced)
     condition = condition,
     incrementer = incrementer,
     block = block,
-    enhanced = enhanced
+    enhanced = enhanced,
+    collectionVar = collectionVar,
+    arrayExpr = arrayExpr,
+    isCollectionIteration = isCollectionIteration
   })
 end
 
@@ -397,11 +400,18 @@ function Node:display(tabs, info)
     end
 
   elseif (self.type == Node.FOR_TYPE) then
-    print(tabString .. "for: " .. dq(self.token.type) .. " enhanced: " .. dq(self.enhanced))
+    if (self.enhanced) then
+      print(tabString .. "for: " .. dq(self.token.type) .. " enhanced: " .. dq(self.enhanced))
 
-    self.initializer:display(tabs + 1, "INITIALIZER: ")
-    self.condition:display(tabs + 1, "CONDITIONAL: ")
-    self.incrementer:display(tabs + 1, "INCREMENTER: ")
+      self.initializer:display(tabs + 1, "INITIALIZER: ")
+      self.condition:display(tabs + 1, "CONDITIONAL: ")
+      self.incrementer:display(tabs + 1, "INCREMENTER: ")
+    else
+      print(tabString .. "for: " .. dq(self.token.type) .. " var: " .. dq(self.collectionVar) .. " collectionIteration: " .. dq(self.isCollectionIteration))
+
+      self.arrayExpr:display(tabs + 1, "ARRAY EXPR: ")
+    end
+
     self.block:display(tabs + 2)
 
   elseif (self.type == Node.FUNCTION_CALL_TYPE) then

@@ -10,6 +10,7 @@ Symbols.ELSE = "else"
 Symbols.FOR = "for"
 Symbols.DEF = "def"
 Symbols.RETURN = "return"
+Symbols.IN = "in"
 
 Symbols.KEYWORDS = Flang.Util.Set{
   Symbols.IF,
@@ -18,6 +19,8 @@ Symbols.KEYWORDS = Flang.Util.Set{
 
   "while",
   Symbols.FOR,
+  Symbols.IN,
+
   "print",
 
   Symbols.DEF,
