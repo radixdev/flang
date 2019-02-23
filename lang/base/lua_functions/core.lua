@@ -65,6 +65,13 @@ function Core:readVirtualSignal(wrapper, flangArguments)
   local combinatorBehavior = entity.get_control_behavior()
 
   local circuitNetwork = combinatorBehavior.get_circuit_network(defines.wire_type.red)
+  if (circuitNetwork == nil) then
+    return {
+      hasError = true,
+      errorMessage = "Core:writeVirtualSignal has no red network attached"
+    }
+  end
+
   local signal = {
       type = "virtual",
       name = "signal-" .. virtualSignalName
