@@ -1,9 +1,16 @@
 -- see \Factorio\data\base\prototypes\entity\entities.lua line 10459
-local entity = table.deepcopy(data.raw["constant-combinator"]["constant-combinator"])
-entity.name = "flang-chip"
-entity.minable = {hardness = 0.2, mining_time = 0.5, result = "flang-chip"}
-entity.max_health = 271
-entity.icon = "__Flang__/graphics/flangchip.png"
-entity.item_slot_count = 100
+local flangChipEntity = table.deepcopy(data.raw["constant-combinator"]["constant-combinator"])
+flangChipEntity.name = "flang-chip"
+flangChipEntity.minable = {hardness = 0.2, mining_time = 0.5, result = "flang-chip"}
+flangChipEntity.max_health = 271
+flangChipEntity.icon = "__Flang__/graphics/flangchip.png"
+flangChipEntity.item_slot_count = 100
 
-data:extend{entity}
+local invisChipEntity = table.deepcopy(data.raw["item"]["programmable-speaker"])
+invisChipEntity.name = "invis-flang-chip"
+invisChipEntity.minable = {hardness = 0.2, mining_time = 0.5, result = "invis-flang-chip"}
+invisChipEntity.max_health = 271
+invisChipEntity.icon = "__Flang__/graphics/flangchip.png"
+invisChipEntity.item_slot_count = 100
+
+data:extend({flangChipEntity, invisChipEntity})
