@@ -8,6 +8,10 @@ function FlangChip:new(o)
     error("nil constructor!")
   end
 
+  if (not o.entity) then
+    error("nil entity!")
+  end
+
   o = {
     entity = o.entity,
     source = o.source or "",

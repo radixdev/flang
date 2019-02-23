@@ -143,11 +143,7 @@ script.on_event(defines.events.on_entity_settings_pasted, function(event)
     -- Write to the global data
     local sourceChipData = GlobalData.get_entity_data(sourceId)
     local sourceCode = sourceChipData.source
-    GlobalData.write_entity_source(destinationId, sourceCode)
-
-    -- Write to the local data
-    local chip = CHIP_TABLE[destinationId]
-    chip:update_source(sourceCode)
+    update_entity_source_code(destinationId, sourceCode)
   end
 end)
 
@@ -209,14 +205,7 @@ script.on_event(defines.events.on_gui_text_changed, function(event)
     if entity then
       local id = entity.unit_number
       -- We add a newline since the gui editor apparently doesn't have EOF
-
-      -- Globals
-      GlobalData.write_entity_source(id, text.."\n")
-
-      -- Local setting
-      -- The chip should exist already
-      local chip = CHIP_TABLE[id]
-      chip:update_source(text.."\n")
+      update_entity_source_code(id, text .. "\n")
     end
   end
 end)
@@ -263,6 +252,18 @@ script.on_load(function()
     CHIP_TABLE[entity_id] = chip
   end
 end)
+
+-------------------------- Chip Data Updates -----------------
+
+--------------------------------------------------------------
+
+function update_entity_source_code(destinationId, sourceCode)
+  GlobalData.write_entity_source(destinationId, sourceCode)
+
+  -- Write to the local data
+  local chip = CHIP_TABLE[destinationId]
+  chip:update_source(sourceCode)
+end
 
 -------------------------- Misc ------------------------------
 
