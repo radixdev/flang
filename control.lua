@@ -257,11 +257,11 @@ end)
 
 --------------------------------------------------------------
 
-function update_entity_source_code(destinationId, sourceCode)
-  GlobalData.write_entity_source(destinationId, sourceCode)
+function update_entity_source_code(destinationEntityId, sourceCode)
+  GlobalData.write_entity_source(destinationEntityId, sourceCode)
 
   -- Write to the local data
-  local chip = CHIP_TABLE[destinationId]
+  local chip = CHIP_TABLE[destinationEntityId]
   chip:update_source(sourceCode)
 end
 
