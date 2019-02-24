@@ -4,6 +4,10 @@ GlobalData = require("controller.GlobalData")
 local PLAYER_ID_TO_ENTITY_MAPPING = {}
 local CHIP_TABLE = {}
 
+-- Some constants
+local FLANG_CHIP_ENTITY_NAME = "flang-chip"
+local INVIS_FLANG_CHIP_ENTITY_NAME = "invis-flang-chip"
+
 function get_player_last_chip_entity(player_id)
   -- create the table if needed
   if PLAYER_ID_TO_ENTITY_MAPPING["player_last_chip_entity_mapping"] then
@@ -270,7 +274,7 @@ end
 --------------------------------------------------------------
 
 function is_entity_flang_chip(entity)
-  return entity.name == "flang-chip" and entity.valid
+  return entity.name == FLANG_CHIP_ENTITY_NAME and entity.valid
 end
 
 function player_log_print(msg, log_to_console)
