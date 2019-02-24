@@ -76,7 +76,7 @@ end
 ]]
 function delete_chip_controller(entity)
   if is_entity_flang_chip(entity) then
-    id = entity.unit_number
+    local id = entity.unit_number
 
     -- delete from global storage
     GlobalData.delete_entity_data(id)
@@ -88,15 +88,15 @@ end
 
 function create_chip_controller(entity)
   if is_entity_flang_chip(entity) then
-    id = entity.unit_number
+    local id = entity.unit_number
 
     -- create the first record of the entity
-    object_data = GlobalData.new_data_object()
+    local object_data = GlobalData.new_data_object()
     object_data.entity = entity
     GlobalData.write_entity_data(id, object_data)
 
     -- create the local chip
-    chip = FlangChip:new({entity = entity, printer = player_info_window_print})
+    local chip = FlangChip:new({entity = entity, printer = player_info_window_print})
     CHIP_TABLE[id] = chip
   end
 end
@@ -108,7 +108,7 @@ end
 script.on_event(defines.events.on_tick, function(event)
   if (event.tick % (60*1) == 0) then
     for entity_id, chip in pairs(CHIP_TABLE) do
-      result = chip:execute()
+      chip:execute()
     end
   end
 end)
@@ -152,13 +152,13 @@ end)
 --------------------------------------------------------------
 
 script.on_event("flang-open-editor", function(event)
-  player = game.players[event.player_index]
+  local player = game.players[event.player_index]
 
   -- Make sure the entity is a flang chip
   if player.selected and is_entity_flang_chip(player.selected) then
-    entity = player.selected
+    local entity = player.selected
 
-    source = GlobalData.get_entity_data(entity.unit_number)["source"]
+    local source = GlobalData.get_entity_data(entity.unit_number)["source"]
     set_player_last_chip_entity(event.player_index, entity)
     create_editor_window(player, source)
   end
@@ -243,7 +243,7 @@ end)
 script.on_load(function()
   -- recreate the controller table from the global table
   for entity_id, chip_data in pairs(GlobalData.get_all_entities()) do
-    chip = FlangChip:new({
+    local chip = FlangChip:new({
       entity = chip_data["entity"],
       source = chip_data["source"],
       is_running = chip_data["is_running"],
