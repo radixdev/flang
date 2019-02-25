@@ -257,6 +257,7 @@ script.on_load(function()
       entity = chip_data["entity"],
       source = chip_data["source"],
       is_running = chip_data["is_running"],
+      invis_chip = chip_data["invis_chip"],
       printer = player_info_window_print
     })
     CHIP_TABLE[entity_id] = chip
@@ -268,11 +269,18 @@ end)
 --------------------------------------------------------------
 
 function update_entity_source_code(destinationEntityId, sourceCode)
+  -- Update the global data
   GlobalData.write_entity_source(destinationEntityId, sourceCode)
 
   -- Write to the local data
   local chip = CHIP_TABLE[destinationEntityId]
   chip:update_source(sourceCode)
+
+  -- Write to the invis_chip
+  local invis_chip = chip.invis_chip
+  if (is_entity_invis_flang_chip(invis_chip)) then
+    encode_data_onto_invis_chip(invis_chip, sourceCode)
+  end
 end
 
 ----------------- Invis Chip ---------------------------------
@@ -320,11 +328,11 @@ end
 --------------------------------------------------------------
 
 function is_entity_flang_chip(entity)
-  return entity.name == FLANG_CHIP_ENTITY_NAME and entity.valid
+  return entity and entity.name == FLANG_CHIP_ENTITY_NAME and entity.valid
 end
 
 function is_entity_invis_flang_chip(entity)
-  return entity.name == INVIS_FLANG_CHIP_ENTITY_NAME and entity.valid
+  return entity and entity.name == INVIS_FLANG_CHIP_ENTITY_NAME and entity.valid
 end
 
 function player_log_print(msg, log_to_console)
