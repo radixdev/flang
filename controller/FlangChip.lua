@@ -19,6 +19,8 @@ function FlangChip:new(o)
 
     is_running = o.is_running or false,
 
+    invis_chip = o.invis_chip,
+
     -- debug shit
     -- optional straight to player console function
     printer = o.printer

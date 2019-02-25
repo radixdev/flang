@@ -1,7 +1,9 @@
 require("controller.FlangChip")
 GlobalData = require("controller.GlobalData")
 
+-- Mappings
 local PLAYER_ID_TO_ENTITY_MAPPING = {}
+-- Mapping from entity ID -> FlangChip
 local CHIP_TABLE = {}
 
 -- Some constants
@@ -94,13 +96,17 @@ function create_chip_controller(entity)
   if is_entity_flang_chip(entity) then
     local id = entity.unit_number
 
+    -- Create an invis chip
+    local invis_chip = create_invis_chip(entity)
+
     -- create the first record of the entity
     local object_data = GlobalData.new_data_object()
     object_data.entity = entity
+    object_data.invis_chip = invis_chip
     GlobalData.write_entity_data(id, object_data)
 
     -- create the local chip
-    local chip = FlangChip:new({entity = entity, printer = player_info_window_print})
+    local chip = FlangChip:new({entity = entity, printer = player_info_window_print, invis_chip = invis_chip})
     CHIP_TABLE[id] = chip
   end
 end

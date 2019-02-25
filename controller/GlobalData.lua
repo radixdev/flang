@@ -20,7 +20,8 @@ function GlobalData.new_data_object()
     -- is the code running or nah?
     is_running = false,
     -- the entity referenced by the id
-    entity = nil
+    entity = nil,
+    invis_chip = nil
   }
 end
 
