@@ -6,7 +6,7 @@ flangChipEntity.max_health = 271
 flangChipEntity.icon = "__Flang__/graphics/flangchip.png"
 flangChipEntity.item_slot_count = 100
 
-local invisChipEntity = table.deepcopy(data.raw["item"]["programmable-speaker"])
+local invisChipEntity = table.deepcopy(data.raw["programmable-speaker"]["programmable-speaker"])
 invisChipEntity.name = "invis-flang-chip"
 invisChipEntity.minable = {hardness = 0.2, mining_time = 0.5, result = "invis-flang-chip"}
 invisChipEntity.max_health = 271
