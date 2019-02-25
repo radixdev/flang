@@ -316,10 +316,10 @@ function encode_data_onto_invis_chip(entity, stringData)
   -- https://lua-api.factorio.com/latest/Concepts.html#ProgrammableSpeakerAlertParameters
 
   local speakerAlertParameters = {
-    alert_message = stringData
+    alert_message = stringData,
 
     show_alert = false,
-    show_on_map = false,
+    show_on_map = false
     -- TODO Not sure if the signal ID is required
   }
 
@@ -336,7 +336,7 @@ end
 
 function get_existing_invis_chip_at_parent(entity)
   -- Any invis chips will exist at the same position
-  local entitiesAtSamePosition = entity.find_entities_filtered({
+  local entitiesAtSamePosition = entity.surface.find_entities_filtered({
     position = entity.position,
     name = INVIS_FLANG_CHIP_ENTITY_NAME
   })
