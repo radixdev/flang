@@ -269,12 +269,56 @@ function update_entity_source_code(destinationEntityId, sourceCode)
   chip:update_source(sourceCode)
 end
 
+----------------- Invis Chip ---------------------------------
+
+--------------------------------------------------------------
+
+function create_invis_chip(entity)
+  local surface = entity.surface
+  local invis_chip = surface.create_entity({
+    name = INVIS_FLANG_CHIP_ENTITY_NAME,
+    position = entity.position,
+    direction = entity.direction,
+    force = entity.force
+  })
+  invis_chip.destructible = false
+  invis_chip.operable = false
+  return invis_chip
+end
+
+function encode_data_onto_invis_chip(entity, stringData)
+  -- See https://lua-api.factorio.com/latest/LuaEntity.html#LuaEntity.alert_parameters
+  -- https://lua-api.factorio.com/latest/Concepts.html#ProgrammableSpeakerAlertParameters
+
+  local speakerAlertParameters = {
+    alert_message = stringData
+
+    show_alert = false,
+    show_on_map = false,
+    -- TODO Not sure if the signal ID is required
+  }
+
+  if (is_entity_invis_flang_chip(entity)) then
+    entity.alert_parameters = speakerAlertParameters
+  end
+end
+
+function decode_data_from_invis_chip(entity)
+  if (is_entity_invis_flang_chip(entity)) then
+    return entity.alert_parameters.alert_message
+  end
+end
+
 -------------------------- Misc ------------------------------
 
 --------------------------------------------------------------
 
 function is_entity_flang_chip(entity)
   return entity.name == FLANG_CHIP_ENTITY_NAME and entity.valid
+end
+
+function is_entity_invis_flang_chip(entity)
+  return entity.name == INVIS_FLANG_CHIP_ENTITY_NAME and entity.valid
 end
 
 function player_log_print(msg, log_to_console)
