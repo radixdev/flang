@@ -95,9 +95,20 @@ end
 function create_chip_controller(entity)
   if is_entity_flang_chip(entity) then
     local id = entity.unit_number
+    local sourceCode = ""
 
-    -- Create an invis chip
-    local invis_chip = create_invis_chip(entity)
+    -- Detect if a chip already exists at the same position
+    local invis_chip
+    local existingInvisChip = get_existing_invis_chip_at_parent(entity)
+
+    if (existingInvisChip) then
+      invis_chip = existingInvisChip
+      -- We already have an encoded chip here, read the contents
+      sourceCode = decode_data_from_invis_chip(existingInvisChip)
+    else
+      -- Create an invis chip since none already exist
+      invis_chip = create_invis_chip(entity)
+    end
 
     -- create the first record of the entity
     local object_data = GlobalData.new_data_object()
@@ -106,7 +117,7 @@ function create_chip_controller(entity)
     GlobalData.write_entity_data(id, object_data)
 
     -- create the local chip
-    local chip = FlangChip:new({entity = entity, printer = player_info_window_print, invis_chip = invis_chip})
+    local chip = FlangChip:new({entity = entity, printer = player_info_window_print, invis_chip = invis_chip, source = sourceCode})
     CHIP_TABLE[id] = chip
   end
 end
@@ -321,6 +332,22 @@ function decode_data_from_invis_chip(entity)
   if (is_entity_invis_flang_chip(entity)) then
     return entity.alert_parameters.alert_message
   end
+end
+
+function get_existing_invis_chip_at_parent(entity)
+  -- Any invis chips will exist at the same position
+  local entitiesAtSamePosition = entity.find_entities_filtered({
+    position = entity.position,
+    name = INVIS_FLANG_CHIP_ENTITY_NAME
+  })
+
+  for _,matchingEntity in pairs(entitiesAtSamePosition) do
+    if (matchingEntity ~= entity and is_entity_invis_flang_chip(matchingEntity)) then
+      return matchingEntity
+    end
+  end
+
+  return nil
 end
 
 -------------------------- Misc ------------------------------
