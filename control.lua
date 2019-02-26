@@ -92,7 +92,7 @@ function delete_chip_controller(entity)
   end
 end
 
-function create_chip_controller(entity)
+function create_chip_controller(entity, built_from_robot)
   if is_entity_flang_chip(entity) then
     player_log_print("chip built")
 
@@ -110,9 +110,13 @@ function create_chip_controller(entity)
       -- We already have an encoded chip here, read the contents
       sourceCode = decode_data_from_invis_chip(existingInvisChip)
     else
-      player_log_print("creating chip")
+      player_log_print("creating invis chip")
       -- Create an invis chip since none already exist
       invis_chip = create_invis_chip(entity)
+
+      if (built_from_robot) then
+        invis_chip.order_deconstruction(entity.force)
+      end
     end
 
     -- create the first record of the entity
@@ -127,6 +131,11 @@ function create_chip_controller(entity)
 
   elseif is_entity_invis_flang_chip(entity) then
     player_log_print("invis built")
+
+    local existingData = decode_data_from_invis_chip(entity)
+    player_log_print(existingData)
+
+    -- WE GOT IT BOYS
   end
 end
 
@@ -143,11 +152,11 @@ script.on_event(defines.events.on_tick, function(event)
 end)
 
 script.on_event(defines.events.on_built_entity, function(event)
-  create_chip_controller(event.created_entity)
+  create_chip_controller(event.created_entity, false)
 end)
 
 script.on_event(defines.events.on_robot_built_entity, function(event)
-  create_chip_controller(event.created_entity)
+  create_chip_controller(event.created_entity, true)
 end)
 
 script.on_event(defines.events.on_entity_settings_pasted, function(event)
