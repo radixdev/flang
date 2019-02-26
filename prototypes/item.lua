@@ -17,7 +17,7 @@ invisChip.flags = { "hidden" }
 invisChip.subgroup = "circuit-network"
 invisChip.place_result = "invis-flang-chip"
 invisChip.order = "b[combinators]-c[invis-flang-chip]"
-invisChip.stack_size = 1
+invisChip.stack_size = 16384
 invisChip.icon_size = 32
 
 data:extend({flangChip, invisChip})

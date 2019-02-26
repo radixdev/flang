@@ -94,8 +94,6 @@ end
 
 function create_chip_controller(entity, built_from_robot)
   if is_entity_flang_chip(entity) then
-    player_log_print("chip built")
-
     local id = entity.unit_number
     local sourceCode = ""
 
@@ -138,8 +136,6 @@ function create_chip_controller(entity, built_from_robot)
     CHIP_TABLE[id] = chip
 
   elseif is_entity_invis_flang_chip(entity) then
-    player_log_print("invis built")
-
     local existingData = decode_data_from_invis_chip(entity)
 
     -- Find the existing flang chip here
@@ -347,8 +343,7 @@ function create_invis_chip(entity)
     direction = entity.direction,
     force = entity.force
   })
-  -- invis_chip.destructible = false
-  -- invis_chip.operable = false
+  invis_chip.destructible = false
   return invis_chip
 end
 
@@ -402,7 +397,7 @@ function get_existing_entity_name_at_parent(parentEntity, targetName)
   })
 
   for _,matchingEntity in pairs(entitiesAtSamePosition) do
-    player_log_print("found target " .. matchingEntity.name)
+    -- player_log_print("found target " .. matchingEntity.name)
     -- player_log_print("found parentEntity " .. matchingEntity.type)
     if (matchingEntity ~= parentEntity) then
       return matchingEntity
