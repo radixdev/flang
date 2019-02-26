@@ -94,6 +94,8 @@ end
 
 function create_chip_controller(entity)
   if is_entity_flang_chip(entity) then
+    player_log_print("chip built")
+
     local id = entity.unit_number
     local sourceCode = ""
 
@@ -102,10 +104,13 @@ function create_chip_controller(entity)
     local existingInvisChip = get_existing_invis_chip_at_parent(entity)
 
     if (existingInvisChip) then
+      player_log_print("existing chip")
+
       invis_chip = existingInvisChip
       -- We already have an encoded chip here, read the contents
       sourceCode = decode_data_from_invis_chip(existingInvisChip)
     else
+      player_log_print("creating chip")
       -- Create an invis chip since none already exist
       invis_chip = create_invis_chip(entity)
     end
@@ -119,6 +124,9 @@ function create_chip_controller(entity)
     -- create the local chip
     local chip = FlangChip:new({entity = entity, printer = player_info_window_print, invis_chip = invis_chip, source = sourceCode})
     CHIP_TABLE[id] = chip
+
+  elseif is_entity_invis_flang_chip(entity) then
+    player_log_print("invis built")
   end
 end
 
@@ -306,8 +314,8 @@ function create_invis_chip(entity)
     direction = entity.direction,
     force = entity.force
   })
-  invis_chip.destructible = false
-  invis_chip.operable = false
+  -- invis_chip.destructible = false
+  -- invis_chip.operable = false
   return invis_chip
 end
 
@@ -319,8 +327,8 @@ function encode_data_onto_invis_chip(entity, stringData)
     alert_message = stringData,
 
     show_alert = false,
-    show_on_map = false
-    -- TODO Not sure if the signal ID is required
+    show_on_map = false,
+    -- signal ID is not required
   }
 
   if (is_entity_invis_flang_chip(entity)) then
@@ -338,10 +346,13 @@ function get_existing_invis_chip_at_parent(entity)
   -- Any invis chips will exist at the same position
   local entitiesAtSamePosition = entity.surface.find_entities_filtered({
     position = entity.position,
-    name = INVIS_FLANG_CHIP_ENTITY_NAME
+    -- type = "ghost"
+    -- name = INVIS_FLANG_CHIP_ENTITY_NAME
   })
 
   for _,matchingEntity in pairs(entitiesAtSamePosition) do
+    -- player_log_print("found entity " .. matchingEntity.name)
+    -- player_log_print("found entity " .. matchingEntity.type)
     if (matchingEntity ~= entity and is_entity_invis_flang_chip(matchingEntity)) then
       return matchingEntity
     end
@@ -362,7 +373,7 @@ function is_entity_invis_flang_chip(entity)
   return entity and entity.name == INVIS_FLANG_CHIP_ENTITY_NAME and entity.valid
 end
 
-function player_log_print(msg, log_to_console)
+function player_log_print(msg)
   if game == nil then
     return
   end
