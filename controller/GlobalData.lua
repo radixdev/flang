@@ -49,6 +49,12 @@ function GlobalData.write_entity_is_running(entity_id, is_running)
   GlobalData.write_entity_data(entity_id, data)
 end
 
+function GlobalData.write_invis_chip(entity_id, invis_chip)
+  local data = GlobalData.get_entity_data(entity_id)
+  data["invis_chip"] = invis_chip
+  GlobalData.write_entity_data(entity_id, data)
+end
+
 function GlobalData.delete_entity_data(entity_id)
   GlobalData.write_entity_data(entity_id, nil)
 end

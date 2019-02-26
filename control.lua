@@ -104,6 +104,8 @@ function create_chip_controller(entity, built_from_robot)
     local existingInvisChip = get_existing_invis_chip_at_parent(entity)
 
     if (existingInvisChip) then
+      -- TODO I don't think this case will ever be hit in real-world use
+      -- The invis chip is only made in the other block AFTER this chip already exists
       player_log_print("existing chip")
 
       invis_chip = existingInvisChip
@@ -115,6 +117,7 @@ function create_chip_controller(entity, built_from_robot)
       invis_chip = create_invis_chip(entity)
 
       if (built_from_robot) then
+        -- This will be deconstructed and fulfill by the robot shortly
         invis_chip.order_deconstruction(entity.force)
       end
     end
@@ -126,16 +129,37 @@ function create_chip_controller(entity, built_from_robot)
     GlobalData.write_entity_data(id, object_data)
 
     -- create the local chip
-    local chip = FlangChip:new({entity = entity, printer = player_info_window_print, invis_chip = invis_chip, source = sourceCode})
+    local chip = FlangChip:new({
+      entity = entity,
+      printer = player_info_window_print,
+      invis_chip = invis_chip,
+      source = sourceCode
+    })
     CHIP_TABLE[id] = chip
 
   elseif is_entity_invis_flang_chip(entity) then
     player_log_print("invis built")
 
     local existingData = decode_data_from_invis_chip(entity)
-    player_log_print(existingData)
 
-    -- WE GOT IT BOYS
+    -- Find the existing flang chip here
+    local existingFlangEntity = get_existing_entity_name_at_parent(entity, FLANG_CHIP_ENTITY_NAME)
+    if (not is_entity_flang_chip(existingFlangEntity)) then
+      return
+    end
+
+    -- Update our tables to reflect the chip relationship
+
+    -- Global table update
+    local chipEntityId = existingFlangEntity.unit_number
+    GlobalData.write_invis_chip(chipEntityId, entity)
+
+    -- Local chip update
+    local chip = CHIP_TABLE[chipEntityId]
+    chip.invis_chip = entity
+
+    -- Update the chip source code with the decoded value here
+    update_entity_source_code(chipEntityId, existingData)
   end
 end
 
@@ -367,6 +391,25 @@ function get_existing_invis_chip_at_parent(entity)
     end
   end
 
+  return nil
+end
+
+function get_existing_entity_name_at_parent(parentEntity, targetName)
+  -- Any invis chips will exist at the same position
+  local entitiesAtSamePosition = parentEntity.surface.find_entities_filtered({
+    position = parentEntity.position,
+    name = targetName
+  })
+
+  for _,matchingEntity in pairs(entitiesAtSamePosition) do
+    player_log_print("found target " .. matchingEntity.name)
+    -- player_log_print("found parentEntity " .. matchingEntity.type)
+    if (matchingEntity ~= parentEntity) then
+      return matchingEntity
+    end
+  end
+
+  player_log_print("Couldn't find existing entity with target name " .. targetName)
   return nil
 end
 
