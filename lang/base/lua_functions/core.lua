@@ -24,6 +24,12 @@ function Core:helloWorld(wrapper, flangArguments)
   }
 end
 
+function Core:tick(wrapper, flangArguments)
+  return {
+    result = Flang.tick
+  }
+end
+
 function Core:luaPrint(wrapper, flangArguments)
   local msg = flangArguments[1]
   if (Util.isTable(msg)) then
@@ -34,6 +40,7 @@ function Core:luaPrint(wrapper, flangArguments)
   return nil
 end
 
+-- args = (index, signal name, signal count)
 function Core:writeVirtualSignal(wrapper, flangArguments)
   local virtualSignalIndex = flangArguments[1]
   if (virtualSignalIndex < 0 or virtualSignalIndex > 100) then

@@ -1,5 +1,6 @@
 require("controller.FlangChip")
 GlobalData = require("controller.GlobalData")
+Flang.tick = 0
 
 -- Mappings
 local PLAYER_ID_TO_ENTITY_MAPPING = {}
@@ -166,6 +167,7 @@ end
 
 script.on_event(defines.events.on_tick, function(event)
   if (event.tick % (60*1) == 0) then
+    Flang.tick = Flang.tick + 1
     for entity_id, chip in pairs(CHIP_TABLE) do
       chip:execute()
     end
