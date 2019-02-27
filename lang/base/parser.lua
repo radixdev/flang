@@ -252,7 +252,7 @@ function Parser:array_constructor()
 
   -- Now parse the arguments
   -- Start at 1 to iterate in LUA
-  local length = 1
+  local length = 0
   local args = {}
 
   while (self.current_token.type ~= Symbols.RSQUAREBRACKET) do
@@ -260,10 +260,10 @@ function Parser:array_constructor()
     -- parse the arguments
     if (token.type == Symbols.COMMA) then
       -- prep for the next argument
-      length = length + 1
       self:eat(Symbols.COMMA)
     else
-      args[length] = self:expr()
+      args[#args + 1] = self:expr()
+      length = length + 1
     end
   end
 

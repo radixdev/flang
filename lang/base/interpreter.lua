@@ -34,7 +34,21 @@ end
 
 function Interpreter:error(msg)
   if (lastVisitedNode and lastVisitedNode.token and Util.isTable(lastVisitedNode.token)) then
-    error(msg .. "\nat " .. Util.set_to_string_dumb(lastVisitedNode.token))
+    local errorMsg = msg .. "\nat " .. Util.set_to_string_dumb(lastVisitedNode.token)
+    local source = self.parser.lexer.sourceText
+    local errorLine = lastVisitedNode.token.lineIndex
+
+    -- Print the line itself
+    local lineNum = 0
+    for line in source:gmatch("([^\n]*)\n?") do
+      lineNum = lineNum + 1
+      if (lineNum == errorLine) then
+        errorMsg = errorMsg .. "\n>\t" .. line
+        break
+      end
+    end
+
+    error(errorMsg)
   else
     error(msg)
   end
