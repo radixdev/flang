@@ -133,7 +133,8 @@ end
 
 -- Returns the scope that contains the variable with "name"
 function Scope:getContainerScopeForVariable(name)
-  -- print("Variable lookup on " .. name .. " on " .. Util.set_to_string_dumb(self) .. " with table " .. Util.set_to_string_dumb(self.variable_table))
+  -- print("Variable lookup on " .. name .. " on " .. Util.set_to_string_dumb(self) ..
+  --       " with table " .. Util.set_to_string_dumb(self.variable_table))
   -- Check ourselves!
   if (self.variable_table[name] ~= nil) then
     return self
@@ -142,6 +143,12 @@ function Scope:getContainerScopeForVariable(name)
   -- Check our parent
   if (self.parent_scope_ptr ~= nil) then
     return self.parent_scope_ptr:getContainerScopeForVariable(name)
+  end
+
+  -- Calls have higher priority than the block start!
+  -- Check the call return
+  if (self.call_ptr ~= nil) then
+    return self.call_ptr:getContainerScopeForVariable(name)
   end
 
   -- Check the block start

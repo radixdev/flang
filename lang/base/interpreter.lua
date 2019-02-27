@@ -131,7 +131,6 @@ end
 function Interpreter:get_function_method(function_class, method_name)
   -- hail mary of a call
   if (Flang.LuaFunction[function_class] == nil) then
-    print(function_class)
     self:error("Function class lookup failed for name <" .. function_class .. ">")
   end
 
@@ -488,13 +487,16 @@ function Interpreter:FunctionCall(node)
 
   local identifierValue = self.current_symbol_scope:getVariable(classOrIdentifier, false)
   if (identifierValue ~= nil) then
-    -- This is a self call on the variable stringVariable.length()
+    -- print("self call on var: " .. classOrIdentifier)
+
+    -- This is a self call on the variable `stringVariable.length()`
     -- function class name is the type itself
     functionMethod = self:get_function_method(type(identifierValue), method_invocation.method_name)
 
     -- The argument is just our variable
     visitedArguments = {identifierValue}
   else
+    -- print("func call on var: " .. classOrIdentifier)
     -- This is a standard function call Foo.doThing()
     functionMethod = self:get_function_method(classOrIdentifier, method_invocation.method_name)
 
