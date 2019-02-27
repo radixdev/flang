@@ -104,13 +104,10 @@ function create_chip_controller(entity, built_from_robot)
     if (existingInvisChip) then
       -- TODO I don't think this case will ever be hit in real-world use
       -- The invis chip is only made in the other block AFTER this chip already exists
-      player_log_print("existing chip")
-
       invis_chip = existingInvisChip
       -- We already have an encoded chip here, read the contents
       sourceCode = decode_data_from_invis_chip(existingInvisChip)
     else
-      player_log_print("creating invis chip")
       -- Create an invis chip since none already exist
       invis_chip = create_invis_chip(entity)
 
