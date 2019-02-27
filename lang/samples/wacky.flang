@@ -1,8 +1,5 @@
-// comment here
+def test() {
 
-if (true) {
-  //
-  //
-
-  x = 2
 }
+
+x = Core.helloWorld(3)

@@ -172,7 +172,7 @@ function Parser:method_invocation()
 
   -- Now parse the arguments
   -- Start at 1 to iterate in LUA
-  local num_arguments = 1
+  local num_arguments = 0
   local args = {}
 
   while (self.current_token.type ~= Symbols.RPAREN) do
@@ -180,10 +180,10 @@ function Parser:method_invocation()
     -- parse the arguments
     if (token.type == Symbols.COMMA) then
       -- prep for the next argument
-      num_arguments = num_arguments + 1
       self:eat(Symbols.COMMA)
     else
-      args[num_arguments] = self:expr()
+      args[#args + 1] = self:expr()
+      num_arguments = num_arguments + 1
     end
   end
 
@@ -336,9 +336,7 @@ function Parser:factor()
     return node
 
   else
-    print("factor has nothing. returning empty node")
-    print(token)
-    return self:empty()
+    error("Factor has nothing! Error state")
   end
 end
 
@@ -604,7 +602,7 @@ function Parser:method_definition_statement()
 
     -- Parse the arguments
     -- Start at 1 to iterate in LUA
-    local num_arguments = 1
+    local num_arguments = 0
     local arguments = {}
 
     while (self.current_token.type ~= Symbols.RPAREN) do
@@ -612,10 +610,10 @@ function Parser:method_definition_statement()
       -- parse the arguments
       if (token.type == Symbols.COMMA) then
         -- prep for the next argument
-        num_arguments = num_arguments + 1
         self:eat(Symbols.COMMA)
       else
-        arguments[num_arguments] = self:method_definition_argument()
+        arguments[#arguments + 1] = self:method_definition_argument()
+        num_arguments = num_arguments + 1
       end
     end
 

@@ -487,11 +487,10 @@ function Interpreter:FunctionCall(node)
     -- Each argument needs to be visited first!
     local k
     visitedArguments = {}
-    for index, invocation_arg in pairs(method_invocation.arguments) do
-    -- for k = 1, method_invocation.num_arguments do
+    for k = 1, method_invocation.num_arguments do
       -- This is some expression that needs to be visited for evaluation
-      -- local invocation_arg = method_invocation.arguments[k]
-      visitedArguments[index] = self:visit(invocation_arg)
+      local invocation_arg = method_invocation.arguments[k]
+      visitedArguments[k] = self:visit(invocation_arg)
     end
   end
 
