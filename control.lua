@@ -88,6 +88,10 @@ function delete_chip_controller(entity)
     GlobalData.delete_entity_data(id)
 
     -- delete from local storage
+    local chip = CHIP_TABLE[id]
+    if (chip and chip.invis_chip) then
+      chip.invis_chip.destroy()
+    end
     CHIP_TABLE[id] = nil
   end
 end
