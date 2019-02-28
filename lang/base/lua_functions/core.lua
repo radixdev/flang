@@ -69,13 +69,35 @@ end
 function Core:readVirtualSignal(wrapper, flangArguments)
   local virtualSignalName = flangArguments[1]
   local entity = wrapper.entity
+  if (entity == nil) then
+    return {
+      hasError = true,
+      errorMessage = "Entity is nil"
+    }
+  end
   local combinatorBehavior = entity.get_control_behavior()
 
-  local circuitNetwork = combinatorBehavior.get_circuit_network(defines.wire_type.red)
+  -- Check the network type
+  local circuitNetworkName = flangArguments[2]
+  local circuitNetworkColor
+  if (circuitNetworkName == "red") then
+    circuitNetworkColor = defines.wire_type.red
+  elseif (circuitNetworkName == "green") then
+    circuitNetworkColor = defines.wire_type.green
+  elseif (circuitNetworkName == "copper") then
+    circuitNetworkColor = defines.wire_type.copper
+  else
+    return {
+      hasError = true,
+      errorMessage = "Circuit network with name " .. circuitNetworkName .. " is invalid. Try ['red', 'green', 'copper']"
+    }
+  end
+
+  local circuitNetwork = combinatorBehavior.get_circuit_network(circuitNetworkColor)
   if (circuitNetwork == nil) then
     return {
       hasError = true,
-      errorMessage = "Core:writeVirtualSignal has no red network attached"
+      errorMessage = "Core:writeVirtualSignal has no network attached on type: " .. circuitNetworkName
     }
   end
 
@@ -83,9 +105,7 @@ function Core:readVirtualSignal(wrapper, flangArguments)
       type = "virtual",
       name = "signal-" .. virtualSignalName
   }
-  local value = circuitNetwork.get_signal(signal)
-
   return {
-    result = value
+    result = circuitNetwork.get_signal(signal)
   }
 end
