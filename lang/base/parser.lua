@@ -20,7 +20,20 @@ function Parser:new(o)
 end
 
 function Parser:error(msg)
-  error(msg)
+  local errorMsg = msg .. "\nat " .. Util.set_to_string_dumb(self.current_token)
+  local source = self.lexer.sourceText
+  local errorLine = self.current_token.lineIndex - 1
+
+  -- Print the line itself
+  local lineNum = 0
+  for line in source:gmatch("([^\n]*)\n?") do
+    lineNum = lineNum + 1
+    if (lineNum == errorLine) then
+      errorMsg = errorMsg .. "\n>    " .. line
+      break
+    end
+  end
+  error(errorMsg)
 end
 
 --[[
@@ -37,7 +50,6 @@ function Parser:eat(token_type)
       print("Ate token " .. dq(token_type) .. " with body: " .. dq(self.current_token))
     end
 
-    -- TODO can we not copy this?
     self.current_token = Token:copy(self.next_token)
     self.next_token = Token:copy(self.lexer:get())
   else
@@ -336,7 +348,7 @@ function Parser:factor()
     return node
 
   else
-    error("Factor has nothing! Error state")
+    self:error("Factor has nothing! Error state")
   end
 end
 

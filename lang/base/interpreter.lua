@@ -43,7 +43,7 @@ function Interpreter:error(msg)
     for line in source:gmatch("([^\n]*)\n?") do
       lineNum = lineNum + 1
       if (lineNum == errorLine) then
-        errorMsg = errorMsg .. "\n>\t" .. line
+        errorMsg = errorMsg .. "\n>    " .. line
         break
       end
     end

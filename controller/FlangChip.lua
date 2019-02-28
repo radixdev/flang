@@ -83,6 +83,7 @@ function FlangChip:execute()
 
   local success, result = pcall(self.interpreter.interpret, self.interpreter)
   if success then
+    self.printer("Current vars: \n", true)
     -- result is our symbol table
     for k,value in pairs(self.interpreter.global_symbol_scope.variable_table) do
       if (Util.isTable(value)) then
