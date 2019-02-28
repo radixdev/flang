@@ -5,3 +5,15 @@ if (true && false) {
 if (true || false) {
   Core.luaPrint("world")
 }
+
+if (true && (true || false)) {
+  Core.luaPrint("cool")
+}
+
+if (true && false || true) {
+  Core.luaPrint("uhh")
+}
+
+if (true || false && true) {
+  Core.luaPrint("nice")
+}
