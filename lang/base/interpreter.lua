@@ -377,7 +377,7 @@ function Interpreter:For(node)
     local iterator_variable_name = node.collectionVar
     local array_variable = self:visit(node.arrayExpr)
 
-    for elementValue in pairs(array_variable) do
+    for _,elementValue in pairs(array_variable) do
       self:set_variable(iterator_variable_name, elementValue)
       self:visit(node.block)
     end

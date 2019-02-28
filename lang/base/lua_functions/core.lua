@@ -66,6 +66,7 @@ function Core:writeVirtualSignal(wrapper, flangArguments)
   })
 end
 
+-- args = (virtual signal name, network color)
 function Core:readVirtualSignal(wrapper, flangArguments)
   local virtualSignalName = flangArguments[1]
   local entity = wrapper.entity
@@ -75,11 +76,19 @@ function Core:readVirtualSignal(wrapper, flangArguments)
       errorMessage = "Entity is nil"
     }
   end
+
+  if (virtualSignalName == "10") then
+    return {
+      hasError = true,
+      errorMessage = "bad virt name" .. virtualSignalName
+    }
+  end
   local combinatorBehavior = entity.get_control_behavior()
 
   -- Check the network type
   local circuitNetworkName = flangArguments[2]
   local circuitNetworkColor
+
   if (circuitNetworkName == "red") then
     circuitNetworkColor = defines.wire_type.red
   elseif (circuitNetworkName == "green") then
