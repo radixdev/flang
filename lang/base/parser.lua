@@ -78,6 +78,7 @@ end
                   | (for_statement | for_collection_statement)
                   | method_definition_statement
                   | return_statement
+                  | break_statement
                   | function_call
                   | empty
 
@@ -87,6 +88,7 @@ end
   for_statement                 : FOR LPAREN (for_body_standard | for_body_collection) RPAREN block
   method_definition_statement   : DEF IDENTIFIER LPAREN (method_definition_argument COMMA | method_definition_argument)* RPAREN block
   return_statement              : RETURN expr
+  break_statement               : BREAK
   empty                         :
 
   for_body_standard             : assignment_statement SEMICOLON expr (SEMICOLON statement | SEMICOLON expr)?
@@ -672,6 +674,14 @@ function Parser:return_statement()
   end
 end
 
+function Parser:break_statement()
+  if (self.current_token.type == Symbols.BREAK) then
+    local token = Token:copy(self.current_token)
+    self:eat(Symbols.BREAK)
+    return Node.BreakStatement(token)
+  end
+end
+
 function Parser:statement()
   --[[
 
@@ -716,6 +726,9 @@ function Parser:statement()
 
   elseif (token.type == Symbols.RETURN) then
     node = self:return_statement()
+
+  elseif (token.type == Symbols.BREAK) then
+    node = self:break_statement()
 
   else
     node = self:empty()

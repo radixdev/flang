@@ -310,6 +310,15 @@ function Node.ReturnStatement(token, expr)
   })
 end
 
+Node.BREAK_STATEMENT_TYPE = "BreakStatement"
+function Node.BreakStatement(token, expr)
+  Node.print("creating break statement node " .. tostring(token))
+  return Node:new({
+    type = Node.BREAK_STATEMENT_TYPE,
+    token = token
+  })
+end
+
 Node.ARRAY_INDEX_GET_TYPE = "ArrayIndexGet"
 function Node.ArrayIndexGet(token, identifier, expr)
   Node.print("creating array index get node " .. tostring(token))
@@ -458,6 +467,9 @@ function Node:display(tabs, info)
   elseif (self.type == Node.RETURN_STATEMENT_TYPE) then
     print(tabString .. "return: " .. dq(self.token.type))
     self.expr:display(tabs + 1)
+
+  elseif (self.type == Node.BREAK_STATEMENT_TYPE) then
+    print(tabString .. "break: " .. dq(self.token.type))
 
   elseif (self.type == Node.ARRAY_TYPE) then
     print(tabString .. "array constructor with args: " .. Util.set_to_string(self.arguments))

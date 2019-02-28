@@ -11,18 +11,22 @@ Symbols.FOR = "for"
 Symbols.DEF = "def"
 Symbols.RETURN = "return"
 Symbols.IN = "in"
+Symbols.BREAK = "break"
+Symbols.CONTINUE = "continue"
 
 Symbols.KEYWORDS = Flang.Util.Set{
   Symbols.IF,
   Symbols.ELSE,
   Symbols.ELSEIF,
 
-  "while",
   Symbols.FOR,
   Symbols.IN,
 
   Symbols.DEF,
+
   Symbols.RETURN,
+  Symbols.BREAK,
+  Symbols.CONTINUE,
 
   Symbols.TRUE,
   Symbols.FALSE
