@@ -173,7 +173,11 @@ function Interpreter:BinOp(node)
   local right = self:visit(node.right)
 
   if node.token_type == Symbols.PLUS then
-    return left + right
+    if (Util.isString(left) and Util.isString(right)) then
+      return left .. right
+    else
+      return left + right
+    end
   elseif node.token_type == Symbols.MINUS then
     return left - right
   elseif node.token_type == Symbols.MUL then
@@ -234,7 +238,14 @@ function Interpreter:Assign(node)
   end
 
   if (token_type == Symbols.ASSIGN_PLUS) then
-    self:set_variable(variable_name, self:get_variable(variable_name) + visitedRightNode)
+    local assignValue
+    local visitedLeftNode = self:get_variable(variable_name)
+    if (Util.isString(visitedLeftNode) and Util.isString(visitedRightNode)) then
+      assignValue = visitedLeftNode .. visitedRightNode
+    else
+      assignValue = visitedLeftNode + visitedRightNode
+    end
+    self:set_variable(variable_name, assignValue)
 
   elseif (token_type == Symbols.ASSIGN_MINUS) then
     self:set_variable(variable_name, self:get_variable(variable_name) - visitedRightNode)

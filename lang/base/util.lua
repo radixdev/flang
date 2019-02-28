@@ -95,3 +95,7 @@ end
 function Util.isTable(val)
   return type(val) == "table"
 end
+
+function Util.isString(val)
+  return type(val) == "string"
+end
