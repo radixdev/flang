@@ -81,6 +81,7 @@ function FlangChip:execute()
     if not self.is_running then return end
   end
 
+  self.printer("", true)
   local success, result = pcall(self.interpreter.interpret, self.interpreter)
   self:printGlobalVars()
   if not success then
@@ -97,7 +98,7 @@ function FlangChip:on_error(error)
 end
 
 function FlangChip:printGlobalVars()
-  self.printer("Current vars: \n", true)
+  self.printer("Current vars: \n")
   -- result is our symbol table
   for k,value in pairs(self.interpreter.global_symbol_scope.variable_table) do
     if (Util.isTable(value)) then

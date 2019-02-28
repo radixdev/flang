@@ -21,8 +21,6 @@ Symbols.KEYWORDS = Flang.Util.Set{
   Symbols.FOR,
   Symbols.IN,
 
-  "print",
-
   Symbols.DEF,
   Symbols.RETURN,
 

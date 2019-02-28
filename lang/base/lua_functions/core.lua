@@ -40,6 +40,16 @@ function Core:luaPrint(wrapper, flangArguments)
   return nil
 end
 
+function Core:print(wrapper, flangArguments)
+  local msg = flangArguments[1]
+  if (Util.isTable(msg)) then
+    wrapper.printer(Util.set_to_string_nested_nodes(msg))
+  else
+    wrapper.printer(msg)
+  end
+  return nil
+end
+
 -- args = (index, signal name, signal count)
 function Core:writeVirtualSignal(wrapper, flangArguments)
   local virtualSignalIndex = flangArguments[1]
