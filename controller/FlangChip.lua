@@ -82,19 +82,10 @@ function FlangChip:execute()
   end
 
   local success, result = pcall(self.interpreter.interpret, self.interpreter)
-  if success then
-    self.printer("Current vars: \n", true)
-    -- result is our symbol table
-    for k,value in pairs(self.interpreter.global_symbol_scope.variable_table) do
-      if (Util.isTable(value)) then
-        self.printer(k .. " = " .. Util.set_to_string(value, true))
-      else
-        self.printer(k .. " = " .. tostring(value))
-      end
-    end
-  else
+  self:printGlobalVars()
+  if not success then
     self.is_running = false
-    self.printer("execution error")
+    self.printer("\nexecution error")
     self:on_error(result)
   end
 end
@@ -103,6 +94,18 @@ function FlangChip:on_error(error)
   -- fuck
   self.printer("got error!")
   self.printer(tostring(error))
+end
+
+function FlangChip:printGlobalVars()
+  self.printer("Current vars: \n", true)
+  -- result is our symbol table
+  for k,value in pairs(self.interpreter.global_symbol_scope.variable_table) do
+    if (Util.isTable(value)) then
+      self.printer(k .. " = " .. Util.set_to_string(value, true))
+    else
+      self.printer(k .. " = " .. tostring(value))
+    end
+  end
 end
 
 function create_flang_interpreter(source, entity, printer)
