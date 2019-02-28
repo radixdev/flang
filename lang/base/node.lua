@@ -161,6 +161,28 @@ function Node.Comparator(left, operator, right)
   })
 end
 
+Node.LOGICAL_OR_TYPE = "LogicalOr"
+function Node.LogicalOr(left, operator, right)
+  Node.print("creating logical OR node: " .. dq(operator))
+  return Node:new({
+    type = Node.LOGICAL_OR_TYPE,
+    left = left,
+    token = operator,
+    right = right
+  })
+end
+
+Node.LOGICAL_AND_TYPE = "LogicalAnd"
+function Node.LogicalAnd(left, operator, right)
+  Node.print("creating logical AND node: " .. dq(operator))
+  return Node:new({
+    type = Node.LOGICAL_AND_TYPE,
+    left = left,
+    token = operator,
+    right = right
+  })
+end
+
 Node.NEGATION_TYPE = "Negate"
 function Node.Negation(operator, expr)
   Node.print("creating negation node " .. tostring(operator))
@@ -449,6 +471,16 @@ function Node:display(tabs, info)
     self.left:display(tabs + 1, "IDENTIFIER: ")
     self.indexExpr:display(tabs + 1, "INDEX: ")
     self.right:display(tabs + 1, "ASSIGNMENT: ")
+
+  elseif (self.type == Node.LOGICAL_OR_TYPE) then
+    print(tabString .. "logical OR: " .. dq(self.token.type))
+    self.right:display(tabs + 1)
+    self.left:display(tabs + 1)
+
+  elseif (self.type == Node.LOGICAL_AND_TYPE) then
+    print(tabString .. "logical AND: " .. dq(self.token.type))
+    self.right:display(tabs + 1)
+    self.left:display(tabs + 1)
 
   else
     print("Unknown type. Can't display parse tree: " .. dq(self.type))

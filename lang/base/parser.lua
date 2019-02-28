@@ -107,7 +107,9 @@ end
   conditional   : LPAREN expr RPAREN
   block         : LBRACKET statement_list RBRACKET
 
-  expr          : expr_cmp
+  expr          : expr_log_or
+  expr_log_or   : expr_log_and (LOGICAL_OR expr_log_and)*
+  expr_log_and  : expr_cmp (LOGICAL_AND expr_cmp)*
   expr_cmp      : expr_plus ((GT | LT | GTE | LTE | CMP_EQUALS | CMP_NEQUALS) expr_plus)*
   expr_plus     : expr_mul ((PLUS | MINUS) expr_mul)*
   expr_mul      : factor ((MUL | DIV) factor)*
@@ -422,8 +424,38 @@ function Parser:expr_cmp()
   return node
 end
 
+function Parser:expr_log_and()
+  local node = self:expr_cmp()
+
+  while (self.current_token.type == Symbols.LOGICAL_AND) do
+    local token = Token:copy(self.current_token)
+    if (token.type == Symbols.LOGICAL_AND) then
+      self:eat(Symbols.LOGICAL_AND)
+    end
+
+    node = Node.LogicalAnd(node, token, self:expr_cmp())
+  end
+
+  return node
+end
+
+function Parser:expr_log_or()
+  local node = self:expr_log_and()
+
+  while (self.current_token.type == Symbols.LOGICAL_OR) do
+    local token = Token:copy(self.current_token)
+    if (token.type == Symbols.LOGICAL_OR) then
+      self:eat(Symbols.LOGICAL_OR)
+    end
+
+    node = Node.LogicalOr(node, token, self:expr_log_and())
+  end
+
+  return node
+end
+
 function Parser:expr()
-  return self:expr_cmp()
+  return self:expr_log_or()
 end
 
 -----------------------------------------------------------------------

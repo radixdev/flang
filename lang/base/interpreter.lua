@@ -188,6 +188,20 @@ function Interpreter:BinOp(node)
   end
 end
 
+function Interpreter:LogicalOr(node)
+  local left = self:visit(node.left)
+  local right = self:visit(node.right)
+
+  return left or right
+end
+
+function Interpreter:LogicalAnd(node)
+  local left = self:visit(node.left)
+  local right = self:visit(node.right)
+
+  return left and right
+end
+
 function Interpreter:UnaryOp(node)
   if node.token_type == Symbols.PLUS then
     return self:visit(node.expr)
