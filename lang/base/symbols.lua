@@ -70,6 +70,8 @@ Symbols.ASSIGN_MINUS = "-="
 Symbols.ASSIGN_MUL = "*="
 Symbols.ASSIGN_DIV = "/="
 Symbols.SINGLE_LINE_COMMENT_START = "//"
+Symbols.LOGICAL_AND = "&&"
+Symbols.LOGICAL_OR = "||"
 
 Symbols.TWO_CHARACTER_SYMBOLS = Flang.Util.Set{
   Symbols.CMP_EQUALS,
@@ -80,8 +82,8 @@ Symbols.TWO_CHARACTER_SYMBOLS = Flang.Util.Set{
   Symbols.ASSIGN_MINUS,
   Symbols.ASSIGN_MUL,
   Symbols.ASSIGN_DIV,
-  "&&",
-  "||",
+  Symbols.LOGICAL_AND,
+  Symbols.LOGICAL_OR,
   Symbols.SINGLE_LINE_COMMENT_START
 }
 

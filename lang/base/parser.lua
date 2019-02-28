@@ -26,12 +26,13 @@ function Parser:error(msg)
 
   -- Print the line itself
   local lineNum = 0
+  print(errorLine)
   for line in source:gmatch("([^\n]*)\n?") do
-    lineNum = lineNum + 1
     if (lineNum == errorLine) then
       errorMsg = errorMsg .. "\n>    " .. line
       break
     end
+    lineNum = lineNum + 1
   end
   error(errorMsg)
 end
