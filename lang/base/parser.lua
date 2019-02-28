@@ -24,17 +24,8 @@ function Parser:error(msg)
   local source = self.lexer.sourceText
   local errorLine = self.current_token.lineIndex - 1
 
-  -- Print the line itself
-  local lineNum = 0
-  print(errorLine)
-  for line in source:gmatch("([^\n]*)\n?") do
-    if (lineNum == errorLine) then
-      errorMsg = errorMsg .. "\n>    " .. line
-      break
-    end
-    lineNum = lineNum + 1
-  end
-  error(errorMsg)
+  local linesMsg = Util.getLineNumbers(source, errorLine - 2, 4)
+  error(errorMsg .. linesMsg)
 end
 
 --[[

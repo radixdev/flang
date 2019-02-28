@@ -1,0 +1,8 @@
+count = 0
+
+for (i=0 ; 100) {
+  if (i == 10) {
+    break
+  }
+  count += 1
+}
