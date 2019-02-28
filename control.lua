@@ -213,6 +213,7 @@ end)
 --------------------------------------------------------------
 
 script.on_event("flang-open-editor", function(event)
+  player_log_print("open editor binding pressed")
   local player = game.players[event.player_index]
 
   -- Make sure the entity is a flang chip
