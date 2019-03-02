@@ -95,3 +95,27 @@ end
 function Util.isTable(val)
   return type(val) == "table"
 end
+
+function Util.isString(val)
+  return type(val) == "string"
+end
+
+-- Returns line numbers in the source
+function Util.getLineNumbers(source, lineStart, linesToPrint)
+  local msg = "\n"
+
+  local lineNum = 0
+  local lastLineToPrint = lineStart + linesToPrint
+  for line in source:gmatch("([^\n]*)\n?") do
+    if (lineNum > lastLineToPrint) then
+      break
+    end
+
+    if (lineNum >= lineStart) then
+      msg = msg .. "\n" .. lineNum .. ">    " .. line
+    end
+    lineNum = lineNum + 1
+  end
+
+  return msg
+end

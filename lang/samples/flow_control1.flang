@@ -1,3 +1,17 @@
+count = 0
+
+for (i=0 ; 10) {
+  Core.luaPrint(i)
+  if (i == 2) {
+    if (true) {
+      if (true) {
+        break
+      }
+    }
+  }
+  count += 1
+}
+
 def helloThere() {
   if (true) {
     if (true) {
@@ -15,4 +29,5 @@ def helloThere() {
   }
 }
 
+y=4
 x = helloThere()

@@ -11,18 +11,22 @@ Symbols.FOR = "for"
 Symbols.DEF = "def"
 Symbols.RETURN = "return"
 Symbols.IN = "in"
+Symbols.BREAK = "break"
+Symbols.CONTINUE = "continue"
 
 Symbols.KEYWORDS = Flang.Util.Set{
   Symbols.IF,
   Symbols.ELSE,
   Symbols.ELSEIF,
 
-  "while",
   Symbols.FOR,
   Symbols.IN,
 
   Symbols.DEF,
+
   Symbols.RETURN,
+  Symbols.BREAK,
+  Symbols.CONTINUE,
 
   Symbols.TRUE,
   Symbols.FALSE
@@ -127,6 +131,17 @@ Symbols.NUMBER             = "Number"
 Symbols.WHITESPACE         = "Whitespace"
 Symbols.COMMENT            = "Comment"
 Symbols.EOF                = "Eof"
+
+-----------------------------------------------------------------------
+-- Special Interpreter Values
+-----------------------------------------------------------------------
+
+-- Values returned just like regular execution values. But these are special!
+-- To ensure these values came from the Interpreter, we append some characters
+-- that are unsupported in the language ... probably
+Symbols.Control = {}
+Symbols.Control.BREAK       = "break" .. "   ~@#$`"
+Symbols.Control.CONTINUE    = "continue" .. "   ~@#$`"
 
 -----------------------------------------------------------------------
 -- Set equality

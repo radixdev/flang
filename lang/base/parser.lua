@@ -24,17 +24,8 @@ function Parser:error(msg)
   local source = self.lexer.sourceText
   local errorLine = self.current_token.lineIndex - 1
 
-  -- Print the line itself
-  local lineNum = 0
-  print(errorLine)
-  for line in source:gmatch("([^\n]*)\n?") do
-    if (lineNum == errorLine) then
-      errorMsg = errorMsg .. "\n>    " .. line
-      break
-    end
-    lineNum = lineNum + 1
-  end
-  error(errorMsg)
+  local linesMsg = Util.getLineNumbers(source, errorLine - 2, 4)
+  error(errorMsg .. linesMsg)
 end
 
 --[[
@@ -72,7 +63,9 @@ function Parser:eat_several(token_type, valid_token_types)
 end
 
 -----------------------------------------------------------------------
+
 -- AST generation
+
 -----------------------------------------------------------------------
 
 --[[
@@ -87,6 +80,8 @@ end
                   | (for_statement | for_collection_statement)
                   | method_definition_statement
                   | return_statement
+                  | break_statement
+                  | continue_statement
                   | function_call
                   | empty
 
@@ -96,6 +91,8 @@ end
   for_statement                 : FOR LPAREN (for_body_standard | for_body_collection) RPAREN block
   method_definition_statement   : DEF IDENTIFIER LPAREN (method_definition_argument COMMA | method_definition_argument)* RPAREN block
   return_statement              : RETURN expr
+  break_statement               : BREAK
+  continue_statement            : CONTINUE
   empty                         :
 
   for_body_standard             : assignment_statement SEMICOLON expr (SEMICOLON statement | SEMICOLON expr)?
@@ -145,7 +142,9 @@ function Parser:empty()
 end
 
 -----------------------------------------------------------------------
+
 -- Expressions
+
 -----------------------------------------------------------------------
 
 function Parser:boolean()
@@ -459,7 +458,9 @@ function Parser:expr()
 end
 
 -----------------------------------------------------------------------
+
 -- Conditionals and if branching
+
 -----------------------------------------------------------------------
 
 function Parser:conditional()
@@ -502,7 +503,9 @@ function Parser:if_elseif()
 end
 
 -----------------------------------------------------------------------
+
 -- Statements
+
 -----------------------------------------------------------------------
 
 function Parser:block()
@@ -681,6 +684,22 @@ function Parser:return_statement()
   end
 end
 
+function Parser:break_statement()
+  if (self.current_token.type == Symbols.BREAK) then
+    local token = Token:copy(self.current_token)
+    self:eat(Symbols.BREAK)
+    return Node.BreakStatement(token)
+  end
+end
+
+function Parser:continue_statement()
+  if (self.current_token.type == Symbols.CONTINUE) then
+    local token = Token:copy(self.current_token)
+    self:eat(Symbols.CONTINUE)
+    return Node.ContinueStatement(token)
+  end
+end
+
 function Parser:statement()
   --[[
 
@@ -725,6 +744,12 @@ function Parser:statement()
 
   elseif (token.type == Symbols.RETURN) then
     node = self:return_statement()
+
+  elseif (token.type == Symbols.BREAK) then
+    node = self:break_statement()
+
+  elseif (token.type == Symbols.CONTINUE) then
+    node = self:continue_statement()
 
   else
     node = self:empty()
@@ -773,7 +798,9 @@ function Parser:program()
 end
 
 -----------------------------------------------------------------------
+
 -- Public interface
+
 -----------------------------------------------------------------------
 
 function Parser:parse()
