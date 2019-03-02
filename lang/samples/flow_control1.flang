@@ -13,20 +13,22 @@ for (i=0 ; 10) {
 }
 
 def helloThere() {
-  if (true) {
-    if (true) {
-      if (true) {
-        if (true) {
-          if (true) {
-            Core.luaPrint("hi")
-            if (true) {
-              return 1
-            }
-          }
-        }
-      }
-    }
-  }
+  return 1
+  // if (true) {
+  //   if (true) {
+  //     if (true) {
+  //       if (true) {
+  //         if (true) {
+  //           Core.luaPrint("hi")
+  //           if (true) {
+  //             return 1
+  //           }
+  //         }
+  //       }
+  //     }
+  //   }
+  // }
 }
 
+y=4
 x = helloThere()

@@ -375,6 +375,7 @@ function Interpreter:StatementList(node)
     -- If there's a return value, return it. Else keep going.
     local returnValue = self:visit(childNode)
     if (returnValue ~= nil) then
+      self.current_symbol_scope = self.current_symbol_scope:exitBlock()
       return returnValue
     end
   end
@@ -436,10 +437,11 @@ function Interpreter:For(node)
             -- break the loop entirely
             break
           elseif (returnValue == Symbols.Control.CONTINUE) then
-            -- continue execution onward
-            -- There actually isn't a continue keyword in Lua lol, jesus christ
+            -- Continue execution onward. Since the StatementList has
+            -- returned this value, we're good to just continue block execution
           else
             -- The return value is just a real return value
+            self.current_symbol_scope = self.current_symbol_scope:exitBlock()
             return returnValue
           end
         end

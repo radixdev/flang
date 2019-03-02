@@ -1,0 +1,6 @@
+for (i=0 ; 10) {
+  if (i == 3){
+    continue
+  }
+  Core.luaPrint(i)
+}
