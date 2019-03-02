@@ -55,7 +55,9 @@ function Interpreter:error(msg)
 end
 
 -----------------------------------------------------------------------
+
 -- Public interface
+
 -----------------------------------------------------------------------
 
 function Interpreter:interpret()
@@ -70,7 +72,9 @@ function Interpreter:interpret()
 end
 
 -----------------------------------------------------------------------
+
 -- State information
+
 -----------------------------------------------------------------------
 
 function Interpreter:get_variable(variable_name)
@@ -142,8 +146,10 @@ function Interpreter:get_function_method(function_class, method_name)
 end
 
 -----------------------------------------------------------------------
+
 -- AST traversal
 -- Every node must have a corresponding method here
+
 -----------------------------------------------------------------------
 
 lastVisitedNode = nil
@@ -384,81 +390,6 @@ function Interpreter:StatementList(node)
   self.current_symbol_scope = self.current_symbol_scope:exitBlock()
 end
 
-function Interpreter:For(node)
-  --[[
-    This is either a standard for loop, an enhanced for loop, or an iteration loop.
-
-    Enhanced for-loops have the following structure:
-    for (assignment ; number (; number) ) block
-
-    Without this structure, we fallback to the standard for loop
-  ]]
-
-  -- We enter scope here since the initializer is inside the forloop scope itself
-  -- e.g. for (i=0... the "i" shouldn't remain in scope afterwards
-  self.current_symbol_scope = self.current_symbol_scope:enterBlock()
-
-  if (node.isCollectionIteration) then
-    local iterator_variable_name = node.collectionVar
-    local array_variable = self:visit(node.arrayExpr)
-
-    for _,elementValue in pairs(array_variable) do
-      self:set_variable(iterator_variable_name, elementValue)
-      self:visit(node.block)
-    end
-  else
-    self:visit(node.initializer)
-
-    if (node.enhanced) then
-      -- extract the variable
-      local variable_name = node.initializer.left.value
-
-      -- visit the condition value
-      local condition_value = self:visit(node.condition)
-      if (not Util.isNumber(condition_value)) then
-        self:error("Expected for loop condition to evaluate to number")
-      end
-
-      local initializer_value = self:get_variable(variable_name)
-
-      if (node.incrementer.type == Node.NO_OP_TYPE) then
-        incrementer_value = 1
-      else
-        incrementer_value = self:visit(node.incrementer)
-      end
-
-      for i = initializer_value, (condition_value-1), incrementer_value do
-        -- set i
-        self:set_variable(variable_name, i)
-        local returnValue = self:visit(node.block)
-
-        if (returnValue ~= nil) then
-          if (returnValue == Symbols.Control.BREAK) then
-            -- break the loop entirely
-            break
-          elseif (returnValue == Symbols.Control.CONTINUE) then
-            -- Continue execution onward. Since the StatementList has
-            -- returned this value, we're good to just continue block execution
-          else
-            -- The return value is just a real return value
-            self.current_symbol_scope = self.current_symbol_scope:exitBlock()
-            return returnValue
-          end
-        end
-      end
-    else
-      self:visit(node.initializer)
-
-      while self:visit(node.condition) do
-        self:visit(node.block)
-        self:visit(node.incrementer)
-      end
-    end
-  end
-
-  self.current_symbol_scope = self.current_symbol_scope:exitBlock()
-end
-
 function Interpreter:MethodDefinition(node)
   -- So there's a method name, the executable block, and the argument list
   self:add_method_definition(node.method_name, node.arguments, node.num_arguments, node.block)
@@ -602,4 +533,125 @@ function Interpreter:ArrayIndexGet(node)
   end
 
   return tableValue
+end
+
+-----------------------------------------------------------------------
+
+-- For statements
+-- They get their own section since they're complicated
+
+-----------------------------------------------------------------------
+
+function Interpreter:For_CollectionIteration(node)
+  local iterator_variable_name = node.collectionVar
+  local array_variable = self:visit(node.arrayExpr)
+
+  for _,elementValue in pairs(array_variable) do
+    self:set_variable(iterator_variable_name, elementValue)
+    local returnValue = self:visit(node.block)
+
+    if (returnValue ~= nil) then
+      if (returnValue == Symbols.Control.BREAK) then
+        -- break the loop entirely
+        break
+      elseif (returnValue == Symbols.Control.CONTINUE) then
+        -- Continue execution onward. Since the StatementList has
+        -- returned this value, we're good to just continue block execution
+      else
+        -- The return value is just a real return value
+        return returnValue
+      end
+    end
+  end
+end
+
+function Interpreter:For_Enhanced(node)
+  self:visit(node.initializer)
+
+  -- extract the variable
+  local variable_name = node.initializer.left.value
+
+  -- visit the condition value
+  local condition_value = self:visit(node.condition)
+  if (not Util.isNumber(condition_value)) then
+    self:error("Expected for loop condition to evaluate to number")
+  end
+
+  local initializer_value = self:get_variable(variable_name)
+
+  if (node.incrementer.type == Node.NO_OP_TYPE) then
+    incrementer_value = 1
+  else
+    incrementer_value = self:visit(node.incrementer)
+  end
+
+  for i = initializer_value, (condition_value-1), incrementer_value do
+    -- set i
+    self:set_variable(variable_name, i)
+    local returnValue = self:visit(node.block)
+
+    if (returnValue ~= nil) then
+      if (returnValue == Symbols.Control.BREAK) then
+        -- break the loop entirely
+        break
+      elseif (returnValue == Symbols.Control.CONTINUE) then
+        -- Continue execution onward. Since the StatementList has
+        -- returned this value, we're good to just continue block execution
+      else
+        -- The return value is just a real return value
+        return returnValue
+      end
+    end
+  end
+end
+
+function Interpreter:For_Standard(node)
+  self:visit(node.initializer)
+  while self:visit(node.condition) do
+    local returnValue = self:visit(node.block)
+
+    if (returnValue ~= nil) then
+      if (returnValue == Symbols.Control.BREAK) then
+        -- break the loop entirely
+        break
+      elseif (returnValue == Symbols.Control.CONTINUE) then
+        -- Continue execution onward. Since the StatementList has
+        -- returned this value, we're good to just continue block execution
+      else
+        -- The return value is just a real return value
+        return returnValue
+      end
+    end
+    
+    self:visit(node.incrementer)
+  end
+end
+
+function Interpreter:For(node)
+  --[[
+    This is either a standard for loop, an enhanced for loop, or an iteration loop.
+
+    Enhanced for-loops have the following structure:
+    for (assignment ; number (; number) ) block
+
+    Without this structure, we fallback to the standard for loop
+  ]]
+
+  -- We enter scope here since the initializer is inside the forloop scope itself
+  -- e.g. for "(i=0..." the "i" shouldn't remain in scope afterwards
+  self.current_symbol_scope = self.current_symbol_scope:enterBlock()
+
+  local returnValue
+  if (node.isCollectionIteration) then
+    returnValue = self:For_CollectionIteration(node)
+  else
+    if (node.enhanced) then
+      returnValue = self:For_Enhanced(node)
+    else
+      returnValue = self:For_Standard(node)
+    end
+  end
+
+  self.current_symbol_scope = self.current_symbol_scope:exitBlock()
+  return returnValue
 end
