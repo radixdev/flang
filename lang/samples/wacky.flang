@@ -1,3 +1,7 @@
-x = "hello" + "world"
+def helloThere() {
+  if (true) {
+    return 1
+  }
+}
 
-x += " fish"
+x = helloThere()
