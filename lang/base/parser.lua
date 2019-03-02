@@ -79,6 +79,7 @@ end
                   | method_definition_statement
                   | return_statement
                   | break_statement
+                  | continue_statement
                   | function_call
                   | empty
 
@@ -89,6 +90,7 @@ end
   method_definition_statement   : DEF IDENTIFIER LPAREN (method_definition_argument COMMA | method_definition_argument)* RPAREN block
   return_statement              : RETURN expr
   break_statement               : BREAK
+  continue_statement            : CONTINUE
   empty                         :
 
   for_body_standard             : assignment_statement SEMICOLON expr (SEMICOLON statement | SEMICOLON expr)?
@@ -682,6 +684,14 @@ function Parser:break_statement()
   end
 end
 
+function Parser:continue_statement()
+  if (self.current_token.type == Symbols.CONTINUE) then
+    local token = Token:copy(self.current_token)
+    self:eat(Symbols.CONTINUE)
+    return Node.ContinueStatement(token)
+  end
+end
+
 function Parser:statement()
   --[[
 
@@ -729,6 +739,9 @@ function Parser:statement()
 
   elseif (token.type == Symbols.BREAK) then
     node = self:break_statement()
+
+  elseif (token.type == Symbols.CONTINUE) then
+    node = self:continue_statement()
 
   else
     node = self:empty()

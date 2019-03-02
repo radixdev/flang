@@ -133,6 +133,17 @@ Symbols.COMMENT            = "Comment"
 Symbols.EOF                = "Eof"
 
 -----------------------------------------------------------------------
+-- Special Interpreter Values
+-----------------------------------------------------------------------
+
+-- Values returned just like regular execution values. But these are special!
+-- To ensure these values came from the Interpreter, we append some characters
+-- that are unsupported in the language ... probably
+Symbols.Control = {}
+Symbols.Control.BREAK       = "break" .. "   ~@#$`"
+Symbols.Control.CONTINUE    = "continue" .. "   ~@#$`"
+
+-----------------------------------------------------------------------
 -- Set equality
 -----------------------------------------------------------------------
 

@@ -231,7 +231,6 @@ function Interpreter:Assign(node)
   local token_type = node.assignment_token.type
 
   local visitedRightNode = self:visit(node.right)
-
   if (token_type == Symbols.EQUALS) then
     self:set_variable(variable_name, visitedRightNode)
     return
@@ -350,10 +349,10 @@ function Interpreter:If(node)
 
   -- If this block gets executed, then any subsequent blocks do not get executed
   if should_execute_block then
-    self:visit(node.block)
+    return self:visit(node.block)
   else
     if node.next_if then
-      self:visit(node.next_if)
+      return self:visit(node.next_if)
     end
   end
 end
@@ -372,11 +371,11 @@ function Interpreter:StatementList(node)
   local k
   for k=1, node.num_children-1 do
     local childNode = node.children[k]
-    -- Check for the return type
-    if (childNode.type == Node.RETURN_STATEMENT_TYPE) then
-      return self:visit(childNode)
-    else
-      self:visit(childNode)
+
+    -- If there's a return value, return it. Else keep going.
+    local returnValue = self:visit(childNode)
+    if (returnValue ~= nil) then
+      return returnValue
     end
   end
 
@@ -430,7 +429,20 @@ function Interpreter:For(node)
       for i = initializer_value, (condition_value-1), incrementer_value do
         -- set i
         self:set_variable(variable_name, i)
-        self:visit(node.block)
+        local returnValue = self:visit(node.block)
+
+        if (returnValue ~= nil) then
+          if (returnValue == Symbols.Control.BREAK) then
+            -- break the loop entirely
+            break
+          elseif (returnValue == Symbols.Control.CONTINUE) then
+            -- continue execution onward
+            -- There actually isn't a continue keyword in Lua lol, jesus christ
+          else
+            -- The return value is just a real return value
+            return returnValue
+          end
+        end
       end
     else
       self:visit(node.initializer)
@@ -459,7 +471,8 @@ function Interpreter:MethodInvocation(node)
   local invocation_arguments = node.arguments
 
   if (method.num_arguments ~= node.num_arguments) then
-    self:error("Expected " .. method.num_arguments  .. " arguments for method <" .. node.method_name .. "> but instead got " .. node.num_arguments)
+    self:error("Expected " .. method.num_arguments  .. " arguments for method <"
+    .. node.method_name .. "> but instead got " .. node.num_arguments)
   end
 
   -- Get the proper values for the arguments in the current scope
@@ -492,6 +505,14 @@ end
 
 function Interpreter:ReturnStatement(node)
   return self:visit(node.expr)
+end
+
+function Interpreter:BreakStatement(node)
+  return Symbols.Control.BREAK
+end
+
+function Interpreter:ContinueStatement(node)
+  return Symbols.Control.CONTINUE
 end
 
 function Interpreter:FunctionCall(node)
