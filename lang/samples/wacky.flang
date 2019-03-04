@@ -1,18 +1,29 @@
-def helloThere() {
-  if (true) {
-    if (true) {
-      if (true) {
-        if (true) {
-          if (true) {
-            Core.luaPrint("hi")
-            if (true) {
-              return 1
-            }
-          }
-        }
-      }
-    }
+signals = [
+"0", "1", "2", "3", "4",
+"5", "6", "7", "8", "9",
+"A", "B", "C", "D", "E",
+"F", "G", "H", "I", "J",
+"K", "L", "M", "N", "O",
+"P", "Q", "R", "S", "T",
+"U", "V", "W", "X", "Y"]
+
+def clearLamps() {
+  for (i=0; signals.length()) {
+    signal = signals[i]
+    Core.writeVirtualSignal(i + 1, signal, 0)
   }
 }
 
-x = helloThere()
+// A mapping of the above for actual characters
+charMap = []
+charMap["0"] = ["1", "2", "3", "5", "9", "A", "E", "F", "J", "K", "O","P", "T", "V", "W", "X", "D", "H", "L"]
+charMap["1"] = ["2", "7", "C", "H", "M", "R", "W", "V", "X", "6"]
+charMap["2"] = ["5","1","2","3","9","E","I","M","Q", "U", "V", "W", "X", "Y"]
+charMap["3"] = ["5","1", "2", "3","9", "E","C", "D","O", "T","V", "W", "X","P"]
+charMap["4"] = []
+charMap[""] = []
+charMap[""] = []
+charMap[""] = []
+charMap[""] = []
+charMap[""] = []
+charMap[""] = []

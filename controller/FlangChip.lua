@@ -83,9 +83,9 @@ function FlangChip:execute()
 
   self.printer("", true)
   local success, result = pcall(self.interpreter.interpret, self.interpreter)
-  self:printGlobalVars()
   if not success then
     self.is_running = false
+    self:printGlobalVars()
     self.printer("\nexecution error")
     self:on_error(result)
   end
