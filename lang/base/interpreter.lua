@@ -179,8 +179,8 @@ function Interpreter:BinOp(node)
   local right = self:visit(node.right)
 
   if node.token_type == Symbols.PLUS then
-    if (Util.isString(left) and Util.isString(right)) then
-      return left .. right
+    if (Util.isString(left) or Util.isString(right)) then
+      return tostring(left) .. tostring(right)
     else
       return left + right
     end
@@ -622,7 +622,7 @@ function Interpreter:For_Standard(node)
         return returnValue
       end
     end
-    
+
     self:visit(node.incrementer)
   end
 end
