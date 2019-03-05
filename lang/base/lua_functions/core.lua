@@ -50,30 +50,26 @@ function Core:print(wrapper, flangArguments)
   return nil
 end
 
--- args = (index, signal name, signal count)
+-- args = (index, virtual signal name suffix, signal count)
 function Core:writeVirtualSignal(wrapper, flangArguments)
-  local virtualSignalIndex = flangArguments[1]
-  if (virtualSignalIndex < 0 or virtualSignalIndex > 100) then
-    -- This is a game ending exception...
-    -- Let's just soft crash!
-    return {
-      hasError = true,
-      errorMessage = "Core:writeVirtualSignal cannot accept a signal index outside the bounds [0..100]"
-    }
-  end
-
-  local virtualSignalName = flangArguments[2]
-  local virtualSignalCount = flangArguments[3]
-
+  local signalType = "virtual"
   local entity = wrapper.entity
-  local combinatorBehavior = entity.get_control_behavior()
-  combinatorBehavior.set_signal(virtualSignalIndex, {
-    signal = {
-      type = "virtual",
-      name = "signal-" .. virtualSignalName
-    },
-    count = virtualSignalCount
-  })
+  local signalIndex = flangArguments[1]
+  local signalName = "signal-" + flangArguments[2]
+  local signalCount = flangArguments[3]
+
+  return writeSignal(entity, signalIndex, signalType, signalName, signalCount)
+end
+
+-- args = (index, signal name, signal count)
+function Core:writeItemSignal(wrapper, flangArguments)
+  local signalType = "item"
+  local entity = wrapper.entity
+  local signalIndex = flangArguments[1]
+  local signalCount = flangArguments[3]
+  local signalName = flangArguments[2]
+
+  return writeSignal(entity, signalIndex, signalType, signalName, signalCount)
 end
 
 -- args = (virtual signal name, network color)
@@ -127,4 +123,31 @@ function Core:readVirtualSignal(wrapper, flangArguments)
   return {
     result = circuitNetwork.get_signal(signal)
   }
+end
+
+-----------------------------------------------------------------------
+
+-- Private functions
+
+-----------------------------------------------------------------------
+
+-- signalType -> "item" or "virtual"
+function writeSignal(entity, signalIndex, signalType, signalName, signalCount)
+  if (signalIndex < 0 or signalIndex > 100) then
+    -- This is a game ending exception...
+    -- Let's just soft crash!
+    return {
+      hasError = true,
+      errorMessage = "Core:Write Signal cannot accept a signal index outside the bounds [0..100]"
+    }
+  end
+
+  local combinatorBehavior = entity.get_control_behavior()
+  combinatorBehavior.set_signal(signalIndex, {
+    signal = {
+      type = signalType,
+      name = signalName
+    },
+    count = signalCount
+  })
 end
