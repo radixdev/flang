@@ -55,7 +55,7 @@ function Core:writeVirtualSignal(wrapper, flangArguments)
   local signalType = "virtual"
   local entity = wrapper.entity
   local signalIndex = flangArguments[1]
-  local signalName = "signal-" + flangArguments[2]
+  local signalName = "signal-" .. flangArguments[2]
   local signalCount = flangArguments[3]
 
   return writeSignal(entity, signalIndex, signalType, signalName, signalCount)
@@ -74,55 +74,21 @@ end
 
 -- args = (virtual signal name, network color)
 function Core:readVirtualSignal(wrapper, flangArguments)
-  local virtualSignalName = flangArguments[1]
+  local signalType = "virtual"
   local entity = wrapper.entity
-  if (entity == nil) then
-    return {
-      hasError = true,
-      errorMessage = "Entity is nil"
-    }
-  end
-
-  if (virtualSignalName == "10") then
-    return {
-      hasError = true,
-      errorMessage = "bad virt name" .. virtualSignalName
-    }
-  end
-  local combinatorBehavior = entity.get_control_behavior()
-
-  -- Check the network type
+  local signalName = "signal-" .. flangArguments[1]
   local circuitNetworkName = flangArguments[2]
-  local circuitNetworkColor
 
-  if (circuitNetworkName == "red") then
-    circuitNetworkColor = defines.wire_type.red
-  elseif (circuitNetworkName == "green") then
-    circuitNetworkColor = defines.wire_type.green
-  elseif (circuitNetworkName == "copper") then
-    circuitNetworkColor = defines.wire_type.copper
-  else
-    return {
-      hasError = true,
-      errorMessage = "Circuit network with name " .. circuitNetworkName .. " is invalid. Try ['red', 'green', 'copper']"
-    }
-  end
+  return readSignal(entity, circuitNetworkName, signalType, signalName)
+end
 
-  local circuitNetwork = combinatorBehavior.get_circuit_network(circuitNetworkColor)
-  if (circuitNetwork == nil) then
-    return {
-      hasError = true,
-      errorMessage = "Core:writeVirtualSignal has no network attached on type: " .. circuitNetworkName
-    }
-  end
+function Core:readItemSignal(wrapper, flangArguments)
+  local signalType = "item"
+  local entity = wrapper.entity
+  local signalName = flangArguments[1]
+  local circuitNetworkName = flangArguments[2]
 
-  local signal = {
-      type = "virtual",
-      name = "signal-" .. virtualSignalName
-  }
-  return {
-    result = circuitNetwork.get_signal(signal)
-  }
+  return readSignal(entity, circuitNetworkName, signalType, signalName)
 end
 
 -----------------------------------------------------------------------
@@ -150,4 +116,46 @@ function writeSignal(entity, signalIndex, signalType, signalName, signalCount)
     },
     count = signalCount
   })
+end
+
+function readSignal(entity, circuitNetworkName, signalType, signalName)
+  if (entity == nil) then
+    return {
+      hasError = true,
+      errorMessage = "Entity is nil"
+    }
+  end
+
+  local combinatorBehavior = entity.get_control_behavior()
+
+  -- Check the network type
+  local circuitNetworkColor
+  if (circuitNetworkName == "red") then
+    circuitNetworkColor = defines.wire_type.red
+  elseif (circuitNetworkName == "green") then
+    circuitNetworkColor = defines.wire_type.green
+  elseif (circuitNetworkName == "copper") then
+    circuitNetworkColor = defines.wire_type.copper
+  else
+    return {
+      hasError = true,
+      errorMessage = "Circuit network with name " .. circuitNetworkName .. " is invalid. Try ['red', 'green', 'copper']"
+    }
+  end
+
+  local circuitNetwork = combinatorBehavior.get_circuit_network(circuitNetworkColor)
+  if (circuitNetwork == nil) then
+    return {
+      hasError = true,
+      errorMessage = "Core:Read Signal has no network attached on type: " .. circuitNetworkName
+    }
+  end
+
+  local signal = {
+      type = signalType,
+      name = signalName
+  }
+  return {
+    result = circuitNetwork.get_signal(signal)
+  }
 end
