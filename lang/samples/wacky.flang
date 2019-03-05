@@ -2,9 +2,6 @@ myIndex = 0
 primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41]
 myPrimeIndex = primes[myIndex]
 
-isReadTick = Core.tick() % 2 == 0
-isWriteTick = !isReadTick
-
 // The "character" chip
 signals = [
 "0", "1", "2", "3", "4",
@@ -16,8 +13,6 @@ signals = [
 "U", "V", "W", "X", "Y"]
 
 def clearLamps() {
-  if (!isWriteTick) { return 1 }
-
   for (i=0; signals.length()) {
     signal = signals[i]
     Core.writeVirtualSignal(i + 1, signal, 0)
@@ -25,8 +20,6 @@ def clearLamps() {
 }
 
 def writeSignals() {
-  if (!isWriteTick) { return 1 }
-
   litLamps = charMap[inputChar]
   for (i=0; litLamps.length()) {
     signal = litLamps[i]
@@ -92,19 +85,7 @@ charMap["Z"] = ["0", "1", "2", "3", "4", "9", "D", "H", "L", "P", "U", "V", "W",
 // Read my actual input char signal from the network
 clearLamps()
 
-// inputChar = ""
 inputChar = readInputChar()
-// for (signal in signals) {
-//   // Since we're reading and outputting from the same combinator, we have to read twice here
-//   x = Core.readVirtualSignal(signal, "green") - Core.readVirtualSignal(signal, "red")
-//
-//   // If the signal is a multiple of this prime, it's for us
-//   if (x != 0 && x % myPrimeIndex == 0) {
-//     Core.print("found index match for x " + x)
-//     inputChar = signal
-//     break
-//   }
-// }
 
 Core.print("my input char is " + inputChar)
 // Write our char to the lamps

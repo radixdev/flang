@@ -441,6 +441,10 @@ function player_info_window_print(msg, should_clear)
   for index,player in pairs(game.connected_players) do
     if player.gui.left.flang_parent_window_flow and player.gui.left.flang_parent_window_flow.flang_info_window then
       info_window = player.gui.left.flang_parent_window_flow.flang_info_window
+      if (not info_window) then
+        return
+      end
+      
       if (should_clear) then
         info_window.text = ""
       end
