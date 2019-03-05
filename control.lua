@@ -310,7 +310,7 @@ script.on_load(function()
       source = chip_data["source"],
       is_running = chip_data["is_running"],
       invis_chip = chip_data["invis_chip"],
-      printer = player_info_window_print
+      printer = editor_window_print
     })
     CHIP_TABLE[entity_id] = chip
   end
@@ -440,6 +440,36 @@ function player_info_window_print(msg, should_clear)
   end
 
   for index,player in pairs(game.connected_players) do
+    if player.gui.left.flang_parent_window_flow and player.gui.left.flang_parent_window_flow.flang_info_window then
+      info_window = player.gui.left.flang_parent_window_flow.flang_info_window
+      if (should_clear) then
+        info_window.text = ""
+      end
+
+      if (info_window.text == "") then
+        info_window.text = msg
+      else
+        info_window.text = info_window.text .. "\n" .. msg
+      end
+    end
+  end
+end
+
+function editor_window_print(spawningEntity, msg, should_clear)
+  if game == nil then
+    return
+  end
+
+  for playerIndex,player in pairs(game.connected_players) do
+    local lastPlayerChipEntity = get_player_last_chip_entity(player.index)
+    if (lastPlayerChipEntity == nil) then
+      return
+    end
+
+    if (spawningEntity.unit_number ~= lastPlayerChipEntity.unit_number) then
+      return
+    end
+
     if player.gui.left.flang_parent_window_flow and player.gui.left.flang_parent_window_flow.flang_info_window then
       info_window = player.gui.left.flang_parent_window_flow.flang_info_window
       if (should_clear) then

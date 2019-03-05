@@ -21,8 +21,7 @@ function FlangChip:new(o)
 
     invis_chip = o.invis_chip,
 
-    -- debug shit
-    -- optional straight to player console function
+    -- straight to editor window logging section function
     printer = o.printer
   }
 
@@ -47,9 +46,9 @@ function FlangChip:start_execution()
   if success then
     self.interpreter = result
     self.is_running = true
-    self.printer("interpreter execution successful", true)
+    self:print("interpreter execution successful", true)
   else
-    self.printer("interpreter error", true)
+    self:print("interpreter error", true)
     self:on_error(result)
     self.is_running = false
   end
@@ -63,7 +62,7 @@ end
 ]]
 function FlangChip:stop_execution()
   if (self.is_running) then
-    self.printer("execution stopped")
+    self:print("execution stopped")
   end
   self.is_running = false
 end
@@ -81,32 +80,39 @@ function FlangChip:execute()
     if not self.is_running then return end
   end
 
-  self.printer("", true)
+  self:print("", true)
   local success, result = pcall(self.interpreter.interpret, self.interpreter)
   if not success then
     self.is_running = false
     self:printGlobalVars()
-    self.printer("\nexecution error")
+    self:print("\nexecution error")
     self:on_error(result)
   end
 end
 
 function FlangChip:on_error(error)
   -- fuck
-  self.printer("got error!")
-  self.printer(tostring(error))
+  self:print("got error!")
+  self:print(tostring(error))
 end
 
 function FlangChip:printGlobalVars()
-  self.printer("Current vars: \n")
+  self:print("Current vars: \n")
   -- result is our symbol table
   for k,value in pairs(self.interpreter.global_symbol_scope.variable_table) do
     if (Util.isTable(value)) then
-      self.printer(k .. " = " .. Util.set_to_string(value, true))
+      self:print(k .. " = " .. Util.set_to_string(value, true))
     else
-      self.printer(k .. " = " .. tostring(value))
+      self:print(k .. " = " .. tostring(value))
     end
   end
+end
+
+function FlangChip:print(msg, shouldClear)
+  if (shouldClear == nil) then
+    shouldClear = false
+  end
+  self.printer(self.entity, msg, shouldClear)
 end
 
 function create_flang_interpreter(source, entity, printer)
@@ -125,12 +131,3 @@ end
 function FlangChip:__tostring()
   print("source:\n" .. self.source)
 end
-
--- Flang.DEBUG_LOGGING = true
-
--- -- Routes all print statements to the player chat.
--- -- SHOULD NOT BE PRESENT IN PRODUCTION!
--- local oldprint = print
--- print = function(...)
---   player_info_window_print(..., false)
--- end
