@@ -104,7 +104,7 @@ function create_chip_controller(entity, built_from_robot)
 
     -- Detect if a chip already exists at the same position
     local invis_chip
-    local existingInvisChip = get_existing_invis_chip_at_parent(entity)
+    local existingInvisChip = get_existing_entity_name_at_parent(entity, INVIS_FLANG_CHIP_ENTITY_NAME)
 
     if (existingInvisChip) then
       -- TODO I don't think this case will ever be hit in real-world use
@@ -131,7 +131,7 @@ function create_chip_controller(entity, built_from_robot)
     -- create the local chip
     local chip = FlangChip:new({
       entity = entity,
-      printer = player_info_window_print,
+      printer = editor_window_print,
       invis_chip = invis_chip,
       source = sourceCode
     })
@@ -373,25 +373,6 @@ function decode_data_from_invis_chip(entity)
   end
 end
 
-function get_existing_invis_chip_at_parent(entity)
-  -- Any invis chips will exist at the same position
-  local entitiesAtSamePosition = entity.surface.find_entities_filtered({
-    position = entity.position,
-    -- type = "ghost"
-    -- name = INVIS_FLANG_CHIP_ENTITY_NAME
-  })
-
-  for _,matchingEntity in pairs(entitiesAtSamePosition) do
-    -- player_log_print("found entity " .. matchingEntity.name)
-    -- player_log_print("found entity " .. matchingEntity.type)
-    if (matchingEntity ~= entity and is_entity_invis_flang_chip(matchingEntity)) then
-      return matchingEntity
-    end
-  end
-
-  return nil
-end
-
 function get_existing_entity_name_at_parent(parentEntity, targetName)
   -- Any invis chips will exist at the same position
   local entitiesAtSamePosition = parentEntity.surface.find_entities_filtered({
@@ -400,8 +381,6 @@ function get_existing_entity_name_at_parent(parentEntity, targetName)
   })
 
   for _,matchingEntity in pairs(entitiesAtSamePosition) do
-    -- player_log_print("found target " .. matchingEntity.name)
-    -- player_log_print("found parentEntity " .. matchingEntity.type)
     if (matchingEntity ~= parentEntity) then
       return matchingEntity
     end
@@ -430,31 +409,6 @@ function player_log_print(msg)
 
   for index,player in pairs(game.connected_players) do
     player.print(msg)
-  end
-end
-
-function player_info_window_print(msg, should_clear)
-  if game == nil then
-    return
-  end
-
-  for index,player in pairs(game.connected_players) do
-    if player.gui.left.flang_parent_window_flow and player.gui.left.flang_parent_window_flow.flang_info_window then
-      info_window = player.gui.left.flang_parent_window_flow.flang_info_window
-      if (not info_window) then
-        return
-      end
-      
-      if (should_clear) then
-        info_window.text = ""
-      end
-
-      if (info_window.text == "") then
-        info_window.text = msg
-      else
-        info_window.text = info_window.text .. "\n" .. msg
-      end
-    end
   end
 end
 
