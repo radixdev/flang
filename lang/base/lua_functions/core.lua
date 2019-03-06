@@ -43,9 +43,9 @@ end
 function Core:print(wrapper, flangArguments)
   local msg = flangArguments[1]
   if (Util.isTable(msg)) then
-    msg = Util.set_to_string_nested_nodes(msg)
+    msg = Util.set_to_string(msg)
   end
-  
+
   wrapper.printer(wrapper.entity, msg, false)
   return nil
 end

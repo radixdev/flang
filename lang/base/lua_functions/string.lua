@@ -27,3 +27,15 @@ function String:getChars(wrapper, flangArguments)
     result = chars
   }
 end
+
+function String:upper(wrapper, flangArguments)
+  return {
+    result = flangArguments[1]:upper()
+  }
+end
+
+function String:lower(wrapper, flangArguments)
+  return {
+    result = flangArguments[1]:lower()
+  }
+end
