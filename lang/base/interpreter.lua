@@ -460,23 +460,20 @@ function Interpreter:FunctionCall(node)
     str = ""
     str.length <==> String.length(str)
   ]]
-
   local functionMethod
   local visitedArguments
 
   local identifierValue = self.current_symbol_scope:getVariable(classOrIdentifier, false)
   if (identifierValue ~= nil) then
-    -- print("self call on var: " .. classOrIdentifier)
-
     -- This is a self call on the variable `stringVariable.length()`
     -- function class name is the type itself
-    functionMethod = self:get_function_method(type(identifierValue), method_invocation.method_name)
+    local functionType = type(identifierValue)
+    -- functionType will be string, number, table, etc.
+    functionMethod = self:get_function_method(functionType, method_invocation.method_name)
 
     -- The argument is just our variable
     visitedArguments = {identifierValue}
   else
-    -- print("func call on var: " .. classOrIdentifier)
-    -- This is a standard function call Foo.doThing()
     functionMethod = self:get_function_method(classOrIdentifier, method_invocation.method_name)
 
     -- Each argument needs to be visited first!

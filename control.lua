@@ -293,12 +293,12 @@ end)
 
 script.on_init(function()
   -- recreate the controller table from the global table
-  player_log_print("on init")
+  -- player_log_print("on init")
 end)
 
 script.on_configuration_changed(function()
   -- recreate the controller table from the global table
-  player_log_print("on config changed")
+  -- player_log_print("on config changed")
 end)
 
 script.on_load(function()

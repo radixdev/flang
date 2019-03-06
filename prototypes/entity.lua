@@ -9,7 +9,7 @@ flangChipEntity.item_slot_count = 100
 local invisChipEntity = table.deepcopy(data.raw["programmable-speaker"]["programmable-speaker"])
 invisChipEntity.name = "invis-flang-chip"
 invisChipEntity.minable = {hardness = 0, mining_time = 0, result = "invis-flang-chip"}
-invisChipEntity.max_health = 1
+invisChipEntity.max_health = 3
 invisChipEntity.icon = "__Flang__/graphics/flangchip.png"
 invisChipEntity.item_slot_count = 100
 invisChipEntity.selectable_in_game = false
@@ -60,7 +60,7 @@ invisChipEntity.energy_usage = "150kW"
 -- https://wiki.factorio.com/Types/ElectricUsagePriority
 invisChipEntity.energy_source = {
       type = "electric",
-      usage_priority = "terciary",
+      usage_priority = "primary-input",
       emissions = 0
     }
 
