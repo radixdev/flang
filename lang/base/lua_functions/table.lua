@@ -22,3 +22,14 @@ function Table:append(wrapper, flangArguments)
 
   return nil
 end
+
+-- Put supposedValue into tbl if tbl[key] does not already exist
+function Table:putIfAbsent(wrapper, flangArguments)
+  local tbl = flangArguments[1]
+  local key = flangArguments[2]
+  local supposedValue = flangArguments[3]
+
+  if (tbl[key] == nil) then
+    tbl[key] = supposedValue
+  end
+end

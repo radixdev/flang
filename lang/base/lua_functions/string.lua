@@ -18,7 +18,7 @@ end
 -- Return an array of each character in the string
 function String:getChars(wrapper, flangArguments)
   local chars = {}
-  local str = flangArguments[0]
+  local str = flangArguments[1]
   for i in str:gmatch('.') do
     table.insert(chars, i)
   end
