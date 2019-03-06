@@ -14,3 +14,11 @@ function Table:length(wrapper, flangArguments)
     result = #flangArguments[1]
   }
 end
+
+function Table:append(wrapper, flangArguments)
+  local varTable = flangArguments[1]
+  local appendValue = flangArguments[2]
+  table.insert(varTable, appendValue)
+
+  return nil
+end

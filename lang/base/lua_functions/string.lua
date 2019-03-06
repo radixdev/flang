@@ -14,3 +14,16 @@ function String:length(wrapper, flangArguments)
     result = flangArguments[1]:len()
   }
 end
+
+-- Return an array of each character in the string
+function String:getChars(wrapper, flangArguments)
+  local chars = {}
+  local str = flangArguments[0]
+  for i in str:gmatch('.') do
+    table.insert(chars, i)
+  end
+
+  return {
+    result = chars
+  }
+end

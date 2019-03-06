@@ -1,6 +1,7 @@
 require("base.flang_import")
 
 filename = "samples/flow_control3.flang"
+filename = "samples/wacky.flang"
 local f = assert(io.open(filename, "r"))
 local t = f:read("*all")
 f:close()
