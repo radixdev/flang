@@ -473,6 +473,15 @@ function Interpreter:FunctionCall(node)
 
     -- The argument is just our variable
     visitedArguments = {identifierValue}
+
+    local k
+    for k = 1, method_invocation.num_arguments do
+      -- This is some expression that needs to be visited for evaluation
+      local invocation_arg = method_invocation.arguments[k]
+      
+      -- Since our first arg is the variable itself, we have to start our index at +1
+      visitedArguments[k + 1] = self:visit(invocation_arg)
+    end
   else
     functionMethod = self:get_function_method(classOrIdentifier, method_invocation.method_name)
 
