@@ -47,9 +47,7 @@ function Scope:error(msg)
 end
 
 function Scope:debugPrint(msg)
-  -- if (Flang.DEBUG_LOGGING) then
-  --   print(msg .. " -> " .. Util.set_to_string_dumb(self) .. " tbl " .. Util.set_to_string_dumb(self.variable_table))
-  -- end
+  -- print(msg .. " -> " .. Util.set_to_string_dumb(self) .. " tbl " .. Util.set_to_string_dumb(self.variable_table))
 end
 
 -- A block has been entered. Our scope gets 1 level deeper.

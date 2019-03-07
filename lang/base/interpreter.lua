@@ -478,7 +478,7 @@ function Interpreter:FunctionCall(node)
     for k = 1, method_invocation.num_arguments do
       -- This is some expression that needs to be visited for evaluation
       local invocation_arg = method_invocation.arguments[k]
-      
+
       -- Since our first arg is the variable itself, we have to start our index at +1
       visitedArguments[k + 1] = self:visit(invocation_arg)
     end
@@ -510,7 +510,7 @@ end
 
 -- Note that the array is constructed here
 function Interpreter:Array(node)
-  local backingTable = node.backing_table
+  local backingTable = {}
 
   -- Populate our table
   local k

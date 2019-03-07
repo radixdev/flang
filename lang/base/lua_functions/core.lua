@@ -33,7 +33,7 @@ end
 function Core:luaPrint(wrapper, flangArguments)
   local msg = flangArguments[1]
   if (Util.isTable(msg)) then
-    print(Util.set_to_string_nested_nodes(msg))
+    print(Util.set_to_string(msg))
   else
     print(msg)
   end

@@ -79,7 +79,8 @@ function Node.ArrayConstructor(token, arguments, length)
     token = token,
     arguments = arguments,
     length = length,
-    backing_table = {}
+    -- Note that this table can't be created lest it be reused globally lol
+    backing_table = nil
   })
 end
 

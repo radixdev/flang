@@ -1,0 +1,4 @@
+arr = []
+Core.luaPrint(arr)
+arr[1] = "fish"
+Core.luaPrint(arr)
