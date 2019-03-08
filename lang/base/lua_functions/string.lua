@@ -39,3 +39,20 @@ function String:lower(wrapper, flangArguments)
     result = flangArguments[1]:lower()
   }
 end
+
+function String:sub(wrapper, flangArguments)
+  local str = flangArguments[1]
+  local startIndex = flangArguments[2]
+  local endIndex = flangArguments[3]
+
+  local result
+  if (endIndex) then
+    result = str:sub(startIndex, endIndex)
+  else
+    result = str:sub(startIndex)
+  end
+  
+  return {
+    result = result
+  }
+end

@@ -1,0 +1,4 @@
+s = "fish"
+Core.luaPrint(s.sub(1, 2))
+Core.luaPrint(s.sub(3))
+Core.luaPrint("fish".sub(3))

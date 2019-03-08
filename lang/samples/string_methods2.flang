@@ -1,0 +1,3 @@
+x = string.sub("fish", 3)
+
+y = 3

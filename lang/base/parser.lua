@@ -350,7 +350,7 @@ function Parser:factor()
     return node
 
   else
-    self:error("Factor has nothing! Error state")
+    self:error("Error, Parser.factor() has cannot continue. Are you trying to call a method on a primitive? Did you not close a brace somewhere? File an issue at https://github.com/radixdev/flang/issues")
   end
 end
 
