@@ -166,7 +166,7 @@ end
 --------------------------------------------------------------
 
 script.on_event(defines.events.on_tick, function(event)
-  if (event.tick % (60*1) == 0) then
+  if (event.tick % (30*1) == 0) then
     Flang.tick = Flang.tick + 1
     for entity_id, chip in pairs(CHIP_TABLE) do
       chip:execute()
