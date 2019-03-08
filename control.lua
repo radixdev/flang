@@ -50,15 +50,21 @@ function create_editor_window(player, source)
   end
 
   -- create the menu
-  menu_flow = flang_parent_window_flow.add{type = "flow", name = "flang_menu_flow", direction = "horizontal"}
+  menu_flow = flang_parent_window_flow.add({type = "flow", name = "flang_menu_flow", direction = "horizontal"})
   -- inside the menu we add the buttons and stuff
   button_style = "slot_button_style"
-  close_button = menu_flow.add{type = "sprite-button", name = "flang_menu_close_button",
-      sprite = "close"}
-  play_button = menu_flow.add{type = "sprite-button", name = "flang_menu_play_button",
-      sprite = "play"}
-  stop_button = menu_flow.add{type = "sprite-button", name = "flang_menu_stop_button",
-      sprite = "stop"}
+  close_button = menu_flow.add({
+    type = "sprite-button",
+    name = "flang_menu_close_button",
+    sprite = "close"})
+  play_button = menu_flow.add({
+    type = "sprite-button",
+    name = "flang_menu_play_button",
+    sprite = "play"})
+  stop_button = menu_flow.add({
+    type = "sprite-button",
+    name = "flang_menu_stop_button",
+    sprite = "stop"})
 
   -- create the editor
   editor_window = flang_parent_window_flow.add{type="text-box", name="flang_editor_window",

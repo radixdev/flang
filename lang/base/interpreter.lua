@@ -535,7 +535,7 @@ function Interpreter:ArrayIndexGet(node)
 
   local tableValue = identifierTable[index]
   if (tableValue == nil) then
-    self:error("Array indexing error on: <" .. identifierName .. "> at index: <" .. index .. ">")
+    self:error("Array indexing error on: <" .. identifierName .. "> at index: <" .. (index - 1) .. ">")
   end
 
   return tableValue
