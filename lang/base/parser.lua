@@ -96,7 +96,7 @@ end
   empty                         :
 
   for_body_standard             : assignment_statement SEMICOLON expr (SEMICOLON statement | SEMICOLON expr)?
-  for_body_collection           : variable IN ARRAY
+  for_body_collection           : variable (COMMA variable)? IN ARRAY
 
   if_elseif     : (ELSEIF conditional block)* if_else
   if_else       : ELSE block
@@ -578,13 +578,38 @@ function Parser:for_statement()
     local enhanced
     local condition
     local isCollectionIteration
+    local iteratorKeyVar
+    local iteratorValueVar
+
     -- This could be a iterator type loop `for (i in array)`
-    -- The next token would be `in`
-    if (self.current_token.type == Symbols.IDENTIFIER and self.next_token.type == Symbols.IN) then
+    -- The next token would be `in` or a comma
+    local nextTokenType = self.next_token.type
+    if (self.current_token.type == Symbols.IDENTIFIER and nextTokenType == Symbols.IN) then
       isCollectionIteration = true
       -- Get the iterator variable
       token = self.current_token
       self:eat(Symbols.IDENTIFIER)
+      self:eat(Symbols.IN)
+
+      -- Get the collection
+      arrayExpr = self:expr()
+
+      iteratorValueVar = token.cargo
+    elseif (self.current_token.type == Symbols.IDENTIFIER and nextTokenType == Symbols.COMMA) then
+      print("yeet")
+      isCollectionIteration = true
+
+      -- Get the iterator key variable
+      token = self.current_token
+      iteratorKeyVar = token.cargo
+      self:eat(Symbols.IDENTIFIER)
+
+      -- Get the value variable
+      self:eat(Symbols.COMMA)
+      iteratorValueVar = self.current_token.cargo
+      self:eat(Symbols.IDENTIFIER)
+
+      -- Now for the rest of the for statement
       self:eat(Symbols.IN)
 
       -- Get the collection
@@ -625,7 +650,8 @@ function Parser:for_statement()
 
     self:eat(Symbols.RPAREN)
     local block = self:block()
-    return Node.For(token, initializer, condition, incrementer, block, enhanced, token.cargo, arrayExpr, isCollectionIteration)
+    return Node.For(token, initializer, condition, incrementer, block, enhanced,
+                    iteratorKeyVar, iteratorValueVar, arrayExpr, isCollectionIteration)
   end
 end
 

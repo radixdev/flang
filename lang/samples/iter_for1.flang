@@ -1,0 +1,18 @@
+tbl = []
+tbl[0] = "fish"
+tbl["a"] = 1
+tbl["b"] = 2
+tbl["c"] = 3
+
+for (k,v in tbl) {
+  Core.luaPrint(k, v)
+}
+
+for (v in tbl) {
+  Core.luaPrint("yeet", v)
+}
+
+r = [1,2,3]
+for (k,v in r) {
+  Core.luaPrint(k, v)
+}

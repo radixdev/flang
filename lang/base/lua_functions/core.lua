@@ -31,21 +31,12 @@ function Core:tick(wrapper, flangArguments)
 end
 
 function Core:luaPrint(wrapper, flangArguments)
-  local msg = flangArguments[1]
-  if (Util.isTable(msg)) then
-    print(Util.set_to_string(msg))
-  else
-    print(msg)
-  end
+  print(Util.concat_table_to_string(flangArguments))
   return nil
 end
 
 function Core:print(wrapper, flangArguments)
-  local msg = flangArguments[1]
-  if (Util.isTable(msg)) then
-    msg = Util.set_to_string(msg)
-  end
-
+  local msg = Util.concat_table_to_string(flangArguments)
   wrapper.printer(wrapper.entity, msg, false)
   return nil
 end

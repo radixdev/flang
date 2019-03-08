@@ -1,0 +1,4 @@
+r = [1,2,3]
+for (k,v in r) {
+  Core.luaPrint(k, v)
+}

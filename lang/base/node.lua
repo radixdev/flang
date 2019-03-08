@@ -225,7 +225,8 @@ function Node.StatementList()
 end
 
 Node.FOR_TYPE = "For"
-function Node.For(token, initializer, condition, incrementer, block, enhanced, collectionVar, arrayExpr, isCollectionIteration)
+function Node.For(token, initializer, condition, incrementer, block, enhanced,
+                  iteratorKeyVar, iteratorValueVar, arrayExpr, isCollectionIteration)
   Node.print("creating for node " .. tostring(token))
   return Node:new({
     type = Node.FOR_TYPE,
@@ -235,7 +236,8 @@ function Node.For(token, initializer, condition, incrementer, block, enhanced, c
     incrementer = incrementer,
     block = block,
     enhanced = enhanced,
-    collectionVar = collectionVar,
+    iteratorKeyVar = iteratorKeyVar,
+    iteratorValueVar = iteratorValueVar,
     arrayExpr = arrayExpr,
     isCollectionIteration = isCollectionIteration
   })
@@ -442,7 +444,8 @@ function Node:display(tabs, info)
 
   elseif (self.type == Node.FOR_TYPE) then
     if (self.isCollectionIteration) then
-      print(tabString .. "for: " .. dq(self.token.type) .. " var: " .. dq(self.collectionVar) .. " collectionIteration: " .. dq(self.isCollectionIteration))
+      print(tabString .. "for: " .. dq(self.token.type) .. " key var: " .. dq(self.iteratorKeyVar) .. " val var: " .. dq(self.iteratorValueVar)
+            .. " collectionIteration: " .. dq(self.isCollectionIteration))
 
       self.arrayExpr:display(tabs + 1, "ARRAY EXPR: ")
     else

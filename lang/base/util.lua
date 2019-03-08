@@ -88,6 +88,19 @@ function Util.set_to_string_nested_nodes(table, dont_print_key)
   return result .. "}"
 end
 
+function Util.concat_table_to_string(tbl)
+  local parts = {}
+  for _,v in pairs(tbl) do
+    if (Util.isTable(v)) then
+      parts[#parts + 1] = Util.set_to_string_dumb(v)
+    else
+      parts[#parts + 1] = tostring(v)
+    end
+  end
+
+  return table.concat(parts, " ")
+end
+
 function Util.isNumber(val)
   return type(val) == "number"
 end

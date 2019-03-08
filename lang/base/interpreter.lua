@@ -549,11 +549,21 @@ end
 -----------------------------------------------------------------------
 
 function Interpreter:For_CollectionIteration(node)
-  local iterator_variable_name = node.collectionVar
+  local key_iterator_variable_name = node.iteratorKeyVar
+  local value_iterator_variable_name = node.iteratorValueVar
   local array_variable = self:visit(node.arrayExpr)
 
-  for _,elementValue in pairs(array_variable) do
-    self:set_variable(iterator_variable_name, elementValue)
+  for elementKey,elementValue in pairs(array_variable) do
+    -- The key won't always exist
+    if (key_iterator_variable_name ~= nil) then
+      -- And it might just be a string ;)
+      if (Util.isNumber(elementKey)) then
+        -- Without this, the pairs iterator starts the array at 1 in code
+        elementKey = elementKey - 1
+      end
+      self:set_variable(key_iterator_variable_name, elementKey)
+    end
+    self:set_variable(value_iterator_variable_name, elementValue)
     local returnValue = self:visit(node.block)
 
     if (returnValue ~= nil) then
