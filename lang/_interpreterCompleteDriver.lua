@@ -82,6 +82,7 @@ assertEquals("arrayShouldBeOhh25", 0.25)
 assertEquals("arrayShouldBeMoon", "moon")
 
 assertEquals("arrayIteratorShouldBe15", 15)
+assertEquals("kvpArrayIteratorShouldBe9", 9)
 
 print("========ALL CHECKS PASSED=======")
 print(string.format("elapsed time: %.5fs or %.2fms\n", elapsed, elapsed * 1000))

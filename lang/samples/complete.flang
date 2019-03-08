@@ -114,3 +114,9 @@ arrayIteratorShouldBe15 = 0
 for (i in sumTable) {
   arrayIteratorShouldBe15 += i
 }
+
+r = [1,2,3]
+kvpArrayIteratorShouldBe9 = 0
+for (k,v in r) {
+  kvpArrayIteratorShouldBe9 += k + v
+}
