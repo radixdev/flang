@@ -1,6 +1,9 @@
 # flang
 Factorio Interpreter in Lua
 
+"So what can do you with Flang?”
+https://gfycat.com/ScientificPinkGoosefish
+
 # description
 
 The EBNF language definition can be found in `base\parser.lua`.
